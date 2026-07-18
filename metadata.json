@@ -1,0 +1,6 @@
+{
+  "name": "Text Scrubber",
+  "description": "An interactive utility to paste text, write and configure multiple custom Regular Expression patterns, and instantly remove matches to obtain clean text.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
