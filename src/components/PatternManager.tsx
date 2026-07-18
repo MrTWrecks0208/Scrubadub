@@ -24,7 +24,7 @@ export default function PatternManager({ rules, onChange, ruleStats }: PatternMa
       isActive: true,
       name: `Rule #${rules.length + 1}`,
     };
-    onChange([...rules, newRule]);
+    onChange([newRule, ...rules]);
   };
 
   const updateRule = (id: string, updates: Partial<RegexRule>) => {
@@ -50,12 +50,70 @@ export default function PatternManager({ rules, onChange, ruleStats }: PatternMa
     }
   };
 
+  const [allState, setAllState] = React.useState<'on' | 'off' | 'none'>('none');
+  const [savedRules, setSavedRules] = React.useState<RegexRule[] | null>(null);
+
   const deleteRule = (id: string) => {
     onChange(rules.filter((r) => r.id !== id));
   };
 
-  const toggleAll = (active: boolean) => {
-    onChange(rules.map((r) => ({ ...r, isActive: active })));
+  React.useEffect(() => {
+    // If rules are cleared or their IDs or length changed completely (e.g. loading a preset),
+    // reset the toggle state.
+    if (savedRules) {
+      const currentIds = rules.map(r => r.id).join(',');
+      const savedIds = savedRules.map(r => r.id).join(',');
+      if (currentIds !== savedIds) {
+        setAllState('none');
+        setSavedRules(null);
+        return;
+      }
+    }
+
+    // Reset toggle state if individual rules are manually toggled or edited
+    if (allState === 'on') {
+      const anyInactive = rules.some(r => !r.isActive);
+      if (anyInactive) {
+        setAllState('none');
+        setSavedRules(null);
+      }
+    } else if (allState === 'off') {
+      const anyActive = rules.some(r => r.isActive);
+      if (anyActive) {
+        setAllState('none');
+        setSavedRules(null);
+      }
+    }
+  }, [rules, allState, savedRules]);
+
+  const handleAllOn = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.currentTarget.blur();
+    if (allState === 'on') {
+      if (savedRules) {
+        onChange(savedRules);
+      }
+      setAllState('none');
+      setSavedRules(null);
+    } else {
+      setSavedRules(rules);
+      setAllState('on');
+      onChange(rules.map((r) => ({ ...r, isActive: true })));
+    }
+  };
+
+  const handleAllOff = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.currentTarget.blur();
+    if (allState === 'off') {
+      if (savedRules) {
+        onChange(savedRules);
+      }
+      setAllState('none');
+      setSavedRules(null);
+    } else {
+      setSavedRules(rules);
+      setAllState('off');
+      onChange(rules.map((r) => ({ ...r, isActive: false })));
+    }
   };
 
   return (
@@ -73,19 +131,27 @@ export default function PatternManager({ rules, onChange, ruleStats }: PatternMa
         </div>
         <div className="flex items-center gap-2">
           {rules.length > 0 && (
-            <div className="flex items-center border border-slate-800 rounded p-0.5 bg-[#020617] text-[10px] text-slate-400 font-mono">
+            <div className="flex items-center border border-slate-800 rounded p-0.5 bg-[#020617] text-[10px] font-mono">
               <button
                 type="button"
-                onClick={() => toggleAll(true)}
-                className="px-1.5 py-0.5 rounded hover:bg-slate-800 hover:text-white font-medium transition-colors cursor-pointer"
+                onClick={handleAllOn}
+                className={`px-1.5 py-0.5 rounded border font-medium transition-colors cursor-pointer ${
+                  allState === 'on'
+                    ? 'bg-emerald-600/10 text-emerald-400 border-emerald-700/20'
+                    : 'border-transparent text-slate-400 hover:bg-slate-800 hover:text-white'
+                }`}
               >
                 All On
               </button>
               <div className="w-[1px] h-3 bg-slate-800 mx-0.5"></div>
               <button
                 type="button"
-                onClick={() => toggleAll(false)}
-                className="px-1.5 py-0.5 rounded hover:bg-slate-800 hover:text-white font-medium transition-colors cursor-pointer"
+                onClick={handleAllOff}
+                className={`px-1.5 py-0.5 rounded border font-medium transition-colors cursor-pointer ${
+                  allState === 'off'
+                    ? 'bg-rose-600/10 text-rose-400 border-rose-700/20'
+                    : 'border-transparent text-slate-400 hover:bg-slate-800 hover:text-white'
+                }`}
               >
                 All Off
               </button>

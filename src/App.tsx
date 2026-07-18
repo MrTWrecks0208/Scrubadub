@@ -5,6 +5,7 @@ import { cleanText } from './utils/cleaner';
 import PatternManager from './components/PatternManager';
 import InteractiveDiff from './components/InteractiveDiff';
 import AIRegexGenerator from './components/AIRegexGenerator';
+import HighlightedTextarea from './components/HighlightedTextarea';
 import { 
   FileText, 
   Copy, 
@@ -126,14 +127,14 @@ export default function App() {
   return (
     <div className="min-h-screen bg-[#0F172A] text-slate-300 flex flex-col font-sans antialiased selection:bg-indigo-500/30 selection:text-white">
       {/* Top Navigation Bar */}
-      <header className="h-12 border-b border-slate-800 flex items-center justify-between px-4 bg-[#1E293B] sticky top-0 z-50 shadow-xs">
+      <header className="h-12 border-b border-slate-800 flex items-center justify-between px-2 bg-[#1E293B] sticky top-0 z-50 shadow-xs">
         <div className="flex items-center gap-2.5">
           <div className="w-6 h-6 bg-indigo-500 rounded flex items-center justify-center text-white">
             <Scissors className="w-3.5 h-3.5" />
           </div>
           <div className="flex items-baseline gap-1.5">
             <h1 className="text-xs font-bold tracking-wider text-white uppercase">
-              Text Scrubber
+              Scrubadub
             </h1>
             <span className="text-[10px] text-slate-500 font-mono">v2.4.0</span>
           </div>
@@ -157,7 +158,7 @@ export default function App() {
       </header>
 
       {/* Main Body Grid */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 space-y-4">
+      <main className="flex-1 max-w-[1450px] w-full mx-auto px-2 py-4 space-y-4">
         
         {/* Presets Bento Strip */}
         <section className="bg-[#1E293B]/40 border border-slate-800 rounded-lg p-3">
@@ -207,15 +208,16 @@ export default function App() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
           
           {/* Left Block: Editor Panels (Input, Output, Visualizer) */}
-          <div className="lg:col-span-7 space-y-4">
+          <div className="lg:col-span-8 space-y-4">
             
             {/* Input Panel */}
             <div className="bg-[#1E293B]/20 border border-slate-800 rounded-lg overflow-hidden flex flex-col">
               <div className="flex items-center justify-between px-3.5 py-2 border-b border-slate-800 bg-[#1E293B]/60">
                 <div className="flex items-center gap-2">
-                  <FileText className="w-3.5 h-3.5 text-slate-400" />
+                  <FileText className="w-3.5 h-3.5 text-indigo-400" />
                   <span className="text-[11px] font-bold uppercase tracking-wider text-slate-300">Source Text Input</span>
                 </div>
+                
                 <div className="flex items-center gap-1">
                   <button
                     type="button"
@@ -238,12 +240,11 @@ export default function App() {
                 </div>
               </div>
               <div className="p-3 bg-[#020617]">
-                <textarea
+                <HighlightedTextarea
                   value={inputText}
-                  onChange={(e) => setInputText(e.target.value)}
+                  onChange={setInputText}
                   placeholder="Paste raw data / log content here..."
-                  className="w-full h-40 sm:h-48 font-mono text-xs text-slate-300 bg-transparent border-0 outline-none focus:ring-0 resize-y placeholder:text-slate-600"
-                  spellCheck={false}
+                  rules={rules}
                 />
                 
                 {/* Statistics Row */}
@@ -337,7 +338,7 @@ export default function App() {
                       value={cleanResult.cleanedText}
                       readOnly
                       placeholder="Sanitized content will render here..."
-                      className="w-full h-40 sm:h-48 font-mono text-xs text-slate-400 bg-transparent border-0 outline-none resize-y placeholder:text-slate-600 select-all"
+                      className="w-full h-64 sm:h-80 font-mono text-xs text-slate-400 bg-transparent border-0 outline-none resize-y placeholder:text-slate-600 select-all"
                       spellCheck={false}
                     />
 
@@ -401,11 +402,11 @@ export default function App() {
 
           </div>
 
-          {/* Right Block: Regex Pattern Configurations (5/12 width) */}
-          <div className="lg:col-span-5 space-y-4">
+          {/* Right Block: Regex Pattern Configurations (4/12 width) */}
+          <div className="lg:col-span-4 space-y-4">
             <AIRegexGenerator 
               onAddRule={(newRule) => {
-                setRules([...rules, newRule]);
+                setRules([newRule, ...rules]);
                 setSelectedPresetId(null);
               }} 
               sampleText={inputText}
