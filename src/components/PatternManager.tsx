@@ -175,9 +175,9 @@ export default function PatternManager({ rules, onChange, ruleStats }: PatternMa
             <div className="w-8 h-8 rounded-full bg-[#1E293B]/50 flex items-center justify-center mb-2.5 border border-slate-800">
               <HelpCircle className="w-4 h-4 text-slate-500 animate-pulse" />
             </div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">No active patterns</h3>
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">No Active Rules</h3>
             <p className="text-[11px] text-slate-500 mt-1 max-w-xs">
-              Add a regular expression pattern to start matching and stripping text. You can also load presets above.
+              Add a rule to start matching and scrubbing text. You can also load presets from 'Templates & Presets'.
             </p>
             <button
               type="button"

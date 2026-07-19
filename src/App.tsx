@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { RegexRule, RegexPreset, CleanResult } from './types';
 import { DEFAULT_PRESETS } from './presets';
+import logo from './Logo.png';
 import { cleanText } from './utils/cleaner';
 import PatternManager from './components/PatternManager';
 import InteractiveDiff from './components/InteractiveDiff';
@@ -133,15 +134,15 @@ export default function App() {
   return (
     <div className="min-h-screen bg-[#0F172A] text-slate-300 flex flex-col font-sans antialiased selection:bg-indigo-500/30 selection:text-white">
       {/* Top Navigation Bar */}
-      <header className="h-12 border-b border-slate-800 flex items-center justify-between px-2 bg-[#1E293B] sticky top-0 z-50 shadow-xs">
+      <header className="h-20 border-b border-slate-800 flex items-center justify-between py-2 pl-6 pr-2 bg-[#1E293B] sticky top-0 z-50 shadow-xs">
         <div className="flex items-center gap-2.5">
-          <div className="w-6 h-6 bg-indigo-500 rounded flex items-center justify-center text-white">
-            <Scissors className="w-3.5 h-3.5" />
-          </div>
+          <img 
+            src={logo} 
+            alt="Scrubadub Logo" 
+            className="w-36 h-16 object-fill" 
+            referrerPolicy="no-referrer"
+          />
           <div className="flex items-baseline gap-1.5">
-            <h1 className="text-xs font-bold tracking-wider text-white uppercase">
-              Scrubadub
-            </h1>
             <span className="text-[10px] text-slate-500 font-mono">v2.4.0</span>
           </div>
         </div>
@@ -170,7 +171,7 @@ export default function App() {
         <section className="bg-[#1E293B]/40 border border-slate-800 rounded-lg p-3">
           <div className="flex items-center gap-1.5 mb-2.5">
             <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
-            <h2 className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Active Templates & Presets</h2>
+            <h2 className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Templates & Presets</h2>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
             {DEFAULT_PRESETS.map((preset) => {
