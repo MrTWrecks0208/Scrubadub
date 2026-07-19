@@ -25,12 +25,6 @@ export default function AIRegexGenerator({ onAddRule, sampleText }: AIRegexGener
   const [generated, setGenerated] = useState<GeneratedRegex | null>(null);
   const [isApplied, setIsApplied] = useState(false);
 
-  const isStaticPages = typeof window !== 'undefined' && (
-    window.location.hostname.endsWith('github.io') || 
-    window.location.hostname.includes('vercel.app') || 
-    window.location.hostname.includes('netlify.app')
-  );
-
   const handleGenerate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!description.trim()) return;
@@ -53,9 +47,6 @@ export default function AIRegexGenerator({ onAddRule, sampleText }: AIRegexGener
       });
 
       if (!response.ok) {
-        if (response.status === 404) {
-          throw new Error('AI formulation backend is not available on static hosting (like GitHub Pages). To use AI generation, run the app locally using "npm run dev", or deploy it on a dynamic server-capable environment.');
-        }
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
       }
@@ -124,14 +115,7 @@ export default function AIRegexGenerator({ onAddRule, sampleText }: AIRegexGener
           />
         </div>
 
-        <div className="flex items-center justify-between gap-3 flex-wrap">
-          {isStaticPages ? (
-            <span className="text-[10px] text-amber-500 font-mono font-medium max-w-[240px] leading-tight">
-              ⚠️ Static Hosting: AI requires backend API (disabled on GitHub Pages)
-            </span>
-          ) : (
-            <div />
-          )}
+        <div className="flex justify-end">
           <button
             type="submit"
             disabled={isLoading || !description.trim()}
