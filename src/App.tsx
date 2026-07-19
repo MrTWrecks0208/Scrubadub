@@ -27,7 +27,7 @@ export default function App() {
   // --- States ---
   const [inputText, setInputText] = useState<string>(() => {
     const saved = localStorage.getItem('regex_cleaner_input');
-    return saved !== null ? saved : DEFAULT_PRESETS[0].sampleText;
+    return saved !== null ? saved : '';
   });
 
   const [rules, setRules] = useState<RegexRule[]>(() => {
@@ -39,12 +39,12 @@ export default function App() {
         console.error('Failed to parse saved rules:', err);
       }
     }
-    return DEFAULT_PRESETS[0].rules;
+    return [];
   });
 
   const [activeTab, setActiveTab] = useState<'cleaned' | 'visualizer'>('cleaned');
   const [selectedPresetId, setSelectedPresetId] = useState<string | null>(() => {
-    return localStorage.getItem('regex_cleaner_preset_id') || 'pii-redactor';
+    return localStorage.getItem('regex_cleaner_preset_id');
   });
 
   const [copySuccess, setCopySuccess] = useState<boolean>(false);
@@ -139,17 +139,14 @@ export default function App() {
           <img 
             src={logo} 
             alt="Scrubadub Logo" 
-            className="w-36 h-16 object-fill" 
+            className="w-42 h-16 object-fill" 
             referrerPolicy="no-referrer"
           />
-          <div className="flex items-baseline gap-1.5">
-            <span className="text-[10px] text-slate-500 font-mono">v2.4.0</span>
-          </div>
         </div>
         
-        <div className="flex items-center gap-4 text-[11px] font-medium text-slate-400">
+        <div className="flex items-center gap-4 text-[11px] pr-6 font-medium text-slate-400">
           <span className="flex items-center gap-1.5 text-slate-300">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Ready
+            <span className="w-3 h-3 rounded-full bg-emerald-400 animate-pulse"></span> Ready
           </span>
           <div className="h-4 w-px bg-slate-700"></div>
           <a 
@@ -222,7 +219,7 @@ export default function App() {
               <div className="flex items-center justify-between px-3.5 py-2 border-b border-slate-800 bg-[#1E293B]/60">
                 <div className="flex items-center gap-2">
                   <FileText className="w-3.5 h-3.5 text-indigo-400" />
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-300">Source Text Input</span>
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-300">Source Input</span>
                 </div>
                 
                 <div className="flex items-center gap-1">
@@ -250,7 +247,7 @@ export default function App() {
                 <HighlightedTextarea
                   value={inputText}
                   onChange={setInputText}
-                  placeholder="Paste raw data / log content here..."
+                  placeholder="Paste text here..."
                   rules={rules}
                 />
                 
@@ -293,7 +290,7 @@ export default function App() {
                         : 'border-transparent text-slate-400 hover:text-slate-200'
                     }`}
                   >
-                    Sanitized Output (Read-Only)
+                    Scrubbed Output (Read-Only)
                   </button>
                   <button
                     type="button"
@@ -304,7 +301,7 @@ export default function App() {
                         : 'border-transparent text-slate-400 hover:text-slate-200'
                     }`}
                   >
-                    Match Highlight View
+                    Matches View
                   </button>
                 </div>
                 
@@ -313,7 +310,7 @@ export default function App() {
                     type="button"
                     onClick={() => copyToClipboard(cleanResult.cleanedText, false)}
                     disabled={!cleanResult.cleanedText}
-                    title="Copy cleaned result"
+                    title="Copy"
                     className="p-1 text-slate-400 hover:text-white hover:bg-slate-800 rounded transition-colors disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
                   >
                     {copySuccess ? (
@@ -329,7 +326,7 @@ export default function App() {
                     type="button"
                     onClick={downloadTextFile}
                     disabled={!cleanResult.cleanedText}
-                    title="Download cleaned file"
+                    title="Download"
                     className="p-1 text-slate-400 hover:text-white hover:bg-slate-800 rounded transition-colors disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
                   >
                     <Download className="w-3.5 h-3.5" />
@@ -344,7 +341,7 @@ export default function App() {
                     <textarea
                       value={cleanResult.cleanedText}
                       readOnly
-                      placeholder="Sanitized content will render here..."
+                      placeholder="Srubbed output will render here..."
                       className="w-full h-64 sm:h-80 font-mono text-xs text-slate-400 bg-transparent border-0 outline-none resize-y placeholder:text-slate-600 select-all"
                       spellCheck={false}
                     />
@@ -400,9 +397,9 @@ export default function App() {
                 <Info className="w-3 h-3" />
               </div>
               <div className="space-y-0.5">
-                <span className="font-bold text-slate-300 block uppercase tracking-wide text-[10px]">Processing Pipeline Information</span>
+                <span className="font-bold text-slate-300 block uppercase tracking-wide text-[10px]">Scrubbing Pipeline Information</span>
                 <p>
-                  Regular expression rules are executed <strong>sequentially from top to bottom</strong>. The sanitized output of each stage acts as the feedstock for the next. Drag, toggle, and name patterns to build repeatable data sanitization processes.
+                  Scrubbing rules are executed <strong>sequentially from top to bottom</strong>. The scrubbed output of each stage serves as the input for the next. Toggle, customize, and name rules to build repeatable text-cleansing workflows.
                 </p>
               </div>
             </div>

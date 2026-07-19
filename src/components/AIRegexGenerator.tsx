@@ -96,8 +96,8 @@ export default function AIRegexGenerator({ onAddRule, sampleText }: AIRegexGener
             <Sparkles className="w-3 h-3 text-indigo-400" />
           </div>
           <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-200">AI Regex formulation</h3>
-            <p className="text-[10px] text-slate-500 font-mono mt-0.5">Describe what to find and replace</p>
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-200">AI Rule Generator</h3>
+            <p className="text-[10px] text-slate-500 font-mono mt-0.5">Describe what pattern to match & replace</p>
           </div>
         </div>
       </div>
@@ -124,7 +124,7 @@ export default function AIRegexGenerator({ onAddRule, sampleText }: AIRegexGener
             {isLoading ? (
               <>
                 <Loader2 className="w-3.5 h-3.5 animate-spin text-slate-200" />
-                <span>Formulating...</span>
+                <span>Generating...</span>
               </>
             ) : (
               <>
