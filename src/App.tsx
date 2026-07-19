@@ -73,9 +73,15 @@ export default function App() {
 
   // --- Actions ---
   const loadPreset = (preset: RegexPreset) => {
-    setRules(preset.rules);
-    setInputText(preset.sampleText);
-    setSelectedPresetId(preset.id);
+    if (selectedPresetId === preset.id) {
+      setRules([]);
+      setInputText('');
+      setSelectedPresetId(null);
+    } else {
+      setRules(preset.rules);
+      setInputText(preset.sampleText);
+      setSelectedPresetId(preset.id);
+    }
   };
 
   const handleCustomRuleChange = (newRules: RegexRule[]) => {
@@ -193,9 +199,9 @@ export default function App() {
                       {preset.rules.length} rule{preset.rules.length !== 1 && 's'}
                     </span>
                     <span className={`flex items-center gap-0.5 ${
-                      isSelected ? 'text-indigo-400' : 'text-slate-500 group-hover:text-slate-300 transition-opacity'
+                      isSelected ? 'text-indigo-400 font-semibold' : 'text-slate-500 group-hover:text-slate-300 transition-opacity'
                     }`}>
-                      Load <ChevronRight className="w-2.5 h-2.5" />
+                      {isSelected ? 'Active' : 'Load'} <ChevronRight className="w-2.5 h-2.5" />
                     </span>
                   </div>
                 </button>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { RegexRule, CleanResult } from '../types';
+import { RegexRule, CleanResult, HIGHLIGHT_COLORS } from '../types';
 import { Plus, Trash2, Eye, EyeOff, AlertCircle, Sparkles, Check, HelpCircle } from 'lucide-react';
 import { validateRegex } from '../utils/cleaner';
 
@@ -194,6 +194,7 @@ export default function PatternManager({ rules, onChange, ruleStats }: PatternMa
             const matchesCount = stats?.matchesRemoved ?? 0;
             const isValid = stats?.isValid ?? true;
             const errorMsg = stats?.errorMsg;
+            const color = HIGHLIGHT_COLORS[index % HIGHLIGHT_COLORS.length];
 
             return (
               <div
@@ -207,7 +208,9 @@ export default function PatternManager({ rules, onChange, ruleStats }: PatternMa
                 {/* Rule Title Row */}
                 <div className="flex items-center justify-between gap-3 mb-2">
                   <div className="flex items-center gap-2 flex-1 min-w-0">
-                    <span className="flex-none text-[9px] font-mono font-bold text-indigo-400 bg-[#020617] border border-slate-800 w-4 h-4 rounded flex items-center justify-center">
+                    <span className={`flex-none text-[9px] font-mono font-bold w-4 h-4 rounded border flex items-center justify-center transition-colors ${
+                      rule.isActive ? color.numClass : 'text-slate-500 bg-slate-950/40 border-slate-900'
+                    }`}>
                       {String(index + 1).padStart(2, '0')}
                     </span>
                     <input
@@ -215,16 +218,18 @@ export default function PatternManager({ rules, onChange, ruleStats }: PatternMa
                       value={rule.name}
                       onChange={(e) => updateRule(rule.id, { name: e.target.value })}
                       placeholder="Rule tag name..."
-                      className="text-xs font-mono font-bold text-indigo-300 bg-transparent hover:bg-[#020617] focus:bg-[#020617] px-1.5 py-0.5 rounded border border-transparent focus:border-slate-800 outline-none flex-1 min-w-0 truncate transition-colors"
+                      className={`text-xs font-mono font-bold bg-transparent hover:bg-[#020617] focus:bg-[#020617] px-1.5 py-0.5 rounded border border-transparent focus:border-slate-800 outline-none flex-1 min-w-0 truncate transition-colors ${
+                        rule.isActive ? color.textClass : 'text-slate-400'
+                      }`}
                     />
                   </div>
 
                   <div className="flex items-center gap-1">
                     {/* Active Match Stat Badge */}
                     {rule.isActive && rule.pattern && isValid && (
-                      <span className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border ${
+                      <span className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border transition-colors ${
                         matchesCount > 0
-                          ? 'bg-emerald-950/40 text-emerald-400 border-emerald-900/40'
+                          ? color.badgeClass
                           : 'bg-[#020617] text-slate-500 border-slate-900'
                       }`}>
                         {matchesCount} match{matchesCount !== 1 && 'es'}
