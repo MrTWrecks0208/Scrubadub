@@ -1,6 +1,6 @@
 import React from 'react';
 import { RegexRule, CleanResult, HIGHLIGHT_COLORS, getStableRuleColor } from '../types';
-import { Plus, Trash2, Eye, EyeOff, AlertCircle, Sparkles, Check, HelpCircle, Bookmark, Pencil } from 'lucide-react';
+import { Plus, Trash2, Eye, EyeOff, AlertCircle, Sparkles, Check, HelpCircle, Bookmark, Pencil, Info } from 'lucide-react';
 import { validateRegex } from '../utils/cleaner';
 
 interface PatternManagerProps {
@@ -122,62 +122,88 @@ export default function PatternManager({ rules, onChange, ruleStats, onSaveTempl
   return (
     <div className="flex flex-col h-full bg-[#1E293B]/20 border border-slate-800 rounded-lg overflow-hidden select-none">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-2.5 border-b border-slate-800 bg-[#1E293B]/60 gap-4">
-        <div className="min-w-0">
-          <h2 className="text-[11px] font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5 truncate">
+      <div className="flex flex-col justify-center px-4 py-3.5 border-b border-slate-800 bg-[#1E293B]/60 gap-2">
+        {/* First Line: Scrubbing Rules with count on left, Action buttons on right */}
+        <div className="flex items-center justify-between gap-3 flex-wrap sm:flex-nowrap">
+          <h2 className="text-[12px] font-bold uppercase tracking-wider text-slate-200 flex items-center gap-2 shrink-0 whitespace-nowrap">
             Scrubbing Rules
-            <span className="inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-mono font-bold bg-[#020617] border border-slate-800 text-indigo-400 rounded-full">
+            <span className="inline-flex items-center justify-center px-2 py-0.5 text-[10px] font-mono font-bold bg-[#020617] border border-slate-800 text-indigo-400 rounded-full">
               {rules.length}
             </span>
           </h2>
-          <p className="text-[10px] text-slate-500 font-mono mt-0.5 truncate">Define rules for scrubbing text</p>
-        </div>
-        <div className="flex items-center gap-2 flex-shrink-0">
-          {rules.length > 0 && onSaveTemplate && (
+          <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+            {rules.length > 0 && onSaveTemplate && (
+              <button
+                type="button"
+                onClick={onSaveTemplate}
+                className="flex items-center gap-1 h-6.5 px-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full text-[9px] font-bold transition-all shadow-sm hover:shadow-md cursor-pointer uppercase tracking-wider whitespace-nowrap flex-shrink-0"
+              >
+                <Bookmark className="w-3 h-3" />
+                Save Rule Set
+              </button>
+            )}
+            {rules.length > 0 && (
+              <div className="flex items-center border border-slate-800 rounded-full p-0.5 bg-[#020617] h-6.5 text-[9px] font-mono flex-shrink-0">
+                <button
+                  type="button"
+                  onClick={handleAllOn}
+                  className={`h-full px-2 rounded-full font-semibold transition-colors cursor-pointer flex items-center uppercase tracking-wider whitespace-nowrap ${
+                    allState === 'on'
+                      ? 'bg-emerald-500/15 text-emerald-400'
+                      : 'text-slate-400 hover:bg-slate-800/50 hover:text-white'
+                  }`}
+                >
+                  All On
+                </button>
+                <div className="w-[1px] h-2.5 bg-slate-800 mx-0.5"></div>
+                <button
+                  type="button"
+                  onClick={handleAllOff}
+                  className={`h-full px-2 rounded-full font-semibold transition-colors cursor-pointer flex items-center uppercase tracking-wider whitespace-nowrap ${
+                    allState === 'off'
+                      ? 'bg-rose-500/15 text-rose-400'
+                      : 'text-slate-400 hover:bg-slate-800/50 hover:text-white'
+                  }`}
+                >
+                  All Off
+                </button>
+              </div>
+            )}
             <button
               type="button"
-              onClick={onSaveTemplate}
-              className="flex items-center gap-1 h-6 px-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full text-[9px] font-bold transition-all shadow-sm hover:shadow-md cursor-pointer uppercase tracking-wider whitespace-nowrap flex-shrink-0"
+              onClick={addRule}
+              className="flex items-center gap-1 h-6.5 px-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full text-[9px] font-bold transition-all shadow-sm hover:shadow-md cursor-pointer uppercase tracking-wider whitespace-nowrap flex-shrink-0"
             >
-              <Bookmark className="w-3 h-3" />
-              Save Rule Set
+              <Plus className="w-3 h-3" />
+              Add Rule
             </button>
-          )}
-          {rules.length > 0 && (
-            <div className="flex items-center border border-slate-800 rounded-full p-0.5 bg-[#020617] h-6 text-[9px] font-mono flex-shrink-0">
-              <button
-                type="button"
-                onClick={handleAllOn}
-                className={`h-full px-2 rounded-full font-semibold transition-colors cursor-pointer flex items-center uppercase tracking-wider whitespace-nowrap ${
-                  allState === 'on'
-                    ? 'bg-emerald-500/15 text-emerald-400'
-                    : 'text-slate-400 hover:bg-slate-800/50 hover:text-white'
-                }`}
+          </div>
+        </div>
+
+        {/* Second Line: Description under Scrubbing Rules */}
+        <div>
+          <p className="text-[10px] text-slate-400 font-mono flex items-center gap-1.5">
+            <span>Define rules for scrubbing text</span>
+            <span className="relative group/info inline-flex items-center cursor-help">
+              <svg 
+                viewBox="0 0 16 16" 
+                className="w-3.5 h-3.5 fill-slate-500 hover:fill-indigo-400 transition-colors"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                All On
-              </button>
-              <div className="w-[1px] h-2.5 bg-slate-800 mx-0.5"></div>
-              <button
-                type="button"
-                onClick={handleAllOff}
-                className={`h-full px-2 rounded-full font-semibold transition-colors cursor-pointer flex items-center uppercase tracking-wider whitespace-nowrap ${
-                  allState === 'off'
-                    ? 'bg-rose-500/15 text-rose-400'
-                    : 'text-slate-400 hover:bg-slate-800/50 hover:text-white'
-                }`}
-              >
-                All Off
-              </button>
-            </div>
-          )}
-          <button
-            type="button"
-            onClick={addRule}
-            className="flex items-center gap-1 h-6 px-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full text-[9px] font-bold transition-all shadow-sm hover:shadow-md cursor-pointer uppercase tracking-wider whitespace-nowrap flex-shrink-0"
-          >
-            <Plus className="w-3 h-3" />
-            Add Rule
-          </button>
+                <path 
+                  fillRule="evenodd" 
+                  clipRule="evenodd" 
+                  d="M8 0C3.58172 0 0 3.58172 0 8C0 12.4183 3.58172 16 8 16C12.4183 16 16 12.4183 16 8C16 3.58172 12.4183 0 8 0ZM8 3.5C8.69 3.5 9.25 4.06 9.25 4.75C9.25 5.44 8.69 6 8 6C7.31 6 6.75 5.44 6.75 4.75C6.75 4.06 7.31 3.5 8 3.5ZM7.7 7.2H8.3C8.74 7.2 9.1 7.56 9.1 8V11.4C9.1 11.84 8.74 12.2 8.3 12.2H7.7C7.26 12.2 6.9 11.84 6.9 11.4V8C6.9 7.56 7.26 7.2 7.7 7.2Z" 
+                />
+              </svg>
+              <span className="absolute top-full left-0 mt-1.5 w-72 p-3 bg-slate-900/95 border border-slate-750 text-slate-300 text-[11px] rounded-xl shadow-2xl opacity-0 scale-95 pointer-events-none group-hover/info:opacity-100 group-hover/info:scale-100 transition-all duration-150 z-50 normal-case font-sans leading-relaxed backdrop-blur-md">
+                <span className="font-bold text-white block uppercase tracking-wider text-[10px] mb-1">
+                  Scrubbing Pipeline Information
+                </span>
+                Scrubbing rules are executed <strong>sequentially from top to bottom</strong>. The scrubbed output of each stage serves as the input for the next. Toggle, customize, and name rules to build repeatable text-cleansing workflows.
+              </span>
+            </span>
+          </p>
         </div>
       </div>
 

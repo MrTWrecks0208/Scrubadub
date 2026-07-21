@@ -453,7 +453,7 @@ export default function App() {
         </section>
 
         {/* Workspace Panels */}
-        <div className="grid grid-cols-1 lg:grid-cols-[60.3%_minmax(0,1fr)] gap-4 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-[56%_minmax(0,1fr)] gap-4 items-start">
           
           {/* Left Block: Editor Panels (Input, Output, Visualizer) */}
           <div className="space-y-4">
@@ -632,19 +632,6 @@ export default function App() {
                 ) : (
                   <InteractiveDiff originalText={inputText} rules={rules} />
                 )}
-              </div>
-            </div>
-
-            {/* Quick guide on regex basics */}
-            <div className="bg-[#1E293B]/25 border border-slate-800 rounded-lg p-3 flex gap-3 text-[11px] text-slate-400 leading-relaxed">
-              <div className="w-5 h-5 rounded-full bg-indigo-950 border border-indigo-800 flex items-center justify-center flex-none mt-0.5 text-indigo-400">
-                <Info className="w-3 h-3" />
-              </div>
-              <div className="space-y-0.5">
-                <span className="font-bold text-slate-300 block uppercase tracking-wide text-[10px]">Scrubbing Pipeline Information</span>
-                <p>
-                  Scrubbing rules are executed <strong>sequentially from top to bottom</strong>. The scrubbed output of each stage serves as the input for the next. Toggle, customize, and name rules to build repeatable text-cleansing workflows.
-                </p>
               </div>
             </div>
 
