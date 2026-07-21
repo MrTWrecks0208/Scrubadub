@@ -1,15 +1,18 @@
 import React from 'react';
-import { RegexRule, CleanResult, HIGHLIGHT_COLORS } from '../types';
-import { Plus, Trash2, Eye, EyeOff, AlertCircle, Sparkles, Check, HelpCircle } from 'lucide-react';
+import { RegexRule, CleanResult, HIGHLIGHT_COLORS, getStableRuleColor } from '../types';
+import { Plus, Trash2, Eye, EyeOff, AlertCircle, Sparkles, Check, HelpCircle, Bookmark, Pencil } from 'lucide-react';
 import { validateRegex } from '../utils/cleaner';
 
 interface PatternManagerProps {
   rules: RegexRule[];
   onChange: (rules: RegexRule[]) => void;
   ruleStats: CleanResult['ruleStats'];
+  onSaveTemplate?: () => void;
 }
 
-export default function PatternManager({ rules, onChange, ruleStats }: PatternManagerProps) {
+export default function PatternManager({ rules, onChange, ruleStats, onSaveTemplate }: PatternManagerProps) {
+  const [focusedRuleId, setFocusedRuleId] = React.useState<string | null>(null);
+
   const addRule = () => {
     const newRule: RegexRule = {
       id: crypto.randomUUID(),
@@ -22,7 +25,7 @@ export default function PatternManager({ rules, onChange, ruleStats }: PatternMa
         dotAll: false,
       },
       isActive: true,
-      name: `Rule #${rules.length + 1}`,
+      name: 'New Rule',
     };
     onChange([newRule, ...rules]);
   };
@@ -119,38 +122,48 @@ export default function PatternManager({ rules, onChange, ruleStats }: PatternMa
   return (
     <div className="flex flex-col h-full bg-[#1E293B]/20 border border-slate-800 rounded-lg overflow-hidden select-none">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-2.5 border-b border-slate-800 bg-[#1E293B]/60">
-        <div>
-          <h2 className="text-[11px] font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+      <div className="flex items-center justify-between px-4 py-2.5 border-b border-slate-800 bg-[#1E293B]/60 gap-4">
+        <div className="min-w-0">
+          <h2 className="text-[11px] font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5 truncate">
             Scrubbing Rules
-            <span className="inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-mono font-bold bg-[#020617] border border-slate-800 text-indigo-400 rounded">
+            <span className="inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-mono font-bold bg-[#020617] border border-slate-800 text-indigo-400 rounded-full">
               {rules.length}
             </span>
           </h2>
-          <p className="text-[10px] text-slate-500 font-mono mt-0.5">Define rules for matching & replacing text</p>
+          <p className="text-[10px] text-slate-500 font-mono mt-0.5 truncate">Define rules for scrubbing text</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-shrink-0">
+          {rules.length > 0 && onSaveTemplate && (
+            <button
+              type="button"
+              onClick={onSaveTemplate}
+              className="flex items-center gap-1 h-6 px-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full text-[9px] font-bold transition-all shadow-sm hover:shadow-md cursor-pointer uppercase tracking-wider whitespace-nowrap flex-shrink-0"
+            >
+              <Bookmark className="w-3 h-3" />
+              Save Rule Set
+            </button>
+          )}
           {rules.length > 0 && (
-            <div className="flex items-center border border-slate-800 rounded p-0.5 bg-[#020617] text-[10px] font-mono">
+            <div className="flex items-center border border-slate-800 rounded-full p-0.5 bg-[#020617] h-6 text-[9px] font-mono flex-shrink-0">
               <button
                 type="button"
                 onClick={handleAllOn}
-                className={`px-1.5 py-0.5 rounded border font-medium transition-colors cursor-pointer ${
+                className={`h-full px-2 rounded-full font-semibold transition-colors cursor-pointer flex items-center uppercase tracking-wider whitespace-nowrap ${
                   allState === 'on'
-                    ? 'bg-emerald-600/10 text-emerald-400 border-emerald-700/20'
-                    : 'border-transparent text-slate-400 hover:bg-slate-800 hover:text-white'
+                    ? 'bg-emerald-500/15 text-emerald-400'
+                    : 'text-slate-400 hover:bg-slate-800/50 hover:text-white'
                 }`}
               >
                 All On
               </button>
-              <div className="w-[1px] h-3 bg-slate-800 mx-0.5"></div>
+              <div className="w-[1px] h-2.5 bg-slate-800 mx-0.5"></div>
               <button
                 type="button"
                 onClick={handleAllOff}
-                className={`px-1.5 py-0.5 rounded border font-medium transition-colors cursor-pointer ${
+                className={`h-full px-2 rounded-full font-semibold transition-colors cursor-pointer flex items-center uppercase tracking-wider whitespace-nowrap ${
                   allState === 'off'
-                    ? 'bg-rose-600/10 text-rose-400 border-rose-700/20'
-                    : 'border-transparent text-slate-400 hover:bg-slate-800 hover:text-white'
+                    ? 'bg-rose-500/15 text-rose-400'
+                    : 'text-slate-400 hover:bg-slate-800/50 hover:text-white'
                 }`}
               >
                 All Off
@@ -160,7 +173,7 @@ export default function PatternManager({ rules, onChange, ruleStats }: PatternMa
           <button
             type="button"
             onClick={addRule}
-            className="flex items-center gap-1 px-3 py-1.5 bg-indigo-600 text-white rounded text-[10px] font-semibold hover:bg-indigo-500 transition-colors shadow-xs cursor-pointer uppercase tracking-wider"
+            className="flex items-center gap-1 h-6 px-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full text-[9px] font-bold transition-all shadow-sm hover:shadow-md cursor-pointer uppercase tracking-wider whitespace-nowrap flex-shrink-0"
           >
             <Plus className="w-3 h-3" />
             Add Rule
@@ -194,7 +207,8 @@ export default function PatternManager({ rules, onChange, ruleStats }: PatternMa
             const matchesCount = stats?.matchesRemoved ?? 0;
             const isValid = stats?.isValid ?? true;
             const errorMsg = stats?.errorMsg;
-            const color = HIGHLIGHT_COLORS[index % HIGHLIGHT_COLORS.length];
+            const color = getStableRuleColor(rule.id, rules);
+            const isFocused = focusedRuleId === rule.id;
 
             return (
               <div
@@ -208,20 +222,19 @@ export default function PatternManager({ rules, onChange, ruleStats }: PatternMa
                 {/* Rule Title Row */}
                 <div className="flex items-center justify-between gap-3 mb-2">
                   <div className="flex items-center gap-2 flex-1 min-w-0">
-                    <span className={`flex-none text-[9px] font-mono font-bold w-4 h-4 rounded border flex items-center justify-center transition-colors ${
-                      rule.isActive ? color.numClass : 'text-slate-500 bg-slate-950/40 border-slate-900'
-                    }`}>
-                      {String(index + 1).padStart(2, '0')}
-                    </span>
-                    <input
-                      type="text"
-                      value={rule.name}
-                      onChange={(e) => updateRule(rule.id, { name: e.target.value })}
-                      placeholder="Rule tag name..."
-                      className={`text-xs font-mono font-bold bg-transparent hover:bg-[#020617] focus:bg-[#020617] px-1.5 py-0.5 rounded border border-transparent focus:border-slate-800 outline-none flex-1 min-w-0 truncate transition-colors ${
-                        rule.isActive ? color.textClass : 'text-slate-400'
-                      }`}
-                    />
+                    <div className="relative flex items-center flex-1 min-w-0 group/name">
+                      <input
+                        type="text"
+                        value={rule.name}
+                        onChange={(e) => updateRule(rule.id, { name: e.target.value })}
+                        placeholder="Rule name..."
+                        className={`text-xs font-mono font-bold bg-[#020617]/45 hover:bg-[#020617]/80 focus:bg-[#020617] px-2 py-0.5 pr-7 rounded border border-slate-800/60 focus:border-indigo-500/50 outline-none w-full min-w-0 truncate transition-all ${
+                          rule.isActive ? color.textClass : 'text-slate-500'
+                        }`}
+                        title="Click to rename rule"
+                      />
+                      <Pencil className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3 h-3 text-slate-550 group-hover/name:text-slate-400 focus-within/name:opacity-0 pointer-events-none transition-colors" />
+                    </div>
                   </div>
 
                   <div className="flex items-center gap-1">
@@ -273,10 +286,14 @@ export default function PatternManager({ rules, onChange, ruleStats }: PatternMa
                     type="text"
                     value={rule.pattern}
                     onChange={(e) => updateRule(rule.id, { pattern: e.target.value })}
+                    onFocus={() => setFocusedRuleId(rule.id)}
+                    onBlur={() => setFocusedRuleId(null)}
                     placeholder="[a-zA-Z]+ or \d+ ..."
                     className={`w-full pl-5 pr-14 py-1.5 font-mono text-xs rounded border outline-none transition-all ${
                       !rule.isActive
                         ? 'bg-[#020617]/50 border-slate-900 text-slate-600'
+                        : isFocused
+                        ? 'border-indigo-500/50 bg-[#020617] text-slate-300 ring-1 ring-indigo-500/50'
                         : !isValid
                         ? 'border-red-900/40 bg-red-950/20 text-red-300 focus:ring-1 focus:ring-red-500 focus:border-red-500'
                         : rule.pattern
@@ -312,7 +329,7 @@ export default function PatternManager({ rules, onChange, ruleStats }: PatternMa
                 </div>
 
                 {/* Error Banner */}
-                {!isValid && errorMsg && (
+                {!isValid && errorMsg && !isFocused && (
                   <div className="flex items-start gap-1.5 mt-2 text-[10px] text-red-400 font-mono bg-red-950/20 border border-red-900/40 rounded p-1.5">
                     <AlertCircle className="w-3.5 h-3.5 flex-none mt-0.5 text-red-500" />
                     <span className="truncate leading-tight">{errorMsg}</span>

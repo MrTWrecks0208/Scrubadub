@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useEffect } from 'react';
-import { RegexRule, HIGHLIGHT_COLORS } from '../types';
+import { RegexRule, HIGHLIGHT_COLORS, getStableRuleColor } from '../types';
 
 interface HighlightedTextareaProps {
   value: string;
@@ -206,82 +206,122 @@ export default function HighlightedTextarea({ value, onChange, placeholder, rule
           background-color: rgba(244, 63, 94, 0.22) !important;
           border-bottom: 1.5px solid rgba(244, 63, 94, 0.55) !important;
         }
+        .sync-text-styles mark.highlight-orange {
+          background-color: rgba(249, 115, 22, 0.22) !important;
+          border-bottom: 1.5px solid rgba(249, 115, 22, 0.55) !important;
+        }
         .sync-text-styles mark.highlight-amber {
           background-color: rgba(245, 158, 11, 0.22) !important;
           border-bottom: 1.5px solid rgba(245, 158, 11, 0.55) !important;
         }
-        .sync-text-styles mark.highlight-sky {
-          background-color: rgba(14, 165, 233, 0.22) !important;
-          border-bottom: 1.5px solid rgba(14, 165, 233, 0.55) !important;
+        .sync-text-styles mark.highlight-lime {
+          background-color: rgba(132, 204, 22, 0.22) !important;
+          border-bottom: 1.5px solid rgba(132, 204, 22, 0.55) !important;
+        }
+        .sync-text-styles mark.highlight-green {
+          background-color: rgba(34, 197, 94, 0.22) !important;
+          border-bottom: 1.5px solid rgba(34, 197, 94, 0.55) !important;
         }
         .sync-text-styles mark.highlight-emerald {
           background-color: rgba(16, 185, 129, 0.22) !important;
           border-bottom: 1.5px solid rgba(16, 185, 129, 0.55) !important;
         }
-        .sync-text-styles mark.highlight-violet {
-          background-color: rgba(139, 92, 246, 0.22) !important;
-          border-bottom: 1.5px solid rgba(139, 92, 246, 0.55) !important;
-        }
-        .sync-text-styles mark.highlight-fuchsia {
-          background-color: rgba(217, 70, 239, 0.22) !important;
-          border-bottom: 1.5px solid rgba(217, 70, 239, 0.55) !important;
-        }
-        .sync-text-styles mark.highlight-orange {
-          background-color: rgba(249, 115, 22, 0.22) !important;
-          border-bottom: 1.5px solid rgba(249, 115, 22, 0.55) !important;
+        .sync-text-styles mark.highlight-teal {
+          background-color: rgba(20, 184, 166, 0.22) !important;
+          border-bottom: 1.5px solid rgba(20, 184, 166, 0.55) !important;
         }
         .sync-text-styles mark.highlight-cyan {
           background-color: rgba(6, 182, 212, 0.22) !important;
           border-bottom: 1.5px solid rgba(6, 182, 212, 0.55) !important;
         }
+        .sync-text-styles mark.highlight-sky {
+          background-color: rgba(14, 165, 233, 0.22) !important;
+          border-bottom: 1.5px solid rgba(14, 165, 233, 0.55) !important;
+        }
+        .sync-text-styles mark.highlight-blue {
+          background-color: rgba(59, 130, 246, 0.22) !important;
+          border-bottom: 1.5px solid rgba(59, 130, 246, 0.55) !important;
+        }
+        .sync-text-styles mark.highlight-indigo {
+          background-color: rgba(99, 102, 241, 0.22) !important;
+          border-bottom: 1.5px solid rgba(99, 102, 241, 0.55) !important;
+        }
+        .sync-text-styles mark.highlight-violet {
+          background-color: rgba(139, 92, 246, 0.22) !important;
+          border-bottom: 1.5px solid rgba(139, 92, 246, 0.55) !important;
+        }
+        .sync-text-styles mark.highlight-purple {
+          background-color: rgba(168, 85, 247, 0.22) !important;
+          border-bottom: 1.5px solid rgba(168, 85, 247, 0.55) !important;
+        }
+        .sync-text-styles mark.highlight-fuchsia {
+          background-color: rgba(217, 70, 239, 0.22) !important;
+          border-bottom: 1.5px solid rgba(217, 70, 239, 0.55) !important;
+        }
         .sync-text-styles mark.highlight-pink {
           background-color: rgba(236, 72, 153, 0.22) !important;
           border-bottom: 1.5px solid rgba(236, 72, 153, 0.55) !important;
-        }
-        .sync-text-styles mark.highlight-lime {
-          background-color: rgba(132, 204, 22, 0.22) !important;
-          border-bottom: 1.5px solid rgba(132, 204, 22, 0.55) !important;
         }
 
         .indicator-rose {
           background-color: rgba(244, 63, 94, 0.22) !important;
           border-color: rgba(244, 63, 94, 0.55) !important;
         }
+        .indicator-orange {
+          background-color: rgba(249, 115, 22, 0.22) !important;
+          border-color: rgba(249, 115, 22, 0.55) !important;
+        }
         .indicator-amber {
           background-color: rgba(245, 158, 11, 0.22) !important;
           border-color: rgba(245, 158, 11, 0.55) !important;
         }
-        .indicator-sky {
-          background-color: rgba(14, 165, 233, 0.22) !important;
-          border-color: rgba(14, 165, 233, 0.55) !important;
+        .indicator-lime {
+          background-color: rgba(132, 204, 22, 0.22) !important;
+          border-color: rgba(132, 204, 22, 0.55) !important;
+        }
+        .indicator-green {
+          background-color: rgba(34, 197, 94, 0.22) !important;
+          border-color: rgba(34, 197, 94, 0.55) !important;
         }
         .indicator-emerald {
           background-color: rgba(16, 185, 129, 0.22) !important;
           border-color: rgba(16, 185, 129, 0.55) !important;
         }
-        .indicator-violet {
-          background-color: rgba(139, 92, 246, 0.22) !important;
-          border-color: rgba(139, 92, 246, 0.55) !important;
-        }
-        .indicator-fuchsia {
-          background-color: rgba(217, 70, 239, 0.22) !important;
-          border-color: rgba(217, 70, 239, 0.55) !important;
-        }
-        .indicator-orange {
-          background-color: rgba(249, 115, 22, 0.22) !important;
-          border-color: rgba(249, 115, 22, 0.55) !important;
+        .indicator-teal {
+          background-color: rgba(20, 184, 166, 0.22) !important;
+          border-color: rgba(20, 184, 166, 0.55) !important;
         }
         .indicator-cyan {
           background-color: rgba(6, 182, 212, 0.22) !important;
           border-color: rgba(6, 182, 212, 0.55) !important;
         }
+        .indicator-sky {
+          background-color: rgba(14, 165, 233, 0.22) !important;
+          border-color: rgba(14, 165, 233, 0.55) !important;
+        }
+        .indicator-blue {
+          background-color: rgba(59, 130, 246, 0.22) !important;
+          border-color: rgba(59, 130, 246, 0.55) !important;
+        }
+        .indicator-indigo {
+          background-color: rgba(99, 102, 241, 0.22) !important;
+          border-color: rgba(99, 102, 241, 0.55) !important;
+        }
+        .indicator-violet {
+          background-color: rgba(139, 92, 246, 0.22) !important;
+          border-color: rgba(139, 92, 246, 0.55) !important;
+        }
+        .indicator-purple {
+          background-color: rgba(168, 85, 247, 0.22) !important;
+          border-color: rgba(168, 85, 247, 0.55) !important;
+        }
+        .indicator-fuchsia {
+          background-color: rgba(217, 70, 239, 0.22) !important;
+          border-color: rgba(217, 70, 239, 0.55) !important;
+        }
         .indicator-pink {
           background-color: rgba(236, 72, 153, 0.22) !important;
           border-color: rgba(236, 72, 153, 0.55) !important;
-        }
-        .indicator-lime {
-          background-color: rgba(132, 204, 22, 0.22) !important;
-          border-color: rgba(132, 204, 22, 0.55) !important;
         }
 
         .sync-text-styles span {
@@ -302,8 +342,7 @@ export default function HighlightedTextarea({ value, onChange, placeholder, rule
           {highlightedSegments.map((seg, idx) => {
             if (seg.isMatch) {
               const firstRuleId = seg.ruleIds?.[0];
-              const ruleIdx = rules.findIndex((r) => r.id === firstRuleId);
-              const colorName = ruleIdx !== -1 ? HIGHLIGHT_COLORS[ruleIdx % HIGHLIGHT_COLORS.length].name : 'amber';
+              const colorName = firstRuleId ? getStableRuleColor(firstRuleId, rules).name : 'amber';
               return (
                 <mark key={idx} className={`highlight-${colorName}`}>
                   {seg.text}
@@ -337,8 +376,7 @@ export default function HighlightedTextarea({ value, onChange, placeholder, rule
               {rules
                 .filter(r => r.isActive && highlightedSegments.some(seg => seg.isMatch && seg.ruleIds?.includes(r.id)))
                 .map((r) => {
-                  const rIdx = rules.findIndex(rule => rule.id === r.id);
-                  const color = HIGHLIGHT_COLORS[rIdx % HIGHLIGHT_COLORS.length];
+                  const color = getStableRuleColor(r.id, rules);
                   return (
                     <div key={r.id} className="flex items-center gap-1 bg-[#1E293B]/40 px-1 py-0.5 rounded border border-slate-800">
                       <span className={`w-1.5 h-1.5 rounded-xs border indicator-${color.name}`}></span>
