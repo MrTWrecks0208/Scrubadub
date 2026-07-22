@@ -64,8 +64,12 @@ export default function AIRegexGenerator({ onAddRule, sampleText }: AIRegexGener
   const handleApply = () => {
     if (!generated) return;
 
+    const newRuleId = typeof crypto !== 'undefined' && crypto.randomUUID 
+      ? crypto.randomUUID() 
+      : 'rule_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
+
     const newRule: RegexRule = {
-      id: crypto.randomUUID(),
+      id: newRuleId,
       name: generated.name,
       pattern: generated.pattern,
       replacement: generated.replacement,

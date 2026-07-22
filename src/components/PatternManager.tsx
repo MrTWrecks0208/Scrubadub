@@ -14,8 +14,11 @@ export default function PatternManager({ rules, onChange, ruleStats, onSaveTempl
   const [focusedRuleId, setFocusedRuleId] = React.useState<string | null>(null);
 
   const addRule = () => {
+    const newRuleId = typeof crypto !== 'undefined' && crypto.randomUUID 
+      ? crypto.randomUUID() 
+      : 'rule_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
     const newRule: RegexRule = {
-      id: crypto.randomUUID(),
+      id: newRuleId,
       pattern: '',
       replacement: '',
       flags: {

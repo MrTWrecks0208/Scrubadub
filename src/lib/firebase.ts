@@ -1,4 +1,4 @@
-import { initializeApp } from 'firebase/app';
+import { initializeApp, getApps } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
@@ -11,9 +11,18 @@ const firebaseConfig = {
   appId: "1:610778229853:web:8728657009abe52cecb1b4"
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// Initialize Firebase safely
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 
-// Initialize Services
 export const auth = getAuth(app);
-export const db = getFirestore(app, "ai-studio-scrubadub-636d09bb-51bf-4dd3-b257-f782715d54a0");
+
+let dbInstance;
+try {
+  dbInstance = getFirestore(app, "ai-studio-scrubadub-636d09bb-51bf-4dd3-b257-f782715d54a0");
+} catch (e) {
+  console.warn("Could not connect to custom Firestore database ID, falling back to default:", e);
+  dbInstance = getFirestore(app);
+}
+
+export const db = dbInstance;
+

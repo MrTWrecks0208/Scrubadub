@@ -33,25 +33,33 @@ import {
 export default function App() {
   // --- States ---
   const [inputText, setInputText] = useState<string>(() => {
-    const saved = localStorage.getItem('regex_cleaner_input');
-    return saved !== null ? saved : '';
+    try {
+      const saved = localStorage.getItem('regex_cleaner_input');
+      return saved !== null ? saved : '';
+    } catch {
+      return '';
+    }
   });
 
   const [rules, setRules] = useState<RegexRule[]>(() => {
-    const saved = localStorage.getItem('regex_cleaner_rules');
-    if (saved) {
-      try {
+    try {
+      const saved = localStorage.getItem('regex_cleaner_rules');
+      if (saved) {
         return JSON.parse(saved);
-      } catch (err) {
-        console.error('Failed to parse saved rules:', err);
       }
+    } catch (err) {
+      console.error('Failed to parse saved rules:', err);
     }
     return [];
   });
 
   const [activeTab, setActiveTab] = useState<'cleaned' | 'visualizer'>('cleaned');
   const [selectedPresetId, setSelectedPresetId] = useState<string | null>(() => {
-    return localStorage.getItem('regex_cleaner_preset_id');
+    try {
+      return localStorage.getItem('regex_cleaner_preset_id');
+    } catch {
+      return null;
+    }
   });
 
   const [copySuccess, setCopySuccess] = useState<boolean>(false);
@@ -83,18 +91,30 @@ export default function App() {
 
   // --- Sync to Local Storage ---
   useEffect(() => {
-    localStorage.setItem('regex_cleaner_input', inputText);
+    try {
+      localStorage.setItem('regex_cleaner_input', inputText);
+    } catch (err) {
+      console.warn('localStorage write failed:', err);
+    }
   }, [inputText]);
 
   useEffect(() => {
-    localStorage.setItem('regex_cleaner_rules', JSON.stringify(rules));
+    try {
+      localStorage.setItem('regex_cleaner_rules', JSON.stringify(rules));
+    } catch (err) {
+      console.warn('localStorage write failed:', err);
+    }
   }, [rules]);
 
   useEffect(() => {
-    if (selectedPresetId) {
-      localStorage.setItem('regex_cleaner_preset_id', selectedPresetId);
-    } else {
-      localStorage.removeItem('regex_cleaner_preset_id');
+    try {
+      if (selectedPresetId) {
+        localStorage.setItem('regex_cleaner_preset_id', selectedPresetId);
+      } else {
+        localStorage.removeItem('regex_cleaner_preset_id');
+      }
+    } catch (err) {
+      console.warn('localStorage access failed:', err);
     }
   }, [selectedPresetId]);
 
