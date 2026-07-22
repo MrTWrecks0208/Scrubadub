@@ -9,7 +9,6 @@ import {
   deleteDoc, 
   doc, 
   serverTimestamp,
-  orderBy,
   updateDoc
 } from 'firebase/firestore';
 import { db } from './firebase';
@@ -38,10 +37,10 @@ export function useFirebaseTemplates(user: User | null) {
     }
 
     setLoading(true);
+    // Query without orderBy to avoid requiring custom composite indexes in Firestore
     const q = query(
       collection(db, 'templates'),
-      where('userId', '==', user.uid),
-      orderBy('updatedAt', 'desc')
+      where('userId', '==', user.uid)
     );
 
     const unsubscribe = onSnapshot(q, 
@@ -60,13 +59,21 @@ export function useFirebaseTemplates(user: User | null) {
             updatedAt: data.updatedAt
           });
         });
+        
+        // Sort client side safely by updatedAt timestamp
+        list.sort((a, b) => {
+          const timeA = a.updatedAt?.seconds || a.createdAt?.seconds || 0;
+          const timeB = b.updatedAt?.seconds || b.createdAt?.seconds || 0;
+          return timeB - timeA;
+        });
+
         setTemplates(list);
         setLoading(false);
         setError(null);
       },
       (err) => {
         console.error('Error fetching templates:', err);
-        setError(err.message);
+        setError(err.message || 'Unable to connect to Cloud Database.');
         setLoading(false);
       }
     );

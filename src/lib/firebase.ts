@@ -16,11 +16,12 @@ const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0
 
 export const auth = getAuth(app);
 
+// Use default Firestore database for the configured Firebase project
 let dbInstance;
 try {
-  dbInstance = getFirestore(app, "ai-studio-scrubadub-636d09bb-51bf-4dd3-b257-f782715d54a0");
+  dbInstance = getFirestore(app);
 } catch (e) {
-  console.warn("Could not connect to custom Firestore database ID, falling back to default:", e);
+  console.warn("Could not initialize Firestore instance:", e);
   dbInstance = getFirestore(app);
 }
 
