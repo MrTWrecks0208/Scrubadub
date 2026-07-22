@@ -1,7 +1,8 @@
 {
-  "name": "react-example",
-  "private": true,
-  "version": "0.0.0",
+  "name": "Scrubadub",
+  "homepage": "https://mrtwrecks0208.github.io/Scrubadub/",
+  "private": false,
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "tsx server.ts",
