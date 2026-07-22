@@ -25,18 +25,42 @@ export interface UserTemplate {
   updatedAt: any;
 }
 
+const LOCAL_TEMPLATES_KEY = 'scrubadub_local_templates';
+
+function getLocalTemplates(): UserTemplate[] {
+  try {
+    const saved = localStorage.getItem(LOCAL_TEMPLATES_KEY);
+    return saved ? JSON.parse(saved) : [];
+  } catch (err) {
+    console.error('Failed to read local templates:', err);
+    return [];
+  }
+}
+
+function saveLocalTemplates(templates: UserTemplate[]) {
+  try {
+    localStorage.setItem(LOCAL_TEMPLATES_KEY, JSON.stringify(templates));
+  } catch (err) {
+    console.error('Failed to save local templates:', err);
+  }
+}
+
 export function useFirebaseTemplates(user: User | null) {
-  const [templates, setTemplates] = useState<UserTemplate[]>([]);
+  const [templates, setTemplates] = useState<UserTemplate[]>(() => getLocalTemplates());
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) {
-      setTemplates([]);
+      setTemplates(getLocalTemplates());
+      setLoading(false);
+      setError(null);
       return;
     }
 
     setLoading(true);
+    let isSubscribed = true;
+
     // Query without orderBy to avoid requiring custom composite indexes in Firestore
     const q = query(
       collection(db, 'templates'),
@@ -45,6 +69,7 @@ export function useFirebaseTemplates(user: User | null) {
 
     const unsubscribe = onSnapshot(q, 
       (snapshot) => {
+        if (!isSubscribed) return;
         const list: UserTemplate[] = [];
         snapshot.forEach((doc) => {
           const data = doc.data();
@@ -72,18 +97,38 @@ export function useFirebaseTemplates(user: User | null) {
         setError(null);
       },
       (err) => {
-        console.error('Error fetching templates:', err);
-        setError(err.message || 'Unable to connect to Cloud Database.');
+        console.warn('Firestore subscription fallback to local storage:', err);
+        // Fallback gracefully to local templates if Firestore errors out
+        setTemplates(getLocalTemplates());
+        setError(null);
         setLoading(false);
       }
     );
 
-    return () => unsubscribe();
+    return () => {
+      isSubscribed = false;
+      unsubscribe();
+    };
   }, [user]);
 
   const saveTemplate = async (name: string, description: string, rules: RegexRule[], sampleText: string) => {
     if (!user) {
-      throw new Error('You must be signed in to save a template.');
+      // Local storage save for guest users
+      const newTemplate: UserTemplate = {
+        id: 'local_' + Date.now().toString(36) + Math.random().toString(36).substring(2, 6),
+        userId: 'guest',
+        name,
+        description,
+        rules,
+        sampleText,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      const current = getLocalTemplates();
+      const updated = [newTemplate, ...current];
+      saveLocalTemplates(updated);
+      setTemplates(updated);
+      return newTemplate.id;
     }
 
     try {
@@ -98,14 +143,40 @@ export function useFirebaseTemplates(user: User | null) {
       });
       return docRef.id;
     } catch (err: any) {
-      console.error('Error saving template:', err);
-      throw new Error(err.message || 'Failed to save template.');
+      console.warn('Cloud save failed, saving locally:', err);
+      // Fallback local save
+      const newTemplate: UserTemplate = {
+        id: 'local_' + Date.now().toString(36),
+        userId: user.uid,
+        name,
+        description,
+        rules,
+        sampleText,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      const current = getLocalTemplates();
+      const updated = [newTemplate, ...current];
+      saveLocalTemplates(updated);
+      setTemplates(updated);
+      return newTemplate.id;
     }
   };
 
   const updateTemplate = async (templateId: string, name: string, description: string, rules: RegexRule[], sampleText: string) => {
-    if (!user) {
-      throw new Error('You must be signed in to update a template.');
+    if (!user || templateId.startsWith('local_')) {
+      const current = getLocalTemplates();
+      const updated = current.map(t => t.id === templateId ? {
+        ...t,
+        name,
+        description,
+        rules,
+        sampleText,
+        updatedAt: new Date().toISOString()
+      } : t);
+      saveLocalTemplates(updated);
+      setTemplates(updated);
+      return;
     }
 
     try {
@@ -118,21 +189,38 @@ export function useFirebaseTemplates(user: User | null) {
         updatedAt: serverTimestamp()
       });
     } catch (err: any) {
-      console.error('Error updating template:', err);
-      throw new Error(err.message || 'Failed to update template.');
+      console.warn('Cloud update failed, updating locally:', err);
+      const current = getLocalTemplates();
+      const updated = current.map(t => t.id === templateId ? {
+        ...t,
+        name,
+        description,
+        rules,
+        sampleText,
+        updatedAt: new Date().toISOString()
+      } : t);
+      saveLocalTemplates(updated);
+      setTemplates(updated);
     }
   };
 
   const deleteTemplate = async (templateId: string) => {
-    if (!user) {
-      throw new Error('You must be signed in to delete a template.');
+    if (!user || templateId.startsWith('local_')) {
+      const current = getLocalTemplates();
+      const updated = current.filter(t => t.id !== templateId);
+      saveLocalTemplates(updated);
+      setTemplates(updated);
+      return;
     }
 
     try {
       await deleteDoc(doc(db, 'templates', templateId));
     } catch (err: any) {
-      console.error('Error deleting template:', err);
-      throw new Error(err.message || 'Failed to delete template.');
+      console.warn('Cloud delete failed, deleting locally:', err);
+      const current = getLocalTemplates();
+      const updated = current.filter(t => t.id !== templateId);
+      saveLocalTemplates(updated);
+      setTemplates(updated);
     }
   };
 

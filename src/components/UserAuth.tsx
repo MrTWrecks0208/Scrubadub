@@ -131,7 +131,7 @@ export default function UserAuth({ onUserChange }: UserAuthProps) {
       }
     } catch (err: any) {
       console.error('Auth error:', err);
-      let friendlyMessage = err.message;
+      let friendlyMessage = err.message || 'Authentication failed.';
       if (err.code === 'auth/invalid-credential') {
         friendlyMessage = 'Invalid email or password.';
       } else if (err.code === 'auth/email-already-in-use') {
@@ -139,7 +139,11 @@ export default function UserAuth({ onUserChange }: UserAuthProps) {
       } else if (err.code === 'auth/invalid-email') {
         friendlyMessage = 'Please enter a valid email address.';
       } else if (err.code === 'auth/weak-password') {
-        friendlyMessage = 'The password is too weak.';
+        friendlyMessage = 'The password must be at least 6 characters.';
+      } else if (err.code === 'auth/unauthorized-domain') {
+        friendlyMessage = `This domain (${window.location.hostname}) is not added to Authorized Domains in Firebase Authentication. Add '${window.location.hostname}' under Firebase Console > Authentication > Settings > Authorized domains.`;
+      } else if (err.code === 'auth/api-key-not-valid' || err.code === 'auth/invalid-api-key') {
+        friendlyMessage = 'The configured Firebase API key is invalid or restricted. Local template saving remains available.';
       }
       setError(friendlyMessage);
     } finally {
