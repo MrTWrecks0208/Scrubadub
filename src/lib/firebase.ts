@@ -3,12 +3,12 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB_4_Ob2Foy663SmQnUPUrR7uoxieKVsok",
-  authDomain: "songcraft-492422.firebaseapp.com",
-  projectId: "songcraft-492422",
-  storageBucket: "songcraft-492422.firebasestorage.app",
-  messagingSenderId: "610778229853",
-  appId: "1:610778229853:web:8728657009abe52cecb1b4"
+  apiKey: "AIzaSyBMjxtzUxfGrGd7fVR3BI-O1ggZ0GC2Qk0",
+  authDomain: "scrubadub-503303.firebaseapp.com",
+  projectId: "scrubadub-503303",
+  storageBucket: "scrubadub-503303.firebasestorage.app",
+  messagingSenderId: "961220374229",
+  appId: "1:961220374229:web:1beca636825032e95b7c5c"
 };
 
 // Initialize Firebase safely

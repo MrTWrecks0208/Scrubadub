@@ -217,7 +217,7 @@ export default function UserAuth({ onUserChange }: UserAuthProps) {
         <button
           type="button"
           onClick={() => handleOpenModal('signin')}
-          className="flex items-center gap-1.5 h-6 px-3.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full text-[10px] font-semibold uppercase tracking-wider transition-all cursor-pointer shadow-sm hover:shadow-md"
+          className="flex items-center gap-1.5 h-6 px-4 pt-2.5 pb-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full text-[10px] font-semibold uppercase tracking-wider transition-all cursor-pointer shadow-sm hover:shadow-md"
         >
           <LogIn className="w-3 h-3" />
           Sign In
