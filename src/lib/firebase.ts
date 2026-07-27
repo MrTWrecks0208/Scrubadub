@@ -16,8 +16,8 @@ const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0
 
 export const auth = getAuth(app);
 
-// Initialize Firestore with the provisioned database ID
-const DATABASE_ID = "ai-studio-scrubadub-636d09bb-51bf-4dd3-b257-f782715d54a0";
+// Initialize Firestore with the provisioned database ID or custom env var
+const DATABASE_ID = import.meta.env.VITE_FIREBASE_DATABASE_ID || "ai-studio-scrubadub-636d09bb-51bf-4dd3-b257-f782715d54a0";
 
 let dbInstance;
 try {
