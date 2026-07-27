@@ -3,12 +3,12 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBMjxtzUxfGrGd7fVR3BI-O1ggZ0GC2Qk0",
-  authDomain: "scrubadub-503303.firebaseapp.com",
-  projectId: "scrubadub-503303",
-  storageBucket: "scrubadub-503303.firebasestorage.app",
-  messagingSenderId: "961220374229",
-  appId: "1:961220374229:web:1beca636825032e95b7c5c"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyBMjxtzUxfGrGd7fVR3BI-O1ggZ0GC2Qk0",
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "scrubadub-503303.firebaseapp.com",
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "scrubadub-503303",
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "scrubadub-503303.firebasestorage.app",
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "961220374229",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:961220374229:web:1beca636825032e95b7c5c"
 };
 
 // Initialize Firebase safely
