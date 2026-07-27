@@ -158,19 +158,14 @@ export default function App() {
   };
 
   const handleSaveTemplateClick = () => {
-    if (!currentUser) {
-      setIsAuthPromptOpen(true);
-    } else {
-      setTemplateName('');
-      setTemplateDesc('');
-      setSaveError(null);
-      setIsSaveModalOpen(true);
-    }
+    setTemplateName('');
+    setTemplateDesc('');
+    setSaveError(null);
+    setIsSaveModalOpen(true);
   };
 
   const handleSaveTemplateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!currentUser) return;
     if (!templateName.trim()) {
       setSaveError('Please enter a rule set name.');
       return;
@@ -180,12 +175,15 @@ export default function App() {
     setSaveError(null);
 
     try {
-      await saveTemplate(
+      const savedId = await saveTemplate(
         templateName.trim(),
         templateDesc.trim(),
         rules,
         inputText
       );
+      if (savedId) {
+        setSelectedPresetId(savedId);
+      }
       setIsSaveModalOpen(false);
     } catch (err: any) {
       setSaveError(err.message || 'Failed to save rule set.');
@@ -362,13 +360,13 @@ export default function App() {
                 {templatesLoading && <Loader2 className="w-2.5 h-2.5 animate-spin text-indigo-400" />}
               </div>
               
-              {!currentUser ? (
+              {templates.length === 0 ? (
                 <div className="p-4 rounded border border-dashed border-slate-800/60 bg-[#1E293B]/10 text-center text-slate-500 text-[10px]">
-                  <span>Create an account or sign in to save your own custom rules as rule sets!</span>
-                </div>
-              ) : templates.length === 0 ? (
-                <div className="p-4 rounded border border-dashed border-slate-800/60 bg-[#1E293B]/10 text-center text-slate-500 text-[10px]">
-                  {templatesLoading ? 'Loading saved rule sets...' : 'No saved rule sets found. Set up some scrubbing rules and click "Save Rule Set" below.'}
+                  {templatesLoading 
+                    ? 'Loading saved rule sets...' 
+                    : currentUser 
+                      ? 'No saved rule sets found. Set up some scrubbing rules and click "Save Rule Set" below.' 
+                      : 'No saved rule sets found. Set up some scrubbing rules and click "Save Rule Set" below (or sign in to sync across devices).'}
                 </div>
               ) : (
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">

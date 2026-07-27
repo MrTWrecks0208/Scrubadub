@@ -45,14 +45,33 @@ function saveLocalTemplates(templates: UserTemplate[]) {
   }
 }
 
+function withTimeout<T>(promise: Promise<T>, ms = 6000): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => {
+      reject(new Error('Database operation timed out'));
+    }, ms);
+    promise
+      .then((res) => {
+        clearTimeout(timer);
+        resolve(res);
+      })
+      .catch((err) => {
+        clearTimeout(timer);
+        reject(err);
+      });
+  });
+}
+
 export function useFirebaseTemplates(user: User | null) {
   const [templates, setTemplates] = useState<UserTemplate[]>(() => getLocalTemplates());
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const initialLocals = getLocalTemplates();
+
     if (!user) {
-      setTemplates(getLocalTemplates());
+      setTemplates(initialLocals);
       setLoading(false);
       setError(null);
       return;
@@ -70,10 +89,10 @@ export function useFirebaseTemplates(user: User | null) {
     const unsubscribe = onSnapshot(q, 
       (snapshot) => {
         if (!isSubscribed) return;
-        const list: UserTemplate[] = [];
+        const cloudList: UserTemplate[] = [];
         snapshot.forEach((doc) => {
           const data = doc.data();
-          list.push({
+          cloudList.push({
             id: doc.id,
             userId: data.userId,
             name: data.name || 'Untitled Template',
@@ -86,15 +105,45 @@ export function useFirebaseTemplates(user: User | null) {
         });
         
         // Sort client side safely by updatedAt timestamp
-        list.sort((a, b) => {
+        cloudList.sort((a, b) => {
           const timeA = a.updatedAt?.seconds || a.createdAt?.seconds || 0;
           const timeB = b.updatedAt?.seconds || b.createdAt?.seconds || 0;
           return timeB - timeA;
         });
 
-        setTemplates(list);
+        // Merge local templates that are not yet in cloudList (by id or name)
+        const currentLocals = getLocalTemplates();
+        const localUnsynced = currentLocals.filter(lt => 
+          lt.id.startsWith('local_') && 
+          !cloudList.some(ct => ct.id === lt.id || ct.name.trim().toLowerCase() === lt.name.trim().toLowerCase())
+        );
+
+        const merged = [...cloudList, ...localUnsynced];
+        setTemplates(merged);
         setLoading(false);
         setError(null);
+
+        // Auto-sync unsynced local templates to Firestore for logged-in user
+        if (localUnsynced.length > 0) {
+          localUnsynced.forEach(async (localT) => {
+            try {
+              await addDoc(collection(db, 'templates'), {
+                userId: user.uid,
+                name: localT.name,
+                description: localT.description,
+                rules: localT.rules,
+                sampleText: localT.sampleText,
+                createdAt: serverTimestamp(),
+                updatedAt: serverTimestamp()
+              });
+              // Once synced, clean up from local storage so it doesn't duplicate
+              const freshLocals = getLocalTemplates().filter(t => t.id !== localT.id);
+              saveLocalTemplates(freshLocals);
+            } catch (e) {
+              console.warn('Failed auto-syncing local template to cloud:', e);
+            }
+          });
+        }
       },
       (err) => {
         console.warn('Firestore subscription fallback to local storage:', err);
@@ -112,54 +161,68 @@ export function useFirebaseTemplates(user: User | null) {
   }, [user]);
 
   const saveTemplate = async (name: string, description: string, rules: RegexRule[], sampleText: string) => {
+    // 1. Immediately create local template & save to localStorage so UI updates instantly
+    const localId = 'local_' + Date.now().toString(36) + Math.random().toString(36).substring(2, 6);
+    const newTemplate: UserTemplate = {
+      id: localId,
+      userId: user ? user.uid : 'guest',
+      name,
+      description,
+      rules,
+      sampleText,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+
+    const currentLocals = getLocalTemplates();
+    const updatedLocals = [newTemplate, ...currentLocals.filter(t => t.id !== localId)];
+    saveLocalTemplates(updatedLocals);
+
+    // Update state immediately so UI updates instantly
+    setTemplates(prev => {
+      const filtered = prev.filter(t => t.id !== localId && t.name.trim().toLowerCase() !== name.trim().toLowerCase());
+      return [newTemplate, ...filtered];
+    });
+
     if (!user) {
-      // Local storage save for guest users
-      const newTemplate: UserTemplate = {
-        id: 'local_' + Date.now().toString(36) + Math.random().toString(36).substring(2, 6),
-        userId: 'guest',
-        name,
-        description,
-        rules,
-        sampleText,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      };
-      const current = getLocalTemplates();
-      const updated = [newTemplate, ...current];
-      saveLocalTemplates(updated);
-      setTemplates(updated);
-      return newTemplate.id;
+      return localId;
     }
 
+    // 2. If logged in, attempt to save to cloud in background
     try {
-      const docRef = await addDoc(collection(db, 'templates'), {
-        userId: user.uid,
-        name,
-        description,
-        rules,
-        sampleText,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp()
-      });
-      return docRef.id;
-    } catch (err: any) {
-      console.warn('Cloud save failed, saving locally:', err);
-      // Fallback local save
-      const newTemplate: UserTemplate = {
-        id: 'local_' + Date.now().toString(36),
-        userId: user.uid,
-        name,
-        description,
-        rules,
-        sampleText,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+      const docRef = await withTimeout(
+        addDoc(collection(db, 'templates'), {
+          userId: user.uid,
+          name,
+          description,
+          rules,
+          sampleText,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        }),
+        6000
+      );
+
+      const cloudId = docRef.id;
+      // Remove temporary local_ item from localStorage now that it's in cloud
+      const freshLocals = getLocalTemplates().filter(t => t.id !== localId);
+      saveLocalTemplates(freshLocals);
+
+      const cloudTemplate: UserTemplate = {
+        ...newTemplate,
+        id: cloudId,
+        userId: user.uid
       };
-      const current = getLocalTemplates();
-      const updated = [newTemplate, ...current];
-      saveLocalTemplates(updated);
-      setTemplates(updated);
-      return newTemplate.id;
+
+      setTemplates(prev => {
+        const filtered = prev.filter(t => t.id !== localId && t.id !== cloudId);
+        return [cloudTemplate, ...filtered];
+      });
+
+      return cloudId;
+    } catch (err: any) {
+      console.warn('Cloud save failed or timed out, keeping in local storage:', err);
+      return localId;
     }
   };
 
@@ -175,21 +238,31 @@ export function useFirebaseTemplates(user: User | null) {
         updatedAt: new Date().toISOString()
       } : t);
       saveLocalTemplates(updated);
-      setTemplates(updated);
+      setTemplates(prev => prev.map(t => t.id === templateId ? {
+        ...t,
+        name,
+        description,
+        rules,
+        sampleText,
+        updatedAt: new Date().toISOString()
+      } : t));
       return;
     }
 
     try {
       const docRef = doc(db, 'templates', templateId);
-      await updateDoc(docRef, {
-        name,
-        description,
-        rules,
-        sampleText,
-        updatedAt: serverTimestamp()
-      });
+      await withTimeout(
+        updateDoc(docRef, {
+          name,
+          description,
+          rules,
+          sampleText,
+          updatedAt: serverTimestamp()
+        }),
+        6000
+      );
     } catch (err: any) {
-      console.warn('Cloud update failed, updating locally:', err);
+      console.warn('Cloud update failed or timed out, updating locally:', err);
       const current = getLocalTemplates();
       const updated = current.map(t => t.id === templateId ? {
         ...t,
@@ -200,7 +273,14 @@ export function useFirebaseTemplates(user: User | null) {
         updatedAt: new Date().toISOString()
       } : t);
       saveLocalTemplates(updated);
-      setTemplates(updated);
+      setTemplates(prev => prev.map(t => t.id === templateId ? {
+        ...t,
+        name,
+        description,
+        rules,
+        sampleText,
+        updatedAt: new Date().toISOString()
+      } : t));
     }
   };
 
@@ -209,18 +289,18 @@ export function useFirebaseTemplates(user: User | null) {
       const current = getLocalTemplates();
       const updated = current.filter(t => t.id !== templateId);
       saveLocalTemplates(updated);
-      setTemplates(updated);
+      setTemplates(prev => prev.filter(t => t.id !== templateId));
       return;
     }
 
     try {
-      await deleteDoc(doc(db, 'templates', templateId));
+      await withTimeout(deleteDoc(doc(db, 'templates', templateId)), 6000);
     } catch (err: any) {
-      console.warn('Cloud delete failed, deleting locally:', err);
+      console.warn('Cloud delete failed or timed out, deleting locally:', err);
       const current = getLocalTemplates();
       const updated = current.filter(t => t.id !== templateId);
       saveLocalTemplates(updated);
-      setTemplates(updated);
+      setTemplates(prev => prev.filter(t => t.id !== templateId));
     }
   };
 
