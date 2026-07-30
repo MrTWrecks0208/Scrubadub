@@ -51,7 +51,7 @@ Provide a robust regular expression with appropriate flags and replacement strat
 Make sure backslashes in the pattern are escaped properly for a valid JSON string (e.g., use \\d instead of \d, \\w instead of \w, etc.).`;
 
       const response = await client.models.generateContent({
-        model: 'gemini-3.5-flash',
+        model: 'gemini-2.5-flash',
         contents: userPrompt,
         config: {
           systemInstruction: `You are an expert software engineer and regex designer.
