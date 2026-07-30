@@ -97,7 +97,7 @@ export default function HighlightedTextarea({ value, onChange, placeholder, rule
     mergedRanges.push(current);
 
     // Build segment elements
-    const segments: { isMatch: boolean; text: string; ruleIds: string[] }[] = [];
+    const segments: { isMatch: boolean; text: string; ruleIds: string[]; start?: number; end?: number }[] = [];
     let lastPos = 0;
 
     for (const range of mergedRanges) {
@@ -113,6 +113,8 @@ export default function HighlightedTextarea({ value, onChange, placeholder, rule
         isMatch: true,
         text: value.slice(range.start, range.end),
         ruleIds: range.ruleIds,
+        start: range.start,
+        end: range.end,
       });
 
       lastPos = range.end;
@@ -137,6 +139,94 @@ export default function HighlightedTextarea({ value, onChange, placeholder, rule
   const activeMatchesCount = useMemo(() => {
     return highlightedSegments.filter(s => s.isMatch).length;
   }, [highlightedSegments]);
+
+  // Track last visited match index per rule for cycling through matches
+  const lastMatchIndices = useRef<Record<string, number>>({});
+
+  const handleJumpToRuleMatch = (rule: RegexRule) => {
+    if (!rule.isActive || !rule.pattern || !textareaRef.current) return;
+
+    let flags = 'g';
+    if (rule.flags.caseInsensitive) flags += 'i';
+    if (rule.flags.multiline) flags += 'm';
+    if (rule.flags.dotAll) flags += 's';
+
+    try {
+      const rx = new RegExp(rule.pattern, flags);
+      const matches = Array.from(value.matchAll(rx)).filter(m => m.index !== undefined && m[0].length > 0);
+      if (matches.length === 0) return;
+
+      const currentIndex = lastMatchIndices.current[rule.id] || 0;
+      const targetMatch = matches[currentIndex % matches.length];
+      lastMatchIndices.current[rule.id] = (currentIndex + 1) % matches.length;
+
+      const start = targetMatch.index!;
+      const end = start + targetMatch[0].length;
+
+      // 1. Smoothly scroll the browser page if the Source Input box is out of view
+      textareaRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+      // 2. Determine exact vertical pixel offset inside backdrop taking wrapped lines into account
+      let targetScrollTop = 0;
+      let markEl = backdropRef.current?.querySelector(`[data-match-start="${start}"]`) as HTMLElement | null;
+      if (!markEl && backdropRef.current) {
+        const allMarks = Array.from(backdropRef.current.querySelectorAll('mark[data-match-start]')) as HTMLElement[];
+        for (const m of allMarks) {
+          const mStart = parseInt(m.getAttribute('data-match-start') || '-1', 10);
+          const mEnd = parseInt(m.getAttribute('data-match-end') || '-1', 10);
+          if (mStart <= start && mEnd >= start) {
+            markEl = m;
+            break;
+          }
+        }
+      }
+
+      const containerHeight = textareaRef.current.clientHeight || 250;
+
+      if (markEl) {
+        targetScrollTop = Math.max(0, markEl.offsetTop - containerHeight / 2 + 10);
+      } else {
+        const textBefore = value.slice(0, start);
+        const lineNumber = textBefore.split('\n').length - 1;
+        const lineHeight = 20;
+        const padding = 12;
+        targetScrollTop = Math.max(0, padding + lineNumber * lineHeight - containerHeight / 2 + lineHeight);
+      }
+
+      // 3. Focus and set selection range without browser auto-scrolling unpredictably
+      textareaRef.current.focus({ preventScroll: true });
+      textareaRef.current.setSelectionRange(start, end);
+
+      // 4. Smoothly scroll both textarea and backdrop to target vertical offset
+      textareaRef.current.scrollTo({
+        top: targetScrollTop,
+        behavior: 'smooth',
+      });
+      if (backdropRef.current) {
+        backdropRef.current.scrollTo({
+          top: targetScrollTop,
+          behavior: 'smooth',
+        });
+      }
+    } catch (e) {
+      // Ignore invalid regex
+    }
+  };
+
+  const getRuleMatchCount = (rule: RegexRule) => {
+    if (!rule.isActive || !rule.pattern) return 0;
+    let flags = 'g';
+    if (rule.flags.caseInsensitive) flags += 'i';
+    if (rule.flags.multiline) flags += 'm';
+    if (rule.flags.dotAll) flags += 's';
+    try {
+      const rx = new RegExp(rule.pattern, flags);
+      const matches = Array.from(value.matchAll(rx)).filter(m => m.index !== undefined && m[0].length > 0);
+      return matches.length;
+    } catch {
+      return 0;
+    }
+  };
 
   return (
     <div className="flex flex-col space-y-1.5">
@@ -344,7 +434,12 @@ export default function HighlightedTextarea({ value, onChange, placeholder, rule
               const firstRuleId = seg.ruleIds?.[0];
               const colorName = firstRuleId ? getStableRuleColor(firstRuleId, rules).name : 'amber';
               return (
-                <mark key={idx} className={`highlight-${colorName}`}>
+                <mark 
+                  key={idx} 
+                  data-match-start={seg.start} 
+                  data-match-end={seg.end}
+                  className={`highlight-${colorName}`}
+                >
                   {seg.text}
                 </mark>
               );
@@ -377,11 +472,19 @@ export default function HighlightedTextarea({ value, onChange, placeholder, rule
                 .filter(r => r.isActive && highlightedSegments.some(seg => seg.isMatch && seg.ruleIds?.includes(r.id)))
                 .map((r) => {
                   const color = getStableRuleColor(r.id, rules);
+                  const count = getRuleMatchCount(r);
                   return (
-                    <div key={r.id} className="flex items-center gap-1 bg-[#1E293B]/40 px-1 py-0.5 rounded border border-slate-800">
+                    <button
+                      key={r.id}
+                      type="button"
+                      onClick={() => handleJumpToRuleMatch(r)}
+                      className="flex items-center gap-1.5 bg-[#1E293B]/60 hover:bg-[#1E293B] active:scale-95 px-2 py-0.5 rounded border border-slate-750 hover:border-indigo-500/50 text-slate-300 hover:text-white transition-all cursor-pointer group/badge shadow-xs"
+                      title={`Click to jump to match in Source Input (${count} match${count !== 1 ? 'es' : ''})`}
+                    >
                       <span className={`w-1.5 h-1.5 rounded-xs border indicator-${color.name}`}></span>
-                      <span className="text-[8px] text-slate-400 font-mono truncate max-w-[80px]">{r.name || 'Rule'}</span>
-                    </div>
+                      <span className="text-[9px] font-mono truncate max-w-[100px]">{r.name || 'Rule'}</span>
+                      <span className="text-[8px] text-slate-500 group-hover/badge:text-indigo-400 font-mono">({count})</span>
+                    </button>
                   );
                 })}
             </div>
@@ -390,7 +493,6 @@ export default function HighlightedTextarea({ value, onChange, placeholder, rule
           )}
         </div>
         <div className="text-slate-600">
-          Highlights update live
         </div>
       </div>
     </div>

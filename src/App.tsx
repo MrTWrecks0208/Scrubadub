@@ -23,6 +23,7 @@ import {
   Scissors, 
   ExternalLink,
   ChevronRight,
+  ChevronLeft,
   Info,
   AlertCircle,
   Loader2,
@@ -75,6 +76,54 @@ export default function App() {
   } = useFirebaseTemplates(currentUser);
   
   const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
+
+  // --- Horizontal Carousel Scroll States & Refs ---
+  const builtinScrollRef = React.useRef<HTMLDivElement>(null);
+  const customScrollRef = React.useRef<HTMLDivElement>(null);
+  const [builtinCanScrollLeft, setBuiltinCanScrollLeft] = useState(false);
+  const [builtinCanScrollRight, setBuiltinCanScrollRight] = useState(false);
+  const [customCanScrollLeft, setCustomCanScrollLeft] = useState(false);
+  const [customCanScrollRight, setCustomCanScrollRight] = useState(false);
+
+  const [hoveredItemInfo, setHoveredItemInfo] = useState<{
+    name: string;
+    description: string;
+    rules: RegexRule[];
+    rect: DOMRect;
+  } | null>(null);
+
+  const checkScrollState = React.useCallback((
+    el: HTMLDivElement | null, 
+    setLeft: (v: boolean) => void, 
+    setRight: (v: boolean) => void
+  ) => {
+    if (!el) return;
+    const { scrollLeft, scrollWidth, clientWidth } = el;
+    setLeft(scrollLeft > 3);
+    setRight(scrollLeft + clientWidth < scrollWidth - 3);
+  }, []);
+
+  const updateAllScrollStates = React.useCallback(() => {
+    checkScrollState(builtinScrollRef.current, setBuiltinCanScrollLeft, setBuiltinCanScrollRight);
+    checkScrollState(customScrollRef.current, setCustomCanScrollLeft, setCustomCanScrollRight);
+  }, [checkScrollState]);
+
+  useEffect(() => {
+    // Initial check and on updates
+    const timer = setTimeout(updateAllScrollStates, 100);
+    window.addEventListener('resize', updateAllScrollStates);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', updateAllScrollStates);
+    };
+  }, [updateAllScrollStates, templates]);
+
+  const handleScroll = (direction: 'left' | 'right', ref: React.RefObject<HTMLDivElement | null>) => {
+    if (ref.current) {
+      const scrollAmount = direction === 'left' ? -320 : 320;
+      ref.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+  };
 
   // Save template modal states
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
@@ -266,19 +315,56 @@ export default function App() {
       <main className="flex-1 max-w-[1450px] w-full mx-auto px-2 py-4 space-y-4">
         
         {/* Presets Bento Strip */}
-        <section className="bg-[#1E293B]/40 border border-slate-800 rounded-lg p-3">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+        <section className="bg-[#1E293B]/40 border border-slate-800 rounded-lg p-2 px-3">
+          <div className="flex items-center justify-between gap-2 mb-1.5">
             <div className="flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+              <Sparkles className="w-3 h-3 text-indigo-400" />
               <h2 className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Rule Sets</h2>
             </div>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-2">
             {/* Built-in Rule Sets */}
             <div>
-              <div className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 font-mono">Built-in</div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
+              <div className="flex items-center justify-between mb-1 font-mono">
+                <div className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Built-in</div>
+                {(builtinCanScrollLeft || builtinCanScrollRight) && (
+                  <div className="flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => handleScroll('left', builtinScrollRef)}
+                      disabled={!builtinCanScrollLeft}
+                      className={`p-0.5 rounded border transition-colors ${
+                        builtinCanScrollLeft
+                          ? 'border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white cursor-pointer'
+                          : 'border-slate-800/40 bg-slate-900/40 text-slate-700 cursor-not-allowed opacity-40'
+                      }`}
+                      title="Scroll left"
+                    >
+                      <ChevronLeft className="w-2.5 h-2.5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleScroll('right', builtinScrollRef)}
+                      disabled={!builtinCanScrollRight}
+                      className={`p-0.5 rounded border transition-colors ${
+                        builtinCanScrollRight
+                          ? 'border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white cursor-pointer'
+                          : 'border-slate-800/40 bg-slate-900/40 text-slate-700 cursor-not-allowed opacity-40'
+                      }`}
+                      title="Scroll right"
+                    >
+                      <ChevronRight className="w-2.5 h-2.5" />
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              <div 
+                ref={builtinScrollRef}
+                onScroll={() => checkScrollState(builtinScrollRef.current, setBuiltinCanScrollLeft, setBuiltinCanScrollRight)}
+                className="flex gap-1.5 overflow-x-auto scrollbar-none scroll-smooth py-0.5"
+              >
                 {DEFAULT_PRESETS.map((preset) => {
                   const isSelected = selectedPresetId === preset.id;
                   return (
@@ -286,7 +372,17 @@ export default function App() {
                       key={preset.id}
                       type="button"
                       onClick={() => loadPreset(preset)}
-                      className={`flex flex-col items-start text-left p-2.5 rounded border transition-all duration-150 group relative cursor-pointer ${
+                      onMouseEnter={(e) => {
+                        const rect = e.currentTarget.getBoundingClientRect();
+                        setHoveredItemInfo({
+                          name: preset.name,
+                          description: preset.description,
+                          rules: preset.rules,
+                          rect
+                        });
+                      }}
+                      onMouseLeave={() => setHoveredItemInfo(null)}
+                      className={`flex flex-col justify-between text-left p-1.5 px-2.5 rounded border transition-all duration-150 group relative cursor-pointer min-w-[150px] max-w-[190px] flex-1 flex-shrink-0 ${
                         isSelected
                           ? 'border-indigo-500 bg-indigo-950/40 text-white shadow-xs'
                           : 'border-slate-800 bg-[#1E293B]/25 text-slate-400 hover:border-slate-700 hover:bg-[#1E293B]/50'
@@ -295,57 +391,17 @@ export default function App() {
                       <h3 className={`text-[11px] font-semibold truncate w-full ${isSelected ? 'text-white' : 'text-slate-300 group-hover:text-white'}`}>
                         {preset.name}
                       </h3>
-                      <p className="text-[10px] mt-0.5 leading-relaxed text-slate-500 line-clamp-1 w-full" title={preset.description}>
-                        {preset.description}
-                      </p>
-                      <div className="mt-2 flex items-center justify-between w-full text-[9px] font-mono">
-                        <span className={`px-1 rounded-sm uppercase tracking-wider ${
-                          isSelected ? 'bg-indigo-500/20 text-indigo-300' : 'bg-slate-800 text-slate-500'
+                      <div className="mt-1 flex items-center justify-between w-full text-[9px] font-mono">
+                        <span className={`px-1 rounded-xs uppercase tracking-wider text-[8.5px] ${
+                          isSelected ? 'bg-indigo-500/20 text-indigo-300' : 'bg-slate-800/80 text-slate-500'
                         }`}>
                           {preset.rules.length} rule{preset.rules.length !== 1 && 's'}
                         </span>
-                        <span className={`flex items-center gap-0.5 ${
+                        <span className={`flex items-center gap-0.5 text-[8.5px] ${
                           isSelected ? 'text-indigo-400 font-semibold' : 'text-slate-550 group-hover:text-slate-300 transition-colors'
                         }`}>
                           {isSelected ? 'Active' : 'Load'} <ChevronRight className="w-2.5 h-2.5" />
                         </span>
-                      </div>
-
-                      {/* Detailed Hover Tooltip */}
-                      <div className="absolute top-[105%] left-1/2 -translate-x-1/2 w-80 bg-slate-900/95 border border-slate-750 rounded-xl p-4 shadow-2xl opacity-0 scale-95 pointer-events-none group-hover:opacity-100 group-hover:scale-100 transition-all duration-150 ease-out origin-top z-50 backdrop-blur-md">
-                        <div className="space-y-3 text-left">
-                          <div>
-                            <h4 className="text-xs font-bold text-white uppercase tracking-wider">{preset.name}</h4>
-                            <p className="text-[11px] text-slate-300 mt-1 leading-relaxed whitespace-normal font-normal">
-                              {preset.description}
-                            </p>
-                          </div>
-                          
-                          <div className="border-t border-slate-800 pt-2">
-                            <h5 className="text-[9px] font-mono text-indigo-400 uppercase tracking-widest mb-1.5">Rule Breakdown</h5>
-                            <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
-                              {preset.rules.map((rule, rIdx) => (
-                                <div key={rule.id || rIdx} className="bg-slate-950/60 p-2 rounded border border-slate-800/80 font-mono text-[10px]">
-                                  <div className="font-bold text-slate-300 flex items-center gap-1.5">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
-                                    {rule.name}
-                                  </div>
-                                  <div className="mt-1 text-slate-400 overflow-x-auto whitespace-pre scrollbar-none py-0.5">
-                                    <span className="text-slate-550">Find:</span> <code className="text-amber-400 bg-amber-950/20 px-1 py-0.5 rounded">{rule.pattern}</code>
-                                  </div>
-                                  <div className="mt-0.5 text-slate-400 overflow-x-auto whitespace-pre scrollbar-none py-0.5">
-                                    <span className="text-slate-550">Replace:</span> <code className="text-emerald-400 bg-emerald-950/20 px-1 py-0.5 rounded">{rule.replacement || '""'}</code>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                          
-                          <div className="text-[9px] text-slate-500 font-mono flex items-center justify-between border-t border-slate-800/40 pt-1.5">
-                            <span>Total: {preset.rules.length} patterns</span>
-                            <span>Click to load ruleset</span>
-                          </div>
-                        </div>
                       </div>
                     </button>
                   );
@@ -354,14 +410,47 @@ export default function App() {
             </div>
 
             {/* Custom Rule Sets */}
-            <div className="pt-2 border-t border-slate-800/40">
-              <div className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 font-mono flex items-center gap-2">
-                Custom
-                {templatesLoading && <Loader2 className="w-2.5 h-2.5 animate-spin text-indigo-400" />}
+            <div className="pt-1.5 border-t border-slate-800/40">
+              <div className="flex items-center justify-between mb-1 font-mono">
+                <div className="text-[9px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
+                  <span>Custom</span>
+                  {templatesLoading && <Loader2 className="w-2.5 h-2.5 animate-spin text-indigo-400" />}
+                  {templates.length > 0 && <span className="text-slate-600 font-normal">({templates.length})</span>}
+                </div>
+                {templates.length > 0 && (customCanScrollLeft || customCanScrollRight) && (
+                  <div className="flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => handleScroll('left', customScrollRef)}
+                      disabled={!customCanScrollLeft}
+                      className={`p-0.5 rounded border transition-colors ${
+                        customCanScrollLeft
+                          ? 'border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white cursor-pointer'
+                          : 'border-slate-800/40 bg-slate-900/40 text-slate-700 cursor-not-allowed opacity-40'
+                      }`}
+                      title="Scroll left"
+                    >
+                      <ChevronLeft className="w-2.5 h-2.5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleScroll('right', customScrollRef)}
+                      disabled={!customCanScrollRight}
+                      className={`p-0.5 rounded border transition-colors ${
+                        customCanScrollRight
+                          ? 'border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white cursor-pointer'
+                          : 'border-slate-800/40 bg-slate-900/40 text-slate-700 cursor-not-allowed opacity-40'
+                      }`}
+                      title="Scroll right"
+                    >
+                      <ChevronRight className="w-2.5 h-2.5" />
+                    </button>
+                  </div>
+                )}
               </div>
               
               {templates.length === 0 ? (
-                <div className="p-4 rounded border border-dashed border-slate-800/60 bg-[#1E293B]/10 text-center text-slate-500 text-[10px]">
+                <div className="p-2 rounded border border-dashed border-slate-800/60 bg-[#1E293B]/10 text-center text-slate-500 text-[10px]">
                   {templatesLoading 
                     ? 'Loading saved rule sets...' 
                     : currentUser 
@@ -369,13 +458,27 @@ export default function App() {
                       : 'No saved rule sets found. Set up some scrubbing rules and click "Save Rule Set" below (or sign in to sync across devices).'}
                 </div>
               ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
+                <div 
+                  ref={customScrollRef}
+                  onScroll={() => checkScrollState(customScrollRef.current, setCustomCanScrollLeft, setCustomCanScrollRight)}
+                  className="flex gap-1.5 overflow-x-auto scrollbar-none scroll-smooth py-0.5"
+                >
                   {templates.map((template) => {
                     const isSelected = selectedTemplateId === template.id;
                     return (
                       <div
                         key={template.id}
-                        className={`flex flex-col items-start text-left p-2.5 rounded border transition-all duration-150 group relative cursor-pointer ${
+                        onMouseEnter={(e) => {
+                          const rect = e.currentTarget.getBoundingClientRect();
+                          setHoveredItemInfo({
+                            name: template.name,
+                            description: template.description || 'No description provided.',
+                            rules: template.rules,
+                            rect
+                          });
+                        }}
+                        onMouseLeave={() => setHoveredItemInfo(null)}
+                        className={`flex flex-col justify-between text-left p-1.5 px-2.5 rounded border transition-all duration-150 group relative cursor-pointer min-w-[150px] max-w-[190px] flex-1 flex-shrink-0 ${
                           isSelected
                             ? 'border-indigo-500 bg-indigo-950/40 text-white shadow-xs'
                             : 'border-slate-800 bg-[#1E293B]/25 text-slate-400 hover:border-slate-700 hover:bg-[#1E293B]/50'
@@ -386,19 +489,16 @@ export default function App() {
                           onClick={() => loadTemplate(template)}
                           className="flex-1 w-full flex flex-col items-start text-left cursor-pointer"
                         >
-                          <h3 className={`text-[11px] font-semibold truncate pr-6 w-full ${isSelected ? 'text-white' : 'text-slate-300 group-hover:text-white'}`}>
+                          <h3 className={`text-[11px] font-semibold truncate pr-5 w-full ${isSelected ? 'text-white' : 'text-slate-300 group-hover:text-white'}`}>
                             {template.name}
                           </h3>
-                          <p className="text-[10px] mt-0.5 leading-relaxed text-slate-500 line-clamp-1 w-full" title={template.description || 'No description.'}>
-                            {template.description || 'No description.'}
-                          </p>
-                          <div className="mt-2 flex items-center justify-between w-full text-[9px] font-mono">
-                            <span className={`px-1 rounded-sm uppercase tracking-wider ${
-                              isSelected ? 'bg-indigo-500/20 text-indigo-300' : 'bg-slate-800 text-slate-500'
+                          <div className="mt-1 flex items-center justify-between w-full text-[9px] font-mono">
+                            <span className={`px-1 rounded-xs uppercase tracking-wider text-[8.5px] ${
+                              isSelected ? 'bg-indigo-500/20 text-indigo-300' : 'bg-slate-800/80 text-slate-500'
                             }`}>
                               {template.rules.length} rule{template.rules.length !== 1 && 's'}
                             </span>
-                            <span className={`flex items-center gap-0.5 ${
+                            <span className={`flex items-center gap-0.5 text-[8.5px] ${
                               isSelected ? 'text-indigo-400 font-semibold' : 'text-slate-550 group-hover:text-slate-300 transition-colors'
                             }`}>
                               {isSelected ? 'Active' : 'Load'} <ChevronRight className="w-2.5 h-2.5" />
@@ -418,49 +518,11 @@ export default function App() {
                               }
                             }
                           }}
-                          className="absolute top-2.5 right-2.5 p-1 rounded hover:bg-rose-950/30 text-slate-500 hover:text-rose-400 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                          className="absolute top-1.5 right-1.5 p-0.5 rounded hover:bg-rose-950/30 text-slate-500 hover:text-rose-400 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
                           title="Delete Rule Set"
                         >
-                          <Trash2 className="w-3.5 h-3.5" />
+                          <Trash2 className="w-3 h-3" />
                         </button>
-
-                        {/* Custom Detailed Tooltip for custom templates */}
-                        <div className="absolute top-[105%] left-1/2 -translate-x-1/2 w-80 bg-slate-900/95 border border-slate-750 rounded-xl p-4 shadow-2xl opacity-0 scale-95 pointer-events-none group-hover:opacity-100 group-hover:scale-100 transition-all duration-150 ease-out origin-top z-50 backdrop-blur-md">
-                          <div className="space-y-3 text-left">
-                            <div>
-                              <h4 className="text-xs font-bold text-white uppercase tracking-wider">{template.name}</h4>
-                              <p className="text-[11px] text-slate-300 mt-1 leading-relaxed whitespace-normal font-normal">
-                                {template.description || 'No description provided.'}
-                              </p>
-                            </div>
-                            
-                            <div className="border-t border-slate-800 pt-2">
-                              <h5 className="text-[9px] font-mono text-indigo-400 uppercase tracking-widest mb-1.5">Rule Breakdown</h5>
-                              <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
-                                {template.rules && template.rules.map((rule, rIdx) => (
-                                  <div key={rule.id || rIdx} className="bg-slate-950/60 p-2 rounded border border-slate-800/80 font-mono text-[10px]">
-                                    <div className="font-bold text-slate-300 flex items-center gap-1.5">
-                                      <span className="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
-                                      {rule.name}
-                                    </div>
-                                    <div className="mt-1 text-slate-400 overflow-x-auto whitespace-pre scrollbar-none py-0.5">
-                                      <span className="text-slate-550">Find:</span> <code className="text-amber-400 bg-amber-950/20 px-1 py-0.5 rounded">{rule.pattern}</code>
-                                    </div>
-                                    <div className="mt-0.5 text-slate-400 overflow-x-auto whitespace-pre scrollbar-none py-0.5">
-                                      <span className="text-slate-550">Replace:</span> <code className="text-emerald-400 bg-emerald-950/20 px-1 py-0.5 rounded">{rule.replacement || '""'}</code>
-                                    </div>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                            
-                            <div className="text-[9px] text-slate-500 font-mono flex items-center justify-between border-t border-slate-800/40 pt-1.5">
-                              <span>Total: {template.rules ? template.rules.length : 0} patterns</span>
-                              <span>Click to load ruleset</span>
-                            </div>
-                          </div>
-                        </div>
-
                       </div>
                     );
                   })}
@@ -824,6 +886,50 @@ export default function App() {
               >
                 Maybe Later
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Floating Rule Breakdown Tooltip */}
+      {hoveredItemInfo && (
+        <div 
+          className="fixed w-80 bg-slate-900/95 border border-slate-750 rounded-xl p-4 shadow-2xl z-50 backdrop-blur-md pointer-events-none transition-opacity duration-150 ease-out text-left font-sans"
+          style={{
+            top: `${Math.min(window.innerHeight - 260, hoveredItemInfo.rect.bottom + 8)}px`,
+            left: `${Math.max(12, Math.min(window.innerWidth - 332, hoveredItemInfo.rect.left + hoveredItemInfo.rect.width / 2 - 160))}px`
+          }}
+        >
+          <div className="space-y-3 text-left">
+            <div>
+              <h4 className="text-xs font-bold text-white uppercase tracking-wider">{hoveredItemInfo.name}</h4>
+              <p className="text-[11px] text-slate-300 mt-1 leading-relaxed whitespace-normal font-normal">
+                {hoveredItemInfo.description || 'No description provided.'}
+              </p>
+            </div>
+            
+            <div className="border-t border-slate-800 pt-2">
+              <h5 className="text-[9px] font-mono text-indigo-400 uppercase tracking-widest mb-1.5">Rule Breakdown</h5>
+              <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+                {hoveredItemInfo.rules && hoveredItemInfo.rules.map((rule, rIdx) => (
+                  <div key={rule.id || rIdx} className="bg-slate-950/60 p-2 rounded border border-slate-800/80 font-mono text-[10px]">
+                    <div className="font-bold text-slate-300 flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                      {rule.name}
+                    </div>
+                    <div className="mt-1 text-slate-400 overflow-x-auto whitespace-pre scrollbar-none py-0.5">
+                      <span className="text-slate-550">Find:</span> <code className="text-amber-400 bg-amber-950/20 px-1 py-0.5 rounded">{rule.pattern}</code>
+                    </div>
+                    <div className="mt-0.5 text-slate-400 overflow-x-auto whitespace-pre scrollbar-none py-0.5">
+                      <span className="text-slate-550">Replace:</span> <code className="text-emerald-400 bg-emerald-950/20 px-1 py-0.5 rounded">{rule.replacement || '""'}</code>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            <div className="text-[9px] text-slate-500 font-mono flex items-center justify-between border-t border-slate-800/40 pt-1.5">
+              <span>Total: {hoveredItemInfo.rules ? hoveredItemInfo.rules.length : 0} patterns</span>
+              <span>Click to load ruleset</span>
             </div>
           </div>
         </div>

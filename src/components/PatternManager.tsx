@@ -1,7 +1,7 @@
 import React from 'react';
 import { RegexRule, CleanResult, HIGHLIGHT_COLORS, getStableRuleColor } from '../types';
 import { Plus, Trash2, Eye, EyeOff, AlertCircle, Sparkles, Check, HelpCircle, Bookmark, Pencil, Info } from 'lucide-react';
-import { validateRegex } from '../utils/cleaner';
+import { validateRegex, getDefaultRuleName } from '../utils/cleaner';
 
 interface PatternManagerProps {
   rules: RegexRule[];
@@ -28,7 +28,7 @@ export default function PatternManager({ rules, onChange, ruleStats, onSaveTempl
         dotAll: false,
       },
       isActive: true,
-      name: 'New Rule',
+      name: getDefaultRuleName(rules),
     };
     onChange([newRule, ...rules]);
   };

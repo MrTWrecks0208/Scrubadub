@@ -4,12 +4,16 @@ import path from 'path';
 import {defineConfig} from 'vite';
 
 export default defineConfig(() => {
+  // Use subpath base ONLY when building specifically for GitHub Pages
+  const isGitHubPages = Boolean(process.env.GITHUB_ACTIONS || process.env.GITHUB_REPOSITORY);
   const repoName = process.env.GITHUB_REPOSITORY
     ? process.env.GITHUB_REPOSITORY.split('/')[1]
-    : 'Scrubadub';
-  
+    : '';
+
+  const base = isGitHubPages && repoName ? `/${repoName}/` : '/';
+
   return {
-    base: process.env.NODE_ENV === 'production' ? `/${repoName}/` : './',
+    base,
     plugins: [react(), tailwindcss()],
 
     resolve: {

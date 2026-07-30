@@ -118,3 +118,22 @@ export function cleanText(originalText: string, rules: RegexRule[]): CleanResult
     ruleStats,
   };
 }
+
+/**
+ * Generates an auto-numbered default rule name (e.g. "Rule 1", "Rule 2", "Rule 3").
+ * Ensures uniqueness among existing rules.
+ */
+export function getDefaultRuleName(existingRules: RegexRule[]): string {
+  const existingNames = new Set(
+    existingRules.map((r) => (r.name || '').trim().toLowerCase())
+  );
+
+  let index = 1;
+  while (true) {
+    const candidateNum = `Rule ${index}`;
+    if (!existingNames.has(candidateNum.toLowerCase())) {
+      return candidateNum;
+    }
+    index++;
+  }
+}
