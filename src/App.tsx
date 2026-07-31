@@ -285,25 +285,25 @@ export default function App() {
   return (
     <div className="min-h-screen bg-[#0F172A] text-slate-300 flex flex-col font-sans antialiased selection:bg-indigo-500/30 selection:text-white">
       {/* Top Navigation Bar */}
-      <header className="h-20 border-b border-slate-800 flex items-center justify-between py-2 pl-6 pr-2 bg-[#1E293B] sticky top-0 z-50 shadow-xs">
+      <header className="min-h-16 h-16 sm:h-20 border-b border-slate-800 flex items-center justify-between py-2 px-3 sm:px-6 bg-[#1E293B] sticky top-0 z-50 shadow-xs">
         <div className="flex items-center gap-2.5">
           <img 
             src={logo} 
             alt="Scrubadub Logo" 
-            className="w-42 h-16 object-fill" 
+            className="w-28 sm:w-36 md:w-42 h-10 sm:h-14 md:h-16 object-contain" 
             referrerPolicy="no-referrer"
           />
         </div>
         
-        <div className="flex items-center gap-4 text-[11px] pr-6 font-medium text-slate-400">
+        <div className="flex items-center gap-2 sm:gap-4 text-[11px] font-medium text-slate-400 shrink-0">
           <UserAuth onUserChange={setCurrentUser} />
              
-          <div className="h-4 w-px bg-slate-700"></div>
+          <div className="hidden sm:block h-4 w-px bg-slate-700"></div>
           <a 
             href="https://regex101.com/" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="flex items-center gap-1 text-[11px] text-slate-400 hover:text-white transition-colors"
+            className="hidden sm:flex items-center gap-1 text-[11px] text-slate-400 hover:text-white transition-colors shrink-0"
           >
             <span>Regex Cheat Sheet</span>
             <ExternalLink className="w-3 h-3 text-slate-500" />
@@ -312,7 +312,7 @@ export default function App() {
       </header>
 
       {/* Main Body Grid */}
-      <main className="flex-1 max-w-[1450px] w-full mx-auto px-2 py-4 space-y-4">
+      <main className="flex-1 max-w-[1450px] w-full mx-auto px-2 sm:px-4 pt-3 pb-1 sm:pb-1.5 space-y-3">
         
         {/* Presets Bento Strip */}
         <section className="bg-[#1E293B]/40 border border-slate-800 rounded-lg p-2 px-3">
@@ -454,8 +454,8 @@ export default function App() {
                   {templatesLoading 
                     ? 'Loading saved rule sets...' 
                     : currentUser 
-                      ? 'No saved rule sets found. Set up some scrubbing rules and click "Save Rule Set" below.' 
-                      : 'No saved rule sets found. Set up some scrubbing rules and click "Save Rule Set" below (or sign in to sync across devices).'}
+                      ? 'No custom rule sets found. Create scrubbing rules below and click "Save Rule Set" when finished.' 
+                      : 'No custom rule sets found. Create scrubbing rules below and click "Save Rule Set" when finished (or sign in to sync across devices).'}
                 </div>
               ) : (
                 <div 
@@ -533,10 +533,28 @@ export default function App() {
         </section>
 
         {/* Workspace Panels */}
-        <div className="grid grid-cols-1 lg:grid-cols-[56%_minmax(0,1fr)] gap-4 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
           
-          {/* Left Block: Editor Panels (Input, Output, Visualizer) */}
-          <div className="space-y-4">
+          {/* Rules Block (Renders FIRST on mobile, SECOND column on desktop) */}
+          <div className="lg:col-span-5 order-1 lg:order-2 space-y-4">
+            <AIRegexGenerator 
+              onAddRule={(newRule) => {
+                setRules([newRule, ...rules]);
+                setSelectedPresetId(null);
+                setSelectedTemplateId(null);
+              }} 
+              sampleText={inputText}
+            />
+            <PatternManager 
+              rules={rules} 
+              onChange={handleCustomRuleChange} 
+              ruleStats={cleanResult.ruleStats} 
+              onSaveTemplate={handleSaveTemplateClick}
+            />
+          </div>
+
+          {/* Editor Panels: Source Input & Scrubbed Output (Renders SECOND on mobile, FIRST column on desktop) */}
+          <div className="lg:col-span-7 order-2 lg:order-1 space-y-4">
             
             {/* Input Panel */}
             <div className="bg-[#1E293B]/20 border border-slate-800 rounded-lg overflow-hidden flex flex-col">
@@ -576,7 +594,7 @@ export default function App() {
                 />
                 
                 {/* Statistics Row */}
-                <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-900 text-[10px] font-mono text-slate-500">
+                <div className="flex flex-wrap items-center justify-between gap-2 mt-2 pt-2 border-t border-slate-900 text-[10px] font-mono text-slate-500">
                   <div className="flex items-center gap-3">
                     <span>Chars: <strong className="text-slate-400">{inputText.length.toLocaleString()}</strong></span>
                     <span>Words: <strong className="text-slate-400">{cleanResult.originalWordCount.toLocaleString()}</strong></span>
@@ -589,7 +607,7 @@ export default function App() {
                         setInputText(randomPreset.sampleText);
                         setSelectedPresetId(null);
                       }}
-                      className="text-slate-400 hover:text-white flex items-center gap-1 cursor-pointer"
+                      className="text-slate-400 hover:text-white flex items-center gap-1 cursor-pointer transition-colors"
                     >
                       <RefreshCw className="w-3 h-3 animate-spin-hover" />
                       Rotate Random Sample
@@ -676,7 +694,7 @@ export default function App() {
                         <div className="text-[9px] text-slate-500 uppercase tracking-widest font-bold">
                           Final Chars
                         </div>
-                        <div className="text-sm font-semibold text-slate-300 mt-0.5">
+                        <div className="text-sm font-semibold text-rose-500 mt-0.5">
                           {cleanResult.cleanedCharCount.toLocaleString()}
                         </div>
                       </div>
@@ -685,7 +703,7 @@ export default function App() {
                         <div className="text-[9px] text-slate-500 uppercase tracking-widest font-bold">
                           Final Words
                         </div>
-                        <div className="text-sm font-semibold text-slate-300 mt-0.5">
+                        <div className="text-sm font-semibold text-amber-500 mt-0.5">
                           {cleanResult.cleanedWordCount.toLocaleString()}
                         </div>
                       </div>
@@ -694,7 +712,7 @@ export default function App() {
                         <div className="text-[9px] text-slate-500 uppercase tracking-widest font-bold">
                           Matches Scrubbed
                         </div>
-                        <div className="text-sm font-semibold text-red-400 mt-0.5">
+                        <div className="text-sm font-semibold text-cyan-500 mt-0.5">
                           {cleanResult.totalMatchesRemoved.toLocaleString()}
                         </div>
                       </div>
@@ -703,7 +721,7 @@ export default function App() {
                         <div className="text-[9px] text-slate-500 uppercase tracking-widest font-bold">
                           Reduction
                         </div>
-                        <div className={`text-sm font-semibold mt-0.5 ${reductionPercentage > 0 ? 'text-emerald-400' : 'text-slate-400'}`}>
+                        <div className={`text-sm font-semibold mt-0.5 ${reductionPercentage > 0 ? 'text-emerald-500' : 'text-slate-500'}`}>
                           -{reductionPercentage}%
                         </div>
                       </div>
@@ -717,37 +735,19 @@ export default function App() {
 
           </div>
 
-          {/* Right Block: Regex Pattern Configurations */}
-          <div className="space-y-4">
-            <AIRegexGenerator 
-              onAddRule={(newRule) => {
-                setRules([newRule, ...rules]);
-                setSelectedPresetId(null);
-                setSelectedTemplateId(null);
-              }} 
-              sampleText={inputText}
-            />
-            <PatternManager 
-              rules={rules} 
-              onChange={handleCustomRuleChange} 
-              ruleStats={cleanResult.ruleStats} 
-              onSaveTemplate={handleSaveTemplateClick}
-            />
-          </div>
-
         </div>
       </main>
 
       {/* Footer Status Bar */}
-      <footer className="h-6 bg-indigo-600 text-white text-[10px] flex items-center justify-between px-3 font-mono mt-auto select-none">
-        <div className="flex items-center gap-4">
+      <footer className="min-h-11 py-3 px-4 sm:px-8 bg-indigo-600 text-white text-[11px] flex flex-wrap items-center justify-between font-mono mt-auto select-none gap-x-6 gap-y-2.5 shadow-inner">
+        <div className="flex flex-wrap items-center gap-2.5 sm:gap-5">
           <span>MODE: SEQUENCE_REPLACE</span>
-          <span className="opacity-60">|</span>
+          <span className="opacity-60 hidden sm:inline">|</span>
           <span>BUFFER: {((inputText.length * 2) / 1024).toFixed(2)} KB</span>
-          <span className="opacity-60">|</span>
-          <span className="text-emerald-300 font-semibold">MATCHES FOUND: {cleanResult.totalMatchesRemoved}</span>
+          <span className="opacity-60 hidden sm:inline">|</span>
+          <span className="text-emerald-300 font-bold">MATCHES FOUND: {cleanResult.totalMatchesRemoved}</span>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="hidden md:flex items-center gap-4">
           <span>UTF-8</span>
           <span className="opacity-60">|</span>
           <span>LINUX (LF)</span>
