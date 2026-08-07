@@ -10,7 +10,7 @@ export const DEFAULT_PRESETS: RegexPreset[] = [
       {
         id: 'email',
         pattern: '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}',
-        replacement: '[REDACTED_EMAIL]',
+        replacement: 'user.name@example.com',
         flags: { global: true, caseInsensitive: true, multiline: false, dotAll: false },
         isActive: true,
         name: 'Email Addresses',
@@ -18,7 +18,7 @@ export const DEFAULT_PRESETS: RegexPreset[] = [
       {
         id: 'phone',
         pattern: '\\b(?:\\+?1[-. ]?)?\\(?[2-9]\\d{2}\\)?[-. ]?\\d{3}[-. ]?\\d{4}\\b',
-        replacement: '[REDACTED_PHONE]',
+        replacement: '+1 (800) 555-0199',
         flags: { global: true, caseInsensitive: false, multiline: false, dotAll: false },
         isActive: true,
         name: 'US Phone Numbers',
@@ -26,7 +26,7 @@ export const DEFAULT_PRESETS: RegexPreset[] = [
       {
         id: 'ip-address',
         pattern: '\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b',
-        replacement: '[REDACTED_IP]',
+        replacement: '192.168.1.15',
         flags: { global: true, caseInsensitive: false, multiline: false, dotAll: false },
         isActive: true,
         name: 'IPv4 Addresses',
@@ -158,6 +158,54 @@ export const DEFAULT_PRESETS: RegexPreset[] = [
         flags: { global: true, caseInsensitive: false, multiline: false, dotAll: false },
         isActive: true,
         name: 'Special Characters & Punctuation',
+      },
+    ],
+  },
+  {
+    id: 'email-address-preset',
+    name: 'Email Address',
+    description: 'Matches common email addresses using precise format validation.',
+    sampleText: 'user.name@example.com\nsupport@globalcorp.org\nadmin@company.co.uk',
+    rules: [
+      {
+        id: 'email-address-rule',
+        pattern: '^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6})*$',
+        replacement: 'user.name@example.com',
+        flags: { global: true, caseInsensitive: true, multiline: true, dotAll: false },
+        isActive: true,
+        name: 'Email Address',
+      },
+    ],
+  },
+  {
+    id: 'duplicates-preset',
+    name: 'Duplicates',
+    description: 'Detects and matches repeated words within a body of text.',
+    sampleText: 'the quick brown fox jumps over the lazy dog dog in the park park',
+    rules: [
+      {
+        id: 'duplicates-rule',
+        pattern: '(\\b\\w+\\b)(?=.*\\b\\1\\b)',
+        replacement: '',
+        flags: { global: true, caseInsensitive: true, multiline: false, dotAll: false },
+        isActive: true,
+        name: 'Duplicate Words',
+      },
+    ],
+  },
+  {
+    id: 'phone-numbers-preset',
+    name: 'Phone Numbers',
+    description: 'Matches US and international phone numbers with separators.',
+    sampleText: '+1 (800) 555-0199\n(415) 555-2671\n555-0142',
+    rules: [
+      {
+        id: 'phone-numbers-rule',
+        pattern: '^(\\+\\d{1,2}\\s)?\\(?\\d{3}\\)?[\\s.-]\\d{3}',
+        replacement: '+1 (800) 555-0199',
+        flags: { global: true, caseInsensitive: false, multiline: true, dotAll: false },
+        isActive: true,
+        name: 'Phone Numbers',
       },
     ],
   },
