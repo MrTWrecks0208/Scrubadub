@@ -209,4 +209,36 @@ export const DEFAULT_PRESETS: RegexPreset[] = [
       },
     ],
   },
+  {
+    id: 'date-any-format-preset',
+    name: 'Date (Any format)',
+    description: 'Matches dates in day/month/year formats separated by delimiters.',
+    sampleText: '15/08/2024\n01-12-1999\n31.01.2030',
+    rules: [
+      {
+        id: 'date-any-format-rule',
+        pattern: '^([1-9]|0[1-9]|[12][0-9]|3[01])\\D([1-9]|0[1-9]|1[012])\\D(19[0-9][0-9]|20[0-9][0-9])$',
+        replacement: '15/08/2024',
+        flags: { global: true, caseInsensitive: false, multiline: true, dotAll: false },
+        isActive: true,
+        name: 'Date (Any format)',
+      },
+    ],
+  },
+  {
+    id: 'url-preset',
+    name: 'URL',
+    description: 'Matches http web URLs with 2 or 3 letter domain TLDs.',
+    sampleText: 'http://example.com\nhttp://my-website.org\nhttp://sub.domain.net',
+    rules: [
+      {
+        id: 'url-rule',
+        pattern: '^http\\:\\/\\/[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,3}$',
+        replacement: 'http://example.com',
+        flags: { global: true, caseInsensitive: true, multiline: true, dotAll: false },
+        isActive: true,
+        name: 'URL',
+      },
+    ],
+  },
 ];
