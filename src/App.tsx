@@ -567,15 +567,6 @@ export default function App() {
                 <div className="flex items-center gap-1">
                   <button
                     type="button"
-                    onClick={() => copyToClipboard(inputText, true)}
-                    disabled={!inputText}
-                    title="Copy input text"
-                    className="p-1 text-slate-400 hover:text-white hover:bg-slate-800 rounded transition-colors disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
-                  >
-                    {inputCopySuccess ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                  </button>
-                  <button
-                    type="button"
                     onClick={clearInput}
                     disabled={!inputText}
                     title="Clear input"
