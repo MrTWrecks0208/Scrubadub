@@ -561,7 +561,7 @@ export default function App() {
               <div className="flex items-center justify-between px-3.5 py-2 border-b border-slate-800 bg-[#1E293B]/60">
                 <div className="flex items-center gap-2">
                   <FileText className="w-3.5 h-3.5 text-indigo-400" />
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-300">Source Input</span>
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-300">Source Text</span>
                 </div>
                 
                 <div className="flex items-center gap-1">
@@ -590,7 +590,7 @@ export default function App() {
                     <span>Chars: <strong className="text-slate-400">{inputText.length.toLocaleString()}</strong></span>
                     <span>Words: <strong className="text-slate-400">{cleanResult.originalWordCount.toLocaleString()}</strong></span>
                   </div>
-                  {inputText && (
+                  <div className="flex items-center gap-1.5">
                     <button
                       type="button"
                       onClick={() => {
@@ -601,9 +601,19 @@ export default function App() {
                       className="text-slate-400 hover:text-white flex items-center gap-1 cursor-pointer transition-colors"
                     >
                       <RefreshCw className="w-3 h-3 animate-spin-hover" />
-                      Rotate Random Sample
+                      <span>Generate Sample</span>
                     </button>
-                  )}
+
+                    <div className="relative group/sample-info inline-flex items-center">
+                      <Info className="w-3 h-3 text-slate-500 hover:text-slate-300 transition-colors cursor-help" />
+                      <div className="absolute bottom-full right-0 mb-1.5 w-64 p-2.5 bg-slate-900/95 border border-slate-700 text-slate-300 text-[11px] rounded-lg shadow-2xl opacity-0 scale-95 pointer-events-none group-hover/sample-info:opacity-100 group-hover/sample-info:scale-100 transition-all duration-150 z-50 normal-case font-sans leading-relaxed backdrop-blur-md">
+                        <span className="font-bold text-white block text-[10px] uppercase tracking-wider mb-1">
+                          Generate Sample Data
+                        </span>
+                        Loads realistic data from a random built-in rule set into the source box so you can immediately test your active regex rules without altering your rules.
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

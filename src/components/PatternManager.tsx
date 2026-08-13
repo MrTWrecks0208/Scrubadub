@@ -129,7 +129,7 @@ export default function PatternManager({ rules, onChange, ruleStats, onSaveTempl
         {/* First Line: Scrubbing Rules with count on left, Action buttons on right */}
         <div className="flex items-center justify-between gap-3 flex-wrap sm:flex-nowrap">
           <h2 className="text-[12px] font-bold uppercase tracking-wider text-slate-200 flex items-center gap-2 shrink-0 whitespace-nowrap">
-            Scrubbing Rules
+            Rules
             <span className="inline-flex items-center justify-center px-2 py-0.5 text-[10px] font-mono font-bold bg-[#020617] border border-slate-800 text-indigo-400 rounded-full">
               {rules.length}
             </span>
@@ -201,9 +201,9 @@ export default function PatternManager({ rules, onChange, ruleStats, onSaveTempl
               </svg>
               <span className="absolute top-full left-0 mt-1.5 w-72 p-3 bg-slate-900/95 border border-slate-750 text-slate-300 text-[11px] rounded-xl shadow-2xl opacity-0 scale-95 pointer-events-none group-hover/info:opacity-100 group-hover/info:scale-100 transition-all duration-150 z-50 normal-case font-sans leading-relaxed backdrop-blur-md">
                 <span className="font-bold text-white block uppercase tracking-wider text-[10px] mb-1">
-                  Scrubbing Pipeline Information
+                  Order of Operations for Scrubbing Rules
                 </span>
-                Scrubbing rules are executed <strong>sequentially from top to bottom</strong>. The scrubbed output of each stage serves as the input for the next. Toggle, customize, and name rules to build repeatable text-cleansing workflows.
+                Scrubbing rules are executed <strong>sequentially from top to bottom</strong>. The output of each stage serves as the input for the next. Toggle, customize, and name rules to build text-scrubbing rule sets.
               </span>
             </span>
           </p>
@@ -219,7 +219,7 @@ export default function PatternManager({ rules, onChange, ruleStats, onSaveTempl
             </div>
             <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">No Active Rules</h3>
             <p className="text-[11px] text-slate-500 mt-1 max-w-xs">
-              Add a rule or select a template to start.
+              Add a rule or select a built-in rule set to start.
             </p>
             <button
               type="button"
@@ -256,7 +256,7 @@ export default function PatternManager({ rules, onChange, ruleStats, onSaveTempl
                         type="text"
                         value={rule.name}
                         onChange={(e) => updateRule(rule.id, { name: e.target.value })}
-                        placeholder="Rule name..."
+                        placeholder="Enter Rule Name..."
                         className={`text-xs font-mono font-bold bg-[#020617]/45 hover:bg-[#020617]/80 focus:bg-[#020617] px-2 py-0.5 pr-7 rounded border border-slate-800/60 focus:border-indigo-500/50 outline-none w-full min-w-0 truncate transition-all ${
                           rule.isActive ? color.textClass : 'text-slate-500'
                         }`}
@@ -342,13 +342,13 @@ export default function PatternManager({ rules, onChange, ruleStats, onSaveTempl
                 {/* Replace with Input */}
                 <div className="mt-1.5 flex items-center gap-2">
                   <span className="text-[9px] font-mono font-bold text-slate-500 select-none w-14 shrink-0 uppercase tracking-widest text-right">
-                    Replace:
+                    Replace With:
                   </span>
                   <input
                     type="text"
                     value={rule.replacement}
                     onChange={(e) => updateRule(rule.id, { replacement: e.target.value })}
-                    placeholder="Empty (strips/deletes matches)..."
+                    placeholder="Removes matches if left empty..."
                     className={`w-full px-2 py-1 font-mono text-xs rounded border outline-none transition-all ${
                       !rule.isActive
                         ? 'bg-[#020617]/30 border-slate-900/50 text-slate-600 placeholder:text-slate-700'
