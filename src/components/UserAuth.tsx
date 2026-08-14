@@ -4,13 +4,15 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut,
-  onAuthStateChanged
+  onAuthStateChanged,
+  updateProfile
 } from 'firebase/auth';
-import { auth } from '../lib/firebase';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { auth, db } from '../lib/firebase';
 import { 
   LogIn, 
   LogOut, 
-  Mail, 
+  AtSign, 
   Lock, 
   UserPlus, 
   X, 
@@ -20,12 +22,32 @@ import {
   Check
 } from 'lucide-react';
 
-interface UserAuthProps {
+export interface UserAuthProps {
   onUserChange: (user: FirebaseUser | null) => void;
+  openAuthTrigger?: { mode: 'signin' | 'signup'; id: number } | null;
+  onCloseAuthTrigger?: () => void;
 }
 
+// Convert a clean username into an internal auth email
+const usernameToInternalEmail = (username: string): string => {
+  const sanitized = username.trim().toLowerCase().replace(/[^a-z0-9_.-]/g, '');
+  return `${sanitized}@scrubadub.internal`;
+};
+
+// Validate username format (letters, numbers, underscores, periods, hyphens; 3-24 chars)
+const validateUsername = (username: string): string | null => {
+  const trimmed = username.trim();
+  if (!trimmed) return 'Username is required.';
+  if (trimmed.length < 3) return 'Username must be at least 3 characters.';
+  if (trimmed.length > 24) return 'Username must be 24 characters or less.';
+  if (!/^[a-zA-Z0-9_.-]+$/.test(trimmed)) {
+    return 'Username can only contain letters, numbers, underscores, hyphens, and dots.';
+  }
+  return null;
+};
+
 // Separate, highly performant Auth Modal component to isolate form input state
-const AuthModal = memo(function AuthModal({
+export const AuthModal = memo(function AuthModal({
   isOpen,
   initialMode,
   onClose
@@ -35,7 +57,7 @@ const AuthModal = memo(function AuthModal({
   onClose: () => void;
 }) {
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>(initialMode);
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -46,7 +68,7 @@ const AuthModal = memo(function AuthModal({
     setAuthMode(initialMode);
     setError(null);
     setSuccessMsg(null);
-    setEmail('');
+    setUsername('');
     setPassword('');
     setConfirmPassword('');
   }, [initialMode, isOpen]);
@@ -58,13 +80,15 @@ const AuthModal = memo(function AuthModal({
     setError(null);
     setSuccessMsg(null);
 
-    if (!email || !password) {
-      setError('Please fill in all fields.');
+    const cleanUser = username.trim();
+    const userErr = validateUsername(cleanUser);
+    if (userErr) {
+      setError(userErr);
       return;
     }
 
-    if (authMode === 'signup' && password !== confirmPassword) {
-      setError('Passwords do not match.');
+    if (!password) {
+      setError('Please enter your password.');
       return;
     }
 
@@ -73,17 +97,57 @@ const AuthModal = memo(function AuthModal({
       return;
     }
 
+    if (authMode === 'signup' && password !== confirmPassword) {
+      setError('Passwords do not match.');
+      return;
+    }
+
+    const internalEmail = usernameToInternalEmail(cleanUser);
+    const normalizedUsername = cleanUser.toLowerCase();
+
     setLoading(true);
 
     try {
       if (authMode === 'signin') {
-        await signInWithEmailAndPassword(auth, email, password);
+        await signInWithEmailAndPassword(auth, internalEmail, password);
         setSuccessMsg('Successfully signed in!');
         setTimeout(() => {
           onClose();
         }, 600);
       } else {
-        await createUserWithEmailAndPassword(auth, email, password);
+        // Check uniqueness in Firestore
+        try {
+          const usernameDocRef = doc(db, 'usernames', normalizedUsername);
+          const usernameSnap = await getDoc(usernameDocRef);
+          if (usernameSnap.exists()) {
+            setError('This username is already taken. Please choose another one.');
+            setLoading(false);
+            return;
+          }
+        } catch {
+          // If firestore read check fails, proceed with creation
+        }
+
+        // Create account
+        const userCredential = await createUserWithEmailAndPassword(auth, internalEmail, password);
+
+        // Update displayName to clean username
+        await updateProfile(userCredential.user, {
+          displayName: cleanUser
+        });
+
+        // Reserve username doc in Firestore
+        try {
+          const usernameDocRef = doc(db, 'usernames', normalizedUsername);
+          await setDoc(usernameDocRef, {
+            uid: userCredential.user.uid,
+            username: cleanUser,
+            createdAt: new Date().toISOString()
+          });
+        } catch {
+          // non-blocking
+        }
+
         setSuccessMsg('Account created successfully!');
         setTimeout(() => {
           onClose();
@@ -92,18 +156,16 @@ const AuthModal = memo(function AuthModal({
     } catch (err: any) {
       console.error('Auth error:', err);
       let friendlyMessage = err.message || 'Authentication failed.';
-      if (err.code === 'auth/invalid-credential') {
-        friendlyMessage = 'Invalid email or password.';
+      if (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
+        friendlyMessage = 'Invalid username or password.';
       } else if (err.code === 'auth/email-already-in-use') {
-        friendlyMessage = 'An account with this email already exists.';
-      } else if (err.code === 'auth/invalid-email') {
-        friendlyMessage = 'Please enter a valid email address.';
+        friendlyMessage = 'This username is already taken. Please choose another one or sign in.';
       } else if (err.code === 'auth/weak-password') {
         friendlyMessage = 'The password must be at least 6 characters.';
+      } else if (err.code === 'auth/too-many-requests') {
+        friendlyMessage = 'Too many failed attempts. Please try again in a few moments.';
       } else if (err.code === 'auth/unauthorized-domain') {
-        friendlyMessage = `This domain (${window.location.hostname}) is not added to Authorized Domains in Firebase Authentication. Add '${window.location.hostname}' under Firebase Console > Authentication > Settings > Authorized domains.`;
-      } else if (err.code === 'auth/api-key-not-valid' || err.code === 'auth/invalid-api-key') {
-        friendlyMessage = 'The configured Firebase API key is invalid or restricted. Local template saving remains available.';
+        friendlyMessage = `This domain (${window.location.hostname}) is not added to Authorized Domains in Firebase Authentication.`;
       }
       setError(friendlyMessage);
     } finally {
@@ -149,22 +211,24 @@ const AuthModal = memo(function AuthModal({
           )}
 
           <div className="space-y-3">
-            {/* Email Field */}
+            {/* Username Field */}
             <div>
               <label className="block text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-1">
-                Email Address
+                Username
               </label>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-500 pointer-events-none">
-                  <Mail className="w-3.5 h-3.5" />
+                  <AtSign className="w-3.5 h-3.5" />
                 </span>
                 <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@example.com"
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value.replace(/\s+/g, ''))}
+                  placeholder="e.g. alex_smith"
                   required
-                  autoComplete="email"
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck="false"
                   disabled={loading}
                   className="w-full pl-9 pr-3 py-1.5 bg-[#020617] border border-slate-800 rounded-md text-xs font-mono text-slate-200 outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 transition-colors placeholder:text-slate-700"
                 />
@@ -232,7 +296,7 @@ const AuthModal = memo(function AuthModal({
               ) : (
                 <UserPlus className="w-3.5 h-3.5" />
               )}
-              {authMode === 'signin' ? 'Sign In' : 'Sign Up'}
+              {authMode === 'signin' ? 'Sign In' : 'Create Account'}
             </button>
 
             {/* Switch between modes */}
@@ -258,11 +322,19 @@ const AuthModal = memo(function AuthModal({
   );
 });
 
-export default function UserAuth({ onUserChange }: UserAuthProps) {
+export default function UserAuth({ onUserChange, openAuthTrigger, onCloseAuthTrigger }: UserAuthProps) {
   const [currentUser, setCurrentUser] = useState<FirebaseUser | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
   
+  // Respond to parent open triggers
+  useEffect(() => {
+    if (openAuthTrigger) {
+      setAuthMode(openAuthTrigger.mode);
+      setIsModalOpen(true);
+    }
+  }, [openAuthTrigger]);
+
   // Dropdown & Avatar states
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string>('');
@@ -287,19 +359,13 @@ export default function UserAuth({ onUserChange }: UserAuthProps) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Compute Gravatar URL on user change
+  // Compute avatar URL based on username
+  const displayUsername = currentUser?.displayName || currentUser?.email?.split('@')[0] || 'User';
+
   useEffect(() => {
-    if (currentUser && currentUser.email) {
-      const emailStr = currentUser.email.trim().toLowerCase();
-      const msgUint8 = new TextEncoder().encode(emailStr);
-      crypto.subtle.digest('SHA-256', msgUint8).then((hashBuffer) => {
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        setAvatarUrl(`https://www.gravatar.com/avatar/${hashHex}?d=identicon&s=128`);
-      }).catch((err) => {
-        console.error('Error generating gravatar hash:', err);
-        setAvatarUrl(`https://ui-avatars.com/api/?name=${encodeURIComponent(emailStr)}&background=6366f1&color=fff&bold=true`);
-      });
+    if (currentUser) {
+      const nameStr = (currentUser.displayName || currentUser.email?.split('@')[0] || 'user').trim().toLowerCase();
+      setAvatarUrl(`https://ui-avatars.com/api/?name=${encodeURIComponent(nameStr)}&background=6366f1&color=fff&bold=true&length=2`);
     } else {
       setAvatarUrl('');
     }
@@ -312,6 +378,7 @@ export default function UserAuth({ onUserChange }: UserAuthProps) {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
+    onCloseAuthTrigger?.();
   };
 
   const handleSignOut = async () => {
@@ -335,7 +402,7 @@ export default function UserAuth({ onUserChange }: UserAuthProps) {
                 ? 'border-indigo-500 ring-2 ring-indigo-500/20' 
                 : 'border-slate-800 hover:border-slate-700 hover:scale-105'
             }`}
-            title={currentUser.email || 'User Account'}
+            title={`@${displayUsername}`}
           >
             {avatarUrl ? (
               <img
@@ -346,7 +413,7 @@ export default function UserAuth({ onUserChange }: UserAuthProps) {
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-indigo-600 text-white text-[10px] font-mono font-bold uppercase">
-                {currentUser.email ? currentUser.email.substring(0, 2) : 'US'}
+                {displayUsername.substring(0, 2)}
               </div>
             )}
           </button>
@@ -356,8 +423,8 @@ export default function UserAuth({ onUserChange }: UserAuthProps) {
             <div className="absolute right-0 top-full mt-2 w-52 bg-[#131B2E] border border-slate-800 rounded-lg py-1 shadow-xl z-50 animate-in fade-in slide-in-from-top-1 duration-100">
               <div className="px-3 py-1.5 border-b border-slate-800/60 select-none">
                 <div className="text-[9px] font-mono font-bold text-slate-500 uppercase tracking-widest">Logged In As</div>
-                <div className="text-[11px] font-mono font-medium text-slate-300 mt-0.5 truncate" title={currentUser.email || ''}>
-                  {currentUser.email || 'User'}
+                <div className="text-[11px] font-mono font-medium text-indigo-400 mt-0.5 truncate" title={`@${displayUsername}`}>
+                  @{displayUsername}
                 </div>
               </div>
               <div className="p-1">

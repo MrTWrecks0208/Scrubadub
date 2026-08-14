@@ -30,7 +30,7 @@ export default function PatternManager({ rules, onChange, ruleStats, onSaveTempl
       isActive: true,
       name: getDefaultRuleName(rules),
     };
-    onChange([newRule, ...rules]);
+    onChange([...rules, newRule]);
   };
 
   const updateRule = (id: string, updates: Partial<RegexRule>) => {

@@ -27,7 +27,9 @@ import {
   AlertCircle,
   Loader2,
   X,
-  Bookmark
+  Bookmark,
+  LogIn,
+  UserPlus
 } from 'lucide-react';
 
 export default function App() {
@@ -66,6 +68,7 @@ export default function App() {
 
   // --- Firebase States & Templates hook ---
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [authTrigger, setAuthTrigger] = useState<{ mode: 'signin' | 'signup'; id: number } | null>(null);
   const { 
     templates, 
     loading: templatesLoading, 
@@ -205,6 +208,10 @@ export default function App() {
   };
 
   const handleSaveTemplateClick = () => {
+    if (!currentUser) {
+      setIsAuthPromptOpen(true);
+      return;
+    }
     setTemplateName('');
     setTemplateDesc('');
     setSaveError(null);
@@ -294,7 +301,11 @@ export default function App() {
         </div>
         
         <div className="flex items-center gap-2 sm:gap-4 text-[11px] font-medium text-slate-400 shrink-0">
-          <UserAuth onUserChange={setCurrentUser} />
+          <UserAuth 
+            onUserChange={setCurrentUser} 
+            openAuthTrigger={authTrigger}
+            onCloseAuthTrigger={() => setAuthTrigger(null)}
+          />
              
           <div className="hidden sm:block h-4 w-px bg-slate-700"></div>
           <a 
@@ -448,13 +459,56 @@ export default function App() {
               </div>
               
               {templates.length === 0 ? (
-                <div className="p-2 rounded border border-dashed border-slate-800/60 bg-[#1E293B]/10 text-center text-slate-500 text-[10px]">
-                  {templatesLoading 
-                    ? 'Loading saved rule sets...' 
-                    : currentUser 
-                      ? 'No custom rule sets found. Create scrubbing rules below and click "Save Rule Set" when finished.' 
-                      : 'No custom rule sets found. Create scrubbing rules below and click "Save Rule Set" when finished (or sign in to sync across devices).'}
-                </div>
+                templatesLoading ? (
+                  <div className="p-2.5 rounded-lg border border-dashed border-slate-800/80 bg-[#1E293B]/20 flex items-center justify-center gap-2 text-slate-400 text-xs font-mono">
+                    <Loader2 className="w-3.5 h-3.5 animate-spin text-indigo-400" />
+                    <span>Loading saved rule sets...</span>
+                  </div>
+                ) : currentUser ? (
+                  <div className="p-2.5 px-3.5 rounded-lg border border-dashed border-slate-800/80 bg-[#1E293B]/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                    <p className="text-[11px] text-slate-300 leading-relaxed font-normal">
+                      No custom rule sets found. To create custom rule sets, create rules below and click <strong className="text-white font-semibold">"Save Rule Set"</strong> when finished.
+                    </p>
+                    <div className="flex items-center gap-1.5 text-[9.5px] font-mono text-emerald-400 bg-emerald-950/40 border border-emerald-900/50 px-2 py-0.5 rounded-full flex-shrink-0">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                      <span>Syncing to @{currentUser.displayName || currentUser.email?.split('@')[0] || 'account'}</span>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="p-2.5 px-3.5 rounded-lg border border-slate-800 bg-gradient-to-r from-slate-900/90 via-[#1E293B]/30 to-slate-900/90 space-y-2">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-2.5">
+                      <div className="space-y-1">
+                        <p className="text-[11px] text-slate-300 leading-snug font-normal">
+                          No custom rule sets found. To create custom rule sets, create rules below and click <strong className="text-white font-semibold">"Save Rule Set"</strong> when finished.
+                        </p>
+                        <div className="flex items-center gap-1.5 text-[10.5px] text-amber-300/95 bg-amber-950/30 border border-amber-900/40 px-2 py-0.5 rounded-md w-fit">
+                          <AlertCircle className="w-3.5 h-3.5 flex-shrink-0 text-amber-400" />
+                          <span>
+                            <strong className="text-amber-200 uppercase tracking-wider text-[9px] font-bold">Note:</strong> An account is required in order to save and manage custom rule sets.
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1.5 flex-shrink-0 self-end md:self-center">
+                        <button
+                          type="button"
+                          onClick={() => setAuthTrigger({ mode: 'signin', id: Date.now() })}
+                          className="inline-flex items-center gap-1 px-2.5 py-1 bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white rounded text-[10px] font-bold uppercase tracking-wider transition-all shadow-xs cursor-pointer"
+                        >
+                          <LogIn className="w-3 h-3" />
+                          <span>Sign In</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setAuthTrigger({ mode: 'signup', id: Date.now() })}
+                          className="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-200 hover:text-white border border-slate-700 rounded text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer"
+                        >
+                          <UserPlus className="w-3 h-3" />
+                          <span>Create Account</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )
               ) : (
                 <div 
                   ref={customScrollRef}
@@ -537,7 +591,7 @@ export default function App() {
           <div className="lg:col-span-5 order-1 lg:order-2 space-y-4">
             <AIRegexGenerator 
               onAddRule={(newRule) => {
-                setRules([newRule, ...rules]);
+                setRules([...rules, newRule]);
                 setSelectedPresetId(null);
                 setSelectedTemplateId(null);
               }} 
@@ -733,11 +787,16 @@ export default function App() {
             
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800 bg-[#131B2E]/60">
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-2">
                 <Bookmark className="w-4 h-4 text-indigo-400" />
                 <span className="text-[11px] font-bold uppercase tracking-wider text-slate-200">
                   Save Custom Rule Set
                 </span>
+                {currentUser && (
+                  <span className="text-[9.5px] font-mono text-emerald-400 bg-emerald-950/50 border border-emerald-900/50 px-1.5 py-0.5 rounded">
+                    @{currentUser.displayName || currentUser.email?.split('@')[0] || 'user'}
+                  </span>
+                )}
               </div>
               <button
                 type="button"
@@ -821,42 +880,56 @@ export default function App() {
       {/* Auth Prompt Modal */}
       {isAuthPromptOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-xs">
-          <div className="relative w-full max-w-sm bg-[#1E293B] border border-slate-800 rounded-xl shadow-2xl p-6 text-center space-y-4 animate-in fade-in zoom-in-95 duration-150">
-            <div className="w-12 h-12 rounded-full bg-indigo-950 border border-indigo-800 flex items-center justify-center mx-auto text-indigo-400">
+          <div className="relative w-full max-w-md bg-[#1E293B] border border-slate-800 rounded-xl shadow-2xl p-6 text-center space-y-4 animate-in fade-in zoom-in-95 duration-150">
+            <button
+              type="button"
+              onClick={() => setIsAuthPromptOpen(false)}
+              className="absolute top-3 right-3 p-1 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            <div className="w-12 h-12 rounded-full bg-indigo-950/80 border border-indigo-700/50 flex items-center justify-center mx-auto text-indigo-400">
               <Bookmark className="w-6 h-6" />
             </div>
             
-            <div className="space-y-1.5">
-              <h3 className="text-sm font-bold text-slate-200 uppercase tracking-wider">Authentication Required</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                You must sign in or create an account to save your custom rules as reusable rule sets.
+            <div className="space-y-1.5 text-center">
+              <h3 className="text-sm font-bold text-slate-100 uppercase tracking-wider">Account Required to Save Rule Sets</h3>
+              <p className="text-xs text-slate-300 leading-relaxed max-w-sm mx-auto">
+                You must create an account in order to save custom rule sets.
               </p>
             </div>
 
-            <div className="flex flex-col gap-2 pt-2">
+            <div className="p-3 bg-amber-950/25 border border-amber-900/40 rounded-lg text-left text-[11px] text-amber-300/95 flex items-start gap-2.5">
+              <AlertCircle className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
+              <span className="leading-relaxed">
+                <strong className="text-amber-200 uppercase tracking-wider text-[9px] font-bold block mb-0.5"></strong>
+                Creating a <strong>free</strong> account allows you to securely create, store, and organize custom rule sets and access them across all your devices.
+              </span>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-2 pt-2">
               <button
                 type="button"
                 onClick={() => {
                   setIsAuthPromptOpen(false);
-                  const authBtn = document.querySelector('button[title*="Sign In"], button[onClick*="signin"]') as HTMLButtonElement;
-                  if (authBtn) {
-                    authBtn.click();
-                  } else {
-                    const buttons = Array.from(document.querySelectorAll('header button'));
-                    const signInBtn = buttons.find(b => b.textContent?.toLowerCase().includes('sign in')) as HTMLButtonElement;
-                    if (signInBtn) signInBtn.click();
-                  }
+                  setAuthTrigger({ mode: 'signin', id: Date.now() });
                 }}
-                className="w-full h-8 flex items-center justify-center bg-indigo-600 hover:bg-indigo-500 text-white rounded-md text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer shadow-xs"
+                className="flex-1 h-8.5 flex items-center justify-center gap-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-md text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer shadow-xs"
               >
-                Sign In or Sign Up Now
+                <LogIn className="w-3.5 h-3.5" />
+                <span>Sign In</span>
               </button>
               <button
                 type="button"
-                onClick={() => setIsAuthPromptOpen(false)}
-                className="w-full h-8 flex items-center justify-center bg-slate-800 hover:bg-slate-750 text-slate-300 rounded-md text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer"
+                onClick={() => {
+                  setIsAuthPromptOpen(false);
+                  setAuthTrigger({ mode: 'signup', id: Date.now() });
+                }}
+                className="flex-1 h-8.5 flex items-center justify-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white border border-slate-700 rounded-md text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer"
               >
-                Maybe Later
+                <UserPlus className="w-3.5 h-3.5" />
+                <span>Create Account</span>
               </button>
             </div>
           </div>
