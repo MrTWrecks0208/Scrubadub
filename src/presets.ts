@@ -9,7 +9,7 @@ export const DEFAULT_PRESETS: RegexPreset[] = [
     rules: [
       {
         id: 'email',
-        pattern: '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}',
+        pattern: '[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+',
         replacement: 'user.name@example.com',
         flags: { global: true, caseInsensitive: true, multiline: false, dotAll: false },
         isActive: true,
