@@ -55,7 +55,7 @@ export interface RuleColor {
 const HUE_SPECS = [
   {
     name: 'red',
-    vibrant: { bg: 'rgba(239, 68, 68, 0.22)', border: 'rgba(239, 68, 68, 0.55)', text: 'text-red-400', bgCls: 'bg-red-500/10', bdrCls: 'border-red-500/20', num: 'border-red-500/30 text-red-400 bg-red-950/20', badge: 'bg-red-950/40 text-red-400 border-red-900/40', btn: 'bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 border-red-500/60 hover:border-red-400/80' },
+    vibrant: { bg: 'rgba(220, 38, 38, 0.22)', border: 'rgba(220, 38, 38, 0.55)', text: 'text-red-600', bgCls: 'bg-red-700/10', bdrCls: 'border-red-700/20', num: 'border-red-700/30 text-red-600 bg-red-950/20', badge: 'bg-red-950/40 text-red-600 border-red-900/40', btn: 'bg-red-700/10 hover:bg-red-700/20 text-red-600 hover:text-red-500 border-red-700/60 hover:border-red-700/80' },
     pastel: { bg: 'rgba(252, 165, 165, 0.28)', border: 'rgba(252, 165, 165, 0.70)', text: 'text-red-300', bgCls: 'bg-red-400/15', bdrCls: 'border-red-400/30', num: 'border-red-400/40 text-red-300 bg-red-900/30', badge: 'bg-red-900/40 text-red-300 border-red-700/50', btn: 'bg-red-400/15 hover:bg-red-400/25 text-red-300 hover:text-red-200 border-red-400/70 hover:border-red-300' },
     deep: { bg: 'rgba(220, 38, 38, 0.30)', border: 'rgba(220, 38, 38, 0.80)', text: 'text-red-500', bgCls: 'bg-red-600/15', bdrCls: 'border-red-600/30', num: 'border-red-600/40 text-red-500 bg-red-950/40', badge: 'bg-red-950/60 text-red-500 border-red-800/60', btn: 'bg-red-600/15 hover:bg-red-600/25 text-red-500 hover:text-red-400 border-red-600/70 hover:border-red-500' },
   },
