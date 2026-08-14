@@ -432,13 +432,18 @@ export default function HighlightedTextarea({ value, onChange, placeholder, rule
           {highlightedSegments.map((seg, idx) => {
             if (seg.isMatch) {
               const firstRuleId = seg.ruleIds?.[0];
-              const colorName = firstRuleId ? getStableRuleColor(firstRuleId, rules).name : 'amber';
+              const ruleColor = firstRuleId ? getStableRuleColor(firstRuleId, rules) : null;
+              const colorName = ruleColor ? ruleColor.name : 'amber';
               return (
                 <mark 
                   key={idx} 
                   data-match-start={seg.start} 
                   data-match-end={seg.end}
                   className={`highlight-${colorName}`}
+                  style={ruleColor ? {
+                    backgroundColor: ruleColor.bg,
+                    borderBottom: `1.5px solid ${ruleColor.border}`
+                  } : undefined}
                 >
                   {seg.text}
                 </mark>
