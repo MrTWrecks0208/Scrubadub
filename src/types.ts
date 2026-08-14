@@ -46,7 +46,8 @@ export const HIGHLIGHT_COLORS = [
     bgClass: 'bg-rose-500/10',
     borderClass: 'border-rose-500/20',
     numClass: 'border-rose-500/30 text-rose-400 bg-rose-950/20',
-    badgeClass: 'bg-rose-950/40 text-rose-400 border-rose-900/40'
+    badgeClass: 'bg-rose-950/40 text-rose-400 border-rose-900/40',
+    neonButtonClass: 'bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 hover:text-rose-300 border-rose-500/60 hover:border-rose-400/80',
   },
   {
     name: 'orange',
@@ -56,7 +57,8 @@ export const HIGHLIGHT_COLORS = [
     bgClass: 'bg-orange-500/10',
     borderClass: 'border-orange-500/20',
     numClass: 'border-orange-500/30 text-orange-400 bg-orange-950/20',
-    badgeClass: 'bg-orange-950/40 text-orange-400 border-orange-900/40'
+    badgeClass: 'bg-orange-950/40 text-orange-400 border-orange-900/40',
+    neonButtonClass: 'bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 hover:text-orange-300 border-orange-500/60 hover:border-orange-400/80',
   },
   {
     name: 'amber',
@@ -66,7 +68,8 @@ export const HIGHLIGHT_COLORS = [
     bgClass: 'bg-amber-500/10',
     borderClass: 'border-amber-500/20',
     numClass: 'border-amber-500/30 text-amber-400 bg-amber-950/20',
-    badgeClass: 'bg-[#451a03]/40 text-amber-400 border-amber-900/40'
+    badgeClass: 'bg-[#451a03]/40 text-amber-400 border-amber-900/40',
+    neonButtonClass: 'bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 hover:text-amber-300 border-amber-500/60 hover:border-amber-400/80',
   },
   {
     name: 'lime',
@@ -76,7 +79,8 @@ export const HIGHLIGHT_COLORS = [
     bgClass: 'bg-lime-500/10',
     borderClass: 'border-lime-500/20',
     numClass: 'border-lime-500/30 text-lime-400 bg-lime-950/20',
-    badgeClass: 'bg-lime-950/40 text-lime-400 border-lime-900/40'
+    badgeClass: 'bg-lime-950/40 text-lime-400 border-lime-900/40',
+    neonButtonClass: 'bg-lime-500/10 hover:bg-lime-500/20 text-lime-400 hover:text-lime-300 border-lime-500/60 hover:border-lime-400/80',
   },
   {
     name: 'green',
@@ -86,7 +90,8 @@ export const HIGHLIGHT_COLORS = [
     bgClass: 'bg-green-500/10',
     borderClass: 'border-green-500/20',
     numClass: 'border-green-500/30 text-green-400 bg-green-950/20',
-    badgeClass: 'bg-green-950/40 text-green-400 border-green-900/40'
+    badgeClass: 'bg-green-950/40 text-green-400 border-green-900/40',
+    neonButtonClass: 'bg-green-500/10 hover:bg-green-500/20 text-green-400 hover:text-green-300 border-green-500/60 hover:border-green-400/80',
   },
   {
     name: 'emerald',
@@ -96,7 +101,8 @@ export const HIGHLIGHT_COLORS = [
     bgClass: 'bg-emerald-500/10',
     borderClass: 'border-emerald-500/20',
     numClass: 'border-emerald-500/30 text-emerald-400 bg-emerald-950/20',
-    badgeClass: 'bg-emerald-950/40 text-emerald-400 border-emerald-900/40'
+    badgeClass: 'bg-emerald-950/40 text-emerald-400 border-emerald-900/40',
+    neonButtonClass: 'bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 hover:text-emerald-300 border-emerald-500/60 hover:border-emerald-400/80',
   },
   {
     name: 'teal',
@@ -106,7 +112,8 @@ export const HIGHLIGHT_COLORS = [
     bgClass: 'bg-teal-500/10',
     borderClass: 'border-teal-500/20',
     numClass: 'border-teal-500/30 text-teal-400 bg-teal-950/20',
-    badgeClass: 'bg-teal-950/40 text-teal-400 border-teal-900/40'
+    badgeClass: 'bg-teal-950/40 text-teal-400 border-teal-900/40',
+    neonButtonClass: 'bg-teal-500/10 hover:bg-teal-500/20 text-teal-400 hover:text-teal-300 border-teal-500/60 hover:border-teal-400/80',
   },
   {
     name: 'cyan',
@@ -116,7 +123,8 @@ export const HIGHLIGHT_COLORS = [
     bgClass: 'bg-cyan-500/10',
     borderClass: 'border-cyan-500/20',
     numClass: 'border-cyan-500/30 text-cyan-400 bg-cyan-950/20',
-    badgeClass: 'bg-cyan-950/40 text-cyan-400 border-cyan-900/40'
+    badgeClass: 'bg-cyan-950/40 text-cyan-400 border-cyan-900/40',
+    neonButtonClass: 'bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 hover:text-cyan-300 border-cyan-500/60 hover:border-cyan-400/80',
   },
   {
     name: 'sky',
@@ -126,7 +134,8 @@ export const HIGHLIGHT_COLORS = [
     bgClass: 'bg-sky-500/10',
     borderClass: 'border-sky-500/20',
     numClass: 'border-sky-500/30 text-sky-400 bg-sky-950/20',
-    badgeClass: 'bg-sky-950/40 text-sky-400 border-sky-900/40'
+    badgeClass: 'bg-sky-950/40 text-sky-400 border-sky-900/40',
+    neonButtonClass: 'bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 hover:text-sky-300 border-sky-500/60 hover:border-sky-400/80',
   },
   {
     name: 'blue',
@@ -136,7 +145,8 @@ export const HIGHLIGHT_COLORS = [
     bgClass: 'bg-blue-500/10',
     borderClass: 'border-blue-500/20',
     numClass: 'border-blue-500/30 text-blue-400 bg-blue-950/20',
-    badgeClass: 'bg-blue-950/40 text-blue-400 border-blue-900/40'
+    badgeClass: 'bg-blue-950/40 text-blue-400 border-blue-900/40',
+    neonButtonClass: 'bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 hover:text-blue-300 border-blue-500/60 hover:border-blue-400/80',
   },
   {
     name: 'indigo',
@@ -146,7 +156,8 @@ export const HIGHLIGHT_COLORS = [
     bgClass: 'bg-indigo-500/10',
     borderClass: 'border-indigo-500/20',
     numClass: 'border-indigo-500/30 text-indigo-400 bg-indigo-950/20',
-    badgeClass: 'bg-indigo-950/40 text-indigo-400 border-indigo-900/40'
+    badgeClass: 'bg-indigo-950/40 text-indigo-400 border-indigo-900/40',
+    neonButtonClass: 'bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 hover:text-indigo-300 border-indigo-500/60 hover:border-indigo-400/80',
   },
   {
     name: 'violet',
@@ -156,7 +167,8 @@ export const HIGHLIGHT_COLORS = [
     bgClass: 'bg-violet-500/10',
     borderClass: 'border-violet-500/20',
     numClass: 'border-violet-500/30 text-violet-400 bg-violet-950/20',
-    badgeClass: 'bg-violet-950/40 text-violet-400 border-violet-900/40'
+    badgeClass: 'bg-violet-950/40 text-violet-400 border-violet-900/40',
+    neonButtonClass: 'bg-violet-500/10 hover:bg-violet-500/20 text-violet-400 hover:text-violet-300 border-violet-500/60 hover:border-violet-400/80',
   },
   {
     name: 'purple',
@@ -166,7 +178,8 @@ export const HIGHLIGHT_COLORS = [
     bgClass: 'bg-purple-500/10',
     borderClass: 'border-purple-500/20',
     numClass: 'border-purple-500/30 text-purple-400 bg-purple-950/20',
-    badgeClass: 'bg-purple-950/40 text-purple-400 border-purple-900/40'
+    badgeClass: 'bg-purple-950/40 text-purple-400 border-purple-900/40',
+    neonButtonClass: 'bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 hover:text-purple-300 border-purple-500/60 hover:border-purple-400/80',
   },
   {
     name: 'fuchsia',
@@ -176,7 +189,8 @@ export const HIGHLIGHT_COLORS = [
     bgClass: 'bg-fuchsia-500/10',
     borderClass: 'border-fuchsia-500/20',
     numClass: 'border-fuchsia-500/30 text-fuchsia-400 bg-fuchsia-950/20',
-    badgeClass: 'bg-fuchsia-950/40 text-fuchsia-400 border-fuchsia-900/40'
+    badgeClass: 'bg-fuchsia-950/40 text-fuchsia-400 border-fuchsia-900/40',
+    neonButtonClass: 'bg-fuchsia-500/10 hover:bg-fuchsia-500/20 text-fuchsia-400 hover:text-fuchsia-300 border-fuchsia-500/60 hover:border-fuchsia-400/80',
   },
   {
     name: 'pink',
@@ -186,7 +200,8 @@ export const HIGHLIGHT_COLORS = [
     bgClass: 'bg-pink-500/10',
     borderClass: 'border-pink-500/20',
     numClass: 'border-pink-500/30 text-pink-400 bg-pink-950/20',
-    badgeClass: 'bg-pink-950/40 text-pink-400 border-pink-900/40'
+    badgeClass: 'bg-pink-950/40 text-pink-400 border-pink-900/40',
+    neonButtonClass: 'bg-pink-500/10 hover:bg-pink-500/20 text-pink-400 hover:text-pink-300 border-pink-500/60 hover:border-pink-400/80',
   }
 ];
 

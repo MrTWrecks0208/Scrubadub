@@ -478,12 +478,13 @@ export default function HighlightedTextarea({ value, onChange, placeholder, rule
                       key={r.id}
                       type="button"
                       onClick={() => handleJumpToRuleMatch(r)}
-                      className="flex items-center gap-1.5 bg-[#1E293B]/60 hover:bg-[#1E293B] active:scale-95 px-2 py-0.5 rounded border border-slate-750 hover:border-indigo-500/50 text-slate-300 hover:text-white transition-all cursor-pointer group/badge shadow-xs"
-                      title={`Click to jump to match in Source Input (${count} match${count !== 1 ? 'es' : ''})`}
+                      className={`flex items-center gap-1.5 active:scale-95 px-2 py-0.5 rounded border transition-all cursor-pointer group/badge shadow-xs ${
+                        color.neonButtonClass || 'bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 hover:text-rose-300 border-rose-500/60 hover:border-rose-400/80'
+                      }`}
+                      title={`Click to jump to match in Source Text (${count} match${count !== 1 ? 'es' : ''})`}
                     >
-                      <span className={`w-1.5 h-1.5 rounded-xs border indicator-${color.name}`}></span>
-                      <span className="text-[9px] font-mono truncate max-w-[100px]">{r.name || 'Rule'}</span>
-                      <span className="text-[8px] text-slate-500 group-hover/badge:text-indigo-400 font-mono">({count})</span>
+                      <span className="text-[9px] font-mono font-bold truncate max-w-[110px]">{r.name || 'Rule'}</span>
+                      <span className="text-[8px] font-mono opacity-80 group-hover/badge:opacity-100">({count})</span>
                     </button>
                   );
                 })}

@@ -4,7 +4,6 @@ import { DEFAULT_PRESETS } from './presets';
 import logo from './Logo.png';
 import { cleanText } from './utils/cleaner';
 import PatternManager from './components/PatternManager';
-import InteractiveDiff from './components/InteractiveDiff';
 import AIRegexGenerator from './components/AIRegexGenerator';
 import HighlightedTextarea from './components/HighlightedTextarea';
 import UserAuth from './components/UserAuth';
@@ -54,7 +53,6 @@ export default function App() {
     return [];
   });
 
-  const [activeTab, setActiveTab] = useState<'cleaned' | 'visualizer'>('cleaned');
   const [selectedPresetId, setSelectedPresetId] = useState<string | null>(() => {
     try {
       return localStorage.getItem('regex_cleaner_preset_id');
@@ -621,31 +619,11 @@ export default function App() {
             {/* Output / Resulting Box Card */}
             <div className="bg-[#1E293B]/20 border border-slate-800 rounded-lg overflow-hidden">
               
-              {/* Tab Selector & Header */}
-              <div className="flex items-center justify-between px-3.5 border-b border-slate-800 bg-[#1E293B]/60">
-                <div className="flex gap-4">
-                  <button
-                    type="button"
-                    onClick={() => setActiveTab('cleaned')}
-                    className={`py-2.5 text-[11px] font-bold uppercase tracking-wider border-b-2 transition-all cursor-pointer ${
-                      activeTab === 'cleaned'
-                        ? 'border-indigo-500 text-white'
-                        : 'border-transparent text-slate-400 hover:text-slate-200'
-                    }`}
-                  >
-                    Scrubbed Output (Read-Only)
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setActiveTab('visualizer')}
-                    className={`py-2.5 text-[11px] font-bold uppercase tracking-wider border-b-2 transition-all cursor-pointer ${
-                      activeTab === 'visualizer'
-                        ? 'border-indigo-500 text-white'
-                        : 'border-transparent text-slate-400 hover:text-slate-200'
-                    }`}
-                  >
-                    Matches View
-                  </button>
+              {/* Header */}
+              <div className="flex items-center justify-between px-3.5 py-2 border-b border-slate-800 bg-[#1E293B]/60">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-300">Scrubbed Output</span>
                 </div>
                 
                 <div className="flex items-center gap-1">
@@ -653,7 +631,7 @@ export default function App() {
                     type="button"
                     onClick={() => copyToClipboard(cleanResult.cleanedText, false)}
                     disabled={!cleanResult.cleanedText}
-                    title="Copy"
+                    title="Copy scrubbed output"
                     className="p-1 text-slate-400 hover:text-white hover:bg-slate-800 rounded transition-colors disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
                   >
                     {copySuccess ? (
@@ -669,7 +647,7 @@ export default function App() {
                     type="button"
                     onClick={downloadTextFile}
                     disabled={!cleanResult.cleanedText}
-                    title="Download"
+                    title="Download scrubbed output"
                     className="p-1 text-slate-400 hover:text-white hover:bg-slate-800 rounded transition-colors disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
                   >
                     <Download className="w-3.5 h-3.5" />
@@ -677,60 +655,56 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Tab Contents */}
+              {/* Output Content */}
               <div className="p-3 bg-[#020617]">
-                {activeTab === 'cleaned' ? (
-                  <div className="space-y-3">
-                    <textarea
-                      value={cleanResult.cleanedText}
-                      readOnly
-                      placeholder="Srubbed output will render here..."
-                      className="w-full h-64 sm:h-80 font-mono text-xs text-slate-400 bg-transparent border-0 outline-none resize-y placeholder:text-slate-600 select-all"
-                      spellCheck={false}
-                    />
+                <div className="space-y-3">
+                  <textarea
+                    value={cleanResult.cleanedText}
+                    readOnly
+                    placeholder="Scrubbed output will render here..."
+                    className="w-full h-64 sm:h-80 font-mono text-xs text-slate-400 bg-transparent border-0 outline-none resize-y placeholder:text-slate-600 select-all"
+                    spellCheck={false}
+                  />
 
-                    {/* Compact stats bar */}
-                    <div className="grid grid-cols-4 gap-2 p-2 bg-[#1E293B]/30 rounded border border-slate-900 text-center">
-                      <div>
-                        <div className="text-[9px] text-slate-500 uppercase tracking-widest font-bold">
-                          Final Chars
-                        </div>
-                        <div className="text-sm font-semibold text-rose-500 mt-0.5">
-                          {cleanResult.cleanedCharCount.toLocaleString()}
-                        </div>
+                  {/* Compact stats bar */}
+                  <div className="grid grid-cols-4 gap-2 p-2 bg-[#1E293B]/30 rounded border border-slate-900 text-center">
+                    <div>
+                      <div className="text-[9px] text-slate-500 uppercase tracking-widest font-bold">
+                        Final Chars
                       </div>
-                      
-                      <div>
-                        <div className="text-[9px] text-slate-500 uppercase tracking-widest font-bold">
-                          Final Words
-                        </div>
-                        <div className="text-sm font-semibold text-amber-500 mt-0.5">
-                          {cleanResult.cleanedWordCount.toLocaleString()}
-                        </div>
+                      <div className="text-sm font-semibold text-rose-500 mt-0.5">
+                        {cleanResult.cleanedCharCount.toLocaleString()}
                       </div>
+                    </div>
+                    
+                    <div>
+                      <div className="text-[9px] text-slate-500 uppercase tracking-widest font-bold">
+                        Final Words
+                      </div>
+                      <div className="text-sm font-semibold text-amber-500 mt-0.5">
+                        {cleanResult.cleanedWordCount.toLocaleString()}
+                      </div>
+                    </div>
 
-                      <div>
-                        <div className="text-[9px] text-slate-500 uppercase tracking-widest font-bold">
-                          Matches Scrubbed
-                        </div>
-                        <div className="text-sm font-semibold text-cyan-500 mt-0.5">
-                          {cleanResult.totalMatchesRemoved.toLocaleString()}
-                        </div>
+                    <div>
+                      <div className="text-[9px] text-slate-500 uppercase tracking-widest font-bold">
+                        Matches Scrubbed
                       </div>
+                      <div className="text-sm font-semibold text-cyan-500 mt-0.5">
+                        {cleanResult.totalMatchesRemoved.toLocaleString()}
+                      </div>
+                    </div>
 
-                      <div>
-                        <div className="text-[9px] text-slate-500 uppercase tracking-widest font-bold">
-                          Reduction
-                        </div>
-                        <div className={`text-sm font-semibold mt-0.5 ${reductionPercentage > 0 ? 'text-emerald-500' : 'text-slate-500'}`}>
-                          -{reductionPercentage}%
-                        </div>
+                    <div>
+                      <div className="text-[9px] text-slate-500 uppercase tracking-widest font-bold">
+                        Reduction
+                      </div>
+                      <div className={`text-sm font-semibold mt-0.5 ${reductionPercentage > 0 ? 'text-emerald-500' : 'text-slate-500'}`}>
+                        -{reductionPercentage}%
                       </div>
                     </div>
                   </div>
-                ) : (
-                  <InteractiveDiff originalText={inputText} rules={rules} />
-                )}
+                </div>
               </div>
             </div>
 
