@@ -588,7 +588,7 @@ export default function App() {
                     <span>Chars: <strong className="text-slate-400">{inputText.length.toLocaleString()}</strong></span>
                     <span>Words: <strong className="text-slate-400">{cleanResult.originalWordCount.toLocaleString()}</strong></span>
                   </div>
-                  <div className="flex items-center gap-1.5">
+                  <div className="relative group/sample-btn">
                     <button
                       type="button"
                       onClick={() => {
@@ -596,20 +596,17 @@ export default function App() {
                         setInputText(randomPreset.sampleText);
                         setSelectedPresetId(null);
                       }}
-                      className="text-slate-400 hover:text-white flex items-center gap-1 cursor-pointer transition-colors"
+                      className="flex items-center gap-1.5 px-2 py-1 bg-slate-800/80 hover:bg-slate-700/80 active:scale-95 text-slate-300 hover:text-white border border-slate-700/80 hover:border-indigo-500/50 rounded text-[10px] font-sans font-semibold tracking-wide cursor-pointer transition-all shadow-xs"
                     >
-                      <RefreshCw className="w-3 h-3 animate-spin-hover" />
-                      <span>Generate Sample</span>
+                      <RefreshCw className="w-3 h-3 text-indigo-400 group-hover/sample-btn:rotate-180 transition-transform duration-300" />
+                      <span>Generate Sample Data</span>
                     </button>
 
-                    <div className="relative group/sample-info inline-flex items-center">
-                      <Info className="w-3 h-3 text-slate-500 hover:text-slate-300 transition-colors cursor-help" />
-                      <div className="absolute bottom-full right-0 mb-1.5 w-64 p-2.5 bg-slate-900/95 border border-slate-700 text-slate-300 text-[11px] rounded-lg shadow-2xl opacity-0 scale-95 pointer-events-none group-hover/sample-info:opacity-100 group-hover/sample-info:scale-100 transition-all duration-150 z-50 normal-case font-sans leading-relaxed backdrop-blur-md">
-                        <span className="font-bold text-white block text-[10px] uppercase tracking-wider mb-1">
-                          Generate Sample Data
-                        </span>
-                        Loads realistic data from a random built-in rule set into the source box so you can immediately test your active regex rules without altering your rules.
-                      </div>
+                    <div className="absolute bottom-full right-0 mb-1.5 w-64 p-2.5 bg-slate-900/95 border border-slate-700 text-slate-300 text-[11px] rounded-lg shadow-2xl opacity-0 scale-95 pointer-events-none group-hover/sample-btn:opacity-100 group-hover/sample-btn:scale-100 transition-all duration-150 z-50 normal-case font-sans leading-relaxed backdrop-blur-md">
+                      <span className="font-bold text-white block text-[10px] uppercase tracking-wider mb-1">
+                        Generate Sample Data
+                      </span>
+                      Loads realistic data from a random built-in rule set into the source box so you can immediately test your active regex rules without altering your rules.
                     </div>
                   </div>
                 </div>
