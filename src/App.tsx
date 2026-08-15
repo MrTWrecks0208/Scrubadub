@@ -904,7 +904,7 @@ export default function App() {
               <AlertCircle className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
               <span className="leading-relaxed">
                 <strong className="text-amber-200 uppercase tracking-wider text-[9px] font-bold block mb-0.5"></strong>
-                Creating a <strong>free</strong> account allows you to securely create, store, and organize custom rule sets and access them across all your devices.
+                Creating a <strong>free</strong> account allows you to create, store, and organize custom rule sets and access them across all your devices.
               </span>
             </div>
 
