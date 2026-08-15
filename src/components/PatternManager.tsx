@@ -1,6 +1,6 @@
 import React from 'react';
 import { RegexRule, CleanResult, HIGHLIGHT_COLORS, getStableRuleColor } from '../types';
-import { Plus, Trash2, Eye, EyeOff, AlertCircle, Sparkles, Check, HelpCircle, Bookmark, Pencil, Info } from 'lucide-react';
+import { Plus, Trash2, Eye, EyeOff, AlertCircle, Sparkles, Check, HelpCircle, Bookmark, Pencil, Info, GripVertical, ChevronUp, ChevronDown } from 'lucide-react';
 import { validateRegex, getDefaultRuleName } from '../utils/cleaner';
 
 interface PatternManagerProps {
@@ -12,6 +12,9 @@ interface PatternManagerProps {
 
 export default function PatternManager({ rules, onChange, ruleStats, onSaveTemplate }: PatternManagerProps) {
   const [focusedRuleId, setFocusedRuleId] = React.useState<string | null>(null);
+  const [draggedIndex, setDraggedIndex] = React.useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = React.useState<number | null>(null);
+  const [dropPosition, setDropPosition] = React.useState<'above' | 'below' | null>(null);
 
   const addRule = () => {
     const newRuleId = typeof crypto !== 'undefined' && crypto.randomUUID 
@@ -54,6 +57,78 @@ export default function PatternManager({ rules, onChange, ruleStats, onSaveTempl
         },
       });
     }
+  };
+
+  const moveRule = (fromIndex: number, toIndex: number) => {
+    if (fromIndex === toIndex || fromIndex < 0 || toIndex < 0 || fromIndex >= rules.length || toIndex >= rules.length) return;
+    const newRules = [...rules];
+    const [moved] = newRules.splice(fromIndex, 1);
+    newRules.splice(toIndex, 0, moved);
+    onChange(newRules);
+  };
+
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    setDraggedIndex(index);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', index.toString());
+  };
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.dataTransfer.dropEffect = 'move';
+
+    if (draggedIndex === null || draggedIndex === index) {
+      if (dragOverIndex !== null) setDragOverIndex(null);
+      if (dropPosition !== null) setDropPosition(null);
+      return;
+    }
+
+    const rect = e.currentTarget.getBoundingClientRect();
+    const relY = e.clientY - rect.top;
+    const pos: 'above' | 'below' = relY < rect.height / 2 ? 'above' : 'below';
+
+    setDragOverIndex(index);
+    setDropPosition(pos);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+      setDragOverIndex(null);
+      setDropPosition(null);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent, targetIndex: number) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (draggedIndex === null || draggedIndex === undefined || draggedIndex === targetIndex) {
+      setDraggedIndex(null);
+      setDragOverIndex(null);
+      setDropPosition(null);
+      return;
+    }
+
+    let finalTargetIndex = targetIndex;
+    if (dropPosition === 'below') {
+      finalTargetIndex = draggedIndex < targetIndex ? targetIndex : targetIndex + 1;
+    } else {
+      finalTargetIndex = draggedIndex < targetIndex ? targetIndex - 1 : targetIndex;
+    }
+
+    const clampedTarget = Math.max(0, Math.min(rules.length - 1, finalTargetIndex));
+    moveRule(draggedIndex, clampedTarget);
+
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+    setDropPosition(null);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+    setDropPosition(null);
   };
 
   const [allState, setAllState] = React.useState<'on' | 'off' | 'none'>('none');
@@ -186,7 +261,7 @@ export default function PatternManager({ rules, onChange, ruleStats, onSaveTempl
         {/* Second Line: Description under Scrubbing Rules */}
         <div>
           <p className="text-[10px] text-slate-400 font-mono flex items-center gap-1.5">
-            <span>Define rules for scrubbing text</span>
+            <span>Define rules for scrubbing text (drag to reorder)</span>
             <span className="relative group/info inline-flex items-center cursor-help">
               <svg 
                 viewBox="0 0 16 16" 
@@ -203,7 +278,7 @@ export default function PatternManager({ rules, onChange, ruleStats, onSaveTempl
                 <span className="font-bold text-white block uppercase tracking-wider text-[10px] mb-1">
                   Order of Operations for Scrubbing Rules
                 </span>
-                Scrubbing rules are executed <strong>sequentially from top to bottom</strong>. The output of each stage serves as the input for the next. Toggle, customize, and name rules to build text-scrubbing rule sets.
+                Scrubbing rules are executed <strong>sequentially from top to bottom</strong>. The output of each stage serves as the input for the next. Drag and drop rules by the grip handle to reorder execution sequence.
               </span>
             </span>
           </p>
@@ -238,22 +313,64 @@ export default function PatternManager({ rules, onChange, ruleStats, onSaveTempl
             const errorMsg = stats?.errorMsg;
             const color = getStableRuleColor(rule.id, rules);
             const isFocused = focusedRuleId === rule.id;
+            const isDragging = draggedIndex === index;
+            const isOver = dragOverIndex === index;
 
             return (
               <div
                 key={rule.id}
+                draggable={true}
+                onDragStart={(e) => handleDragStart(e, index)}
+                onDragOver={(e) => handleDragOver(e, index)}
+                onDragLeave={handleDragLeave}
+                onDrop={(e) => handleDrop(e, index)}
+                onDragEnd={handleDragEnd}
                 className={`relative flex flex-col p-3 rounded border transition-all duration-150 ${
-                  rule.isActive
-                    ? 'bg-slate-800/30 border-slate-800 shadow-xs'
-                    : 'bg-slate-900/40 border-slate-800/60 opacity-60'
+                  isDragging
+                    ? 'opacity-35 scale-[0.99] border-dashed border-indigo-500 bg-slate-900/60 ring-2 ring-indigo-500/40 shadow-inner'
+                    : isOver
+                    ? 'ring-2 ring-indigo-500/80 border-indigo-500/80 bg-slate-850/80 shadow-lg'
+                    : rule.isActive
+                    ? 'bg-slate-800/30 border-slate-800 shadow-xs hover:border-slate-700/80'
+                    : 'bg-slate-900/40 border-slate-800/60 opacity-60 hover:opacity-80'
                 }`}
               >
+                {/* Visual Insertion Indicator Bars */}
+                {isOver && dropPosition === 'above' && !isDragging && (
+                  <div className="absolute -top-1.5 left-2 right-2 h-1 bg-indigo-500 rounded-full shadow-[0_0_8px_rgba(99,102,241,0.9)] z-30 pointer-events-none animate-pulse" />
+                )}
+                {isOver && dropPosition === 'below' && !isDragging && (
+                  <div className="absolute -bottom-1.5 left-2 right-2 h-1 bg-indigo-500 rounded-full shadow-[0_0_8px_rgba(99,102,241,0.9)] z-30 pointer-events-none animate-pulse" />
+                )}
+
                 {/* Rule Title Row */}
-                <div className="flex items-center justify-between gap-3 mb-2">
-                  <div className="flex items-center gap-2 flex-1 min-w-0">
-                    <div className="relative flex items-center flex-1 min-w-0 group/name">
+                <div className="flex items-center justify-between gap-2 mb-2">
+                  <div className="flex items-center gap-1.5 flex-1 min-w-0">
+                    {/* Drag Handle */}
+                    <div 
+                      className="flex items-center justify-center p-1 -ml-1 text-slate-500 hover:text-indigo-400 active:text-indigo-300 rounded cursor-grab active:cursor-grabbing group/grip transition-colors shrink-0"
+                      title="Click and drag to reorder rule sequence"
+                    >
+                      <GripVertical className="w-4 h-4 text-slate-500 group-hover/grip:text-indigo-400" />
+                    </div>
+
+                    {/* Step Sequence Order Pill */}
+                    <span 
+                      className={`text-[9.5px] font-mono font-bold px-1.5 py-0.5 rounded border select-none shrink-0 ${
+                        rule.isActive
+                          ? 'bg-[#020617] text-slate-400 border-slate-800'
+                          : 'bg-[#020617]/50 text-slate-600 border-slate-900'
+                      }`}
+                      title={`Rule #${index + 1} in execution order`}
+                    >
+                      #{index + 1}
+                    </span>
+
+                    {/* Rule Name Input */}
+                    <div className="relative flex items-center flex-1 min-w-0 group/name" draggable={false} onMouseDown={(e) => e.stopPropagation()}>
                       <input
                         type="text"
+                        draggable={false}
                         value={rule.name}
                         onChange={(e) => updateRule(rule.id, { name: e.target.value })}
                         placeholder="Enter Rule Name..."
@@ -266,7 +383,29 @@ export default function PatternManager({ rules, onChange, ruleStats, onSaveTempl
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1 shrink-0" draggable={false} onMouseDown={(e) => e.stopPropagation()}>
+                    {/* Move Up / Down Buttons */}
+                    <div className="flex items-center border border-slate-800/80 bg-[#020617] rounded p-0.5 gap-0.5">
+                      <button
+                        type="button"
+                        onClick={() => moveRule(index, index - 1)}
+                        disabled={index === 0}
+                        title="Move rule up"
+                        className="p-0.5 text-slate-500 hover:text-slate-200 hover:bg-slate-800 rounded transition-colors disabled:opacity-20 disabled:pointer-events-none cursor-pointer"
+                      >
+                        <ChevronUp className="w-3 h-3" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => moveRule(index, index + 1)}
+                        disabled={index === rules.length - 1}
+                        title="Move rule down"
+                        className="p-0.5 text-slate-500 hover:text-slate-200 hover:bg-slate-800 rounded transition-colors disabled:opacity-20 disabled:pointer-events-none cursor-pointer"
+                      >
+                        <ChevronDown className="w-3 h-3" />
+                      </button>
+                    </div>
+
                     {/* Active Match Stat Badge */}
                     {rule.isActive && rule.pattern && isValid && (
                       <span className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border transition-colors ${
@@ -307,12 +446,13 @@ export default function PatternManager({ rules, onChange, ruleStats, onSaveTempl
                 </div>
 
                  {/* Regex Pattern Input */}
-                <div className="relative">
+                <div className="relative" draggable={false} onMouseDown={(e) => e.stopPropagation()}>
                   <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs font-mono text-slate-600 select-none">
                     /
                   </span>
                   <input
                     type="text"
+                    draggable={false}
                     value={rule.pattern}
                     onChange={(e) => updateRule(rule.id, { pattern: e.target.value })}
                     onFocus={() => setFocusedRuleId(rule.id)}
@@ -340,15 +480,16 @@ export default function PatternManager({ rules, onChange, ruleStats, onSaveTempl
                 </div>
 
                 {/* Replace with Input */}
-                <div className="mt-1.5 flex items-center gap-2">
+                <div className="mt-1.5 flex items-center gap-2" draggable={false} onMouseDown={(e) => e.stopPropagation()}>
                   <span className="text-[9px] font-mono font-bold text-slate-500 select-none w-14 shrink-0 uppercase tracking-widest text-right">
                     Replace With:
                   </span>
                   <input
                     type="text"
+                    draggable={false}
                     value={rule.replacement}
                     onChange={(e) => updateRule(rule.id, { replacement: e.target.value })}
-                    placeholder="Removes matches if left empty..."
+                    placeholder="If left blank, matched text will simply be removed"
                     className={`w-full px-2 py-1 font-mono text-xs rounded border outline-none transition-all ${
                       !rule.isActive
                         ? 'bg-[#020617]/30 border-slate-900/50 text-slate-600 placeholder:text-slate-700'
@@ -367,7 +508,7 @@ export default function PatternManager({ rules, onChange, ruleStats, onSaveTempl
 
                 {/* Flag Toggles */}
                 {rule.isActive && (
-                  <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 mt-2 pt-2 border-t border-slate-900">
+                  <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 mt-2 pt-2 border-t border-slate-900" draggable={false} onMouseDown={(e) => e.stopPropagation()}>
                     <span className="text-[9px] uppercase tracking-wider font-bold text-slate-500 mr-1 select-none">
                       Flags:
                     </span>
