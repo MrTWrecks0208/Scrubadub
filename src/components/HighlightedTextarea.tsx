@@ -1,11 +1,12 @@
 import React, { useMemo, useRef, useEffect } from 'react';
-import { RegexRule, HIGHLIGHT_COLORS, getStableRuleColor } from '../types';
+import { RegexRule, CleanResult, HIGHLIGHT_COLORS, getStableRuleColor, RuleColor } from '../types';
 
 interface HighlightedTextareaProps {
   value: string;
   onChange: (val: string) => void;
   placeholder?: string;
   rules: RegexRule[];
+  ruleStats?: CleanResult['ruleStats'];
 }
 
 interface MatchRange {
@@ -14,7 +15,7 @@ interface MatchRange {
   ruleIds: string[];
 }
 
-export default function HighlightedTextarea({ value, onChange, placeholder, rules }: HighlightedTextareaProps) {
+export default function HighlightedTextarea({ value, onChange, placeholder, rules, ruleStats }: HighlightedTextareaProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const backdropRef = useRef<HTMLDivElement>(null);
 
@@ -26,7 +27,8 @@ export default function HighlightedTextarea({ value, onChange, placeholder, rule
     }
   };
 
-  const isTooLarge = value.length > 20000;
+  // Support up to 200,000 characters for rich visual highlight previewing
+  const isTooLarge = value.length > 200000;
 
   // Segment calculation for highlights
   const highlightedSegments = useMemo(() => {
@@ -34,33 +36,58 @@ export default function HighlightedTextarea({ value, onChange, placeholder, rule
       return [{ isMatch: false, text: value || '', ruleIds: [] }];
     }
 
-    let ranges: MatchRange[] = [];
+    const ranges: MatchRange[] = [];
 
     // Gather matches from all active rules
     for (const rule of rules) {
       if (!rule.isActive || !rule.pattern) continue;
 
-      let flags = 'g';
-      if (rule.flags.caseInsensitive) flags += 'i';
-      if (rule.flags.multiline) flags += 'm';
-      if (rule.flags.dotAll) flags += 's';
+      let flags = '';
+      if (rule.flags?.global !== false) flags += 'g';
+      if (rule.flags?.caseInsensitive) flags += 'i';
+      if (rule.flags?.multiline) flags += 'm';
+      if (rule.flags?.dotAll) flags += 's';
 
       try {
         const rx = new RegExp(rule.pattern, flags);
-        const matches = Array.from(value.matchAll(rx));
-        for (const match of matches) {
-          if (match.index === undefined) continue;
-          const start = match.index;
-          const end = start + match[0].length;
-          if (start === end) continue;
+        
+        if (rx.global) {
+          let match: RegExpExecArray | null;
+          let iterations = 0;
+          const maxIterations = 10000; // Safety guard against catastrophic infinite loops
 
-          ranges.push({
-            start,
-            end,
-            ruleIds: [rule.id],
-          });
+          while ((match = rx.exec(value)) !== null && iterations < maxIterations) {
+            iterations++;
+            const start = match.index;
+            const matchLen = match[0].length;
+            const end = start + matchLen;
+
+            if (matchLen > 0) {
+              ranges.push({
+                start,
+                end,
+                ruleIds: [rule.id],
+              });
+            }
+
+            // If zero-width match, advance lastIndex manually to avoid infinite loop
+            if (matchLen === 0) {
+              rx.lastIndex = Math.max(match.index + 1, rx.lastIndex + 1);
+            }
+
+            if (rx.lastIndex > value.length) break;
+          }
+        } else {
+          const match = rx.exec(value);
+          if (match && match[0].length > 0) {
+            ranges.push({
+              start: match.index,
+              end: match.index + match[0].length,
+              ruleIds: [rule.id],
+            });
+          }
         }
-      } catch (e) {
+      } catch {
         // Ignore invalid regexes during typing
       }
     }
@@ -69,12 +96,13 @@ export default function HighlightedTextarea({ value, onChange, placeholder, rule
       return [{ isMatch: false, text: value, ruleIds: [] }];
     }
 
-    // Sort and merge overlapping ranges
+    // Sort ranges by start position, then by length descending
     ranges.sort((a, b) => {
       if (a.start !== b.start) return a.start - b.start;
-      return b.end - a.end;
+      return (b.end - b.start) - (a.end - a.start);
     });
 
+    // Merge overlapping ranges
     const mergedRanges: MatchRange[] = [];
     let current = { ...ranges[0], ruleIds: [...ranges[0].ruleIds] };
 
@@ -84,11 +112,11 @@ export default function HighlightedTextarea({ value, onChange, placeholder, rule
         if (next.end > current.end) {
           current.end = next.end;
         }
-        next.ruleIds.forEach(id => {
+        for (const id of next.ruleIds) {
           if (!current.ruleIds.includes(id)) {
             current.ruleIds.push(id);
           }
-        });
+        }
       } else {
         mergedRanges.push(current);
         current = { ...next, ruleIds: [...next.ruleIds] };
@@ -96,28 +124,33 @@ export default function HighlightedTextarea({ value, onChange, placeholder, rule
     }
     mergedRanges.push(current);
 
-    // Build segment elements
+    // Build slice segments for seamless backdrop rendering
     const segments: { isMatch: boolean; text: string; ruleIds: string[]; start?: number; end?: number }[] = [];
     let lastPos = 0;
 
     for (const range of mergedRanges) {
-      if (range.start > lastPos) {
+      const segStart = Math.max(lastPos, range.start);
+      const segEnd = Math.max(segStart, range.end);
+
+      if (segStart > lastPos) {
         segments.push({
           isMatch: false,
-          text: value.slice(lastPos, range.start),
+          text: value.slice(lastPos, segStart),
           ruleIds: [],
         });
       }
 
-      segments.push({
-        isMatch: true,
-        text: value.slice(range.start, range.end),
-        ruleIds: range.ruleIds,
-        start: range.start,
-        end: range.end,
-      });
+      if (segEnd > segStart) {
+        segments.push({
+          isMatch: true,
+          text: value.slice(segStart, segEnd),
+          ruleIds: range.ruleIds,
+          start: segStart,
+          end: segEnd,
+        });
+      }
 
-      lastPos = range.end;
+      lastPos = segEnd;
     }
 
     if (lastPos < value.length) {
@@ -147,9 +180,9 @@ export default function HighlightedTextarea({ value, onChange, placeholder, rule
     if (!rule.isActive || !rule.pattern || !textareaRef.current) return;
 
     let flags = 'g';
-    if (rule.flags.caseInsensitive) flags += 'i';
-    if (rule.flags.multiline) flags += 'm';
-    if (rule.flags.dotAll) flags += 's';
+    if (rule.flags?.caseInsensitive) flags += 'i';
+    if (rule.flags?.multiline) flags += 'm';
+    if (rule.flags?.dotAll) flags += 's';
 
     try {
       const rx = new RegExp(rule.pattern, flags);
@@ -208,17 +241,23 @@ export default function HighlightedTextarea({ value, onChange, placeholder, rule
           behavior: 'smooth',
         });
       }
-    } catch (e) {
+    } catch {
       // Ignore invalid regex
     }
   };
 
   const getRuleMatchCount = (rule: RegexRule) => {
+    // Prefer stats from execution pipeline if available
+    const stat = ruleStats?.find(s => s.ruleId === rule.id);
+    if (stat && stat.matchesRemoved !== undefined) {
+      return stat.matchesRemoved;
+    }
+
     if (!rule.isActive || !rule.pattern) return 0;
     let flags = 'g';
-    if (rule.flags.caseInsensitive) flags += 'i';
-    if (rule.flags.multiline) flags += 'm';
-    if (rule.flags.dotAll) flags += 's';
+    if (rule.flags?.caseInsensitive) flags += 'i';
+    if (rule.flags?.multiline) flags += 'm';
+    if (rule.flags?.dotAll) flags += 's';
     try {
       const rx = new RegExp(rule.pattern, flags);
       const matches = Array.from(value.matchAll(rx)).filter(m => m.index !== undefined && m[0].length > 0);
@@ -227,6 +266,16 @@ export default function HighlightedTextarea({ value, onChange, placeholder, rule
       return 0;
     }
   };
+
+  // Find all active rules that have matches (either in raw text or via pipeline stats)
+  const rulesWithMatches = useMemo(() => {
+    return rules.filter(r => {
+      if (!r.isActive || !r.pattern) return false;
+      const count = getRuleMatchCount(r);
+      if (count > 0) return true;
+      return highlightedSegments.some(seg => seg.isMatch && seg.ruleIds?.includes(r.id));
+    });
+  }, [rules, highlightedSegments, ruleStats, value]);
 
   return (
     <div className="flex flex-col space-y-1.5">
@@ -249,7 +298,7 @@ export default function HighlightedTextarea({ value, onChange, placeholder, rule
           overflow-x: hidden !important;
         }
 
-        /* Custom scrollbar for textarea to look stunning and consistent */
+        /* Custom scrollbar for textarea */
         .custom-scrollbar::-webkit-scrollbar {
           width: 8px !important;
           height: 8px !important;
@@ -292,126 +341,8 @@ export default function HighlightedTextarea({ value, onChange, placeholder, rule
           margin: 0 !important;
         }
 
-        .sync-text-styles mark.highlight-rose {
-          background-color: rgba(244, 63, 94, 0.22) !important;
-          border-bottom: 1.5px solid rgba(244, 63, 94, 0.55) !important;
-        }
-        .sync-text-styles mark.highlight-orange {
-          background-color: rgba(249, 115, 22, 0.22) !important;
-          border-bottom: 1.5px solid rgba(249, 115, 22, 0.55) !important;
-        }
-        .sync-text-styles mark.highlight-amber {
-          background-color: rgba(245, 158, 11, 0.22) !important;
-          border-bottom: 1.5px solid rgba(245, 158, 11, 0.55) !important;
-        }
-        .sync-text-styles mark.highlight-lime {
-          background-color: rgba(132, 204, 22, 0.22) !important;
-          border-bottom: 1.5px solid rgba(132, 204, 22, 0.55) !important;
-        }
-        .sync-text-styles mark.highlight-green {
-          background-color: rgba(34, 197, 94, 0.22) !important;
-          border-bottom: 1.5px solid rgba(34, 197, 94, 0.55) !important;
-        }
-        .sync-text-styles mark.highlight-emerald {
-          background-color: rgba(16, 185, 129, 0.22) !important;
-          border-bottom: 1.5px solid rgba(16, 185, 129, 0.55) !important;
-        }
-        .sync-text-styles mark.highlight-teal {
-          background-color: rgba(20, 184, 166, 0.22) !important;
-          border-bottom: 1.5px solid rgba(20, 184, 166, 0.55) !important;
-        }
-        .sync-text-styles mark.highlight-cyan {
-          background-color: rgba(6, 182, 212, 0.22) !important;
-          border-bottom: 1.5px solid rgba(6, 182, 212, 0.55) !important;
-        }
-        .sync-text-styles mark.highlight-sky {
-          background-color: rgba(14, 165, 233, 0.22) !important;
-          border-bottom: 1.5px solid rgba(14, 165, 233, 0.55) !important;
-        }
-        .sync-text-styles mark.highlight-blue {
-          background-color: rgba(59, 130, 246, 0.22) !important;
-          border-bottom: 1.5px solid rgba(59, 130, 246, 0.55) !important;
-        }
-        .sync-text-styles mark.highlight-indigo {
-          background-color: rgba(99, 102, 241, 0.22) !important;
-          border-bottom: 1.5px solid rgba(99, 102, 241, 0.55) !important;
-        }
-        .sync-text-styles mark.highlight-violet {
-          background-color: rgba(139, 92, 246, 0.22) !important;
-          border-bottom: 1.5px solid rgba(139, 92, 246, 0.55) !important;
-        }
-        .sync-text-styles mark.highlight-purple {
-          background-color: rgba(168, 85, 247, 0.22) !important;
-          border-bottom: 1.5px solid rgba(168, 85, 247, 0.55) !important;
-        }
-        .sync-text-styles mark.highlight-fuchsia {
-          background-color: rgba(217, 70, 239, 0.22) !important;
-          border-bottom: 1.5px solid rgba(217, 70, 239, 0.55) !important;
-        }
-        .sync-text-styles mark.highlight-pink {
-          background-color: rgba(236, 72, 153, 0.22) !important;
-          border-bottom: 1.5px solid rgba(236, 72, 153, 0.55) !important;
-        }
-
-        .indicator-rose {
-          background-color: rgba(244, 63, 94, 0.22) !important;
-          border-color: rgba(244, 63, 94, 0.55) !important;
-        }
-        .indicator-orange {
-          background-color: rgba(249, 115, 22, 0.22) !important;
-          border-color: rgba(249, 115, 22, 0.55) !important;
-        }
-        .indicator-amber {
-          background-color: rgba(245, 158, 11, 0.22) !important;
-          border-color: rgba(245, 158, 11, 0.55) !important;
-        }
-        .indicator-lime {
-          background-color: rgba(132, 204, 22, 0.22) !important;
-          border-color: rgba(132, 204, 22, 0.55) !important;
-        }
-        .indicator-green {
-          background-color: rgba(34, 197, 94, 0.22) !important;
-          border-color: rgba(34, 197, 94, 0.55) !important;
-        }
-        .indicator-emerald {
-          background-color: rgba(16, 185, 129, 0.22) !important;
-          border-color: rgba(16, 185, 129, 0.55) !important;
-        }
-        .indicator-teal {
-          background-color: rgba(20, 184, 166, 0.22) !important;
-          border-color: rgba(20, 184, 166, 0.55) !important;
-        }
-        .indicator-cyan {
-          background-color: rgba(6, 182, 212, 0.22) !important;
-          border-color: rgba(6, 182, 212, 0.55) !important;
-        }
-        .indicator-sky {
-          background-color: rgba(14, 165, 233, 0.22) !important;
-          border-color: rgba(14, 165, 233, 0.55) !important;
-        }
-        .indicator-blue {
-          background-color: rgba(59, 130, 246, 0.22) !important;
-          border-color: rgba(59, 130, 246, 0.55) !important;
-        }
-        .indicator-indigo {
-          background-color: rgba(99, 102, 241, 0.22) !important;
-          border-color: rgba(99, 102, 241, 0.55) !important;
-        }
-        .indicator-violet {
-          background-color: rgba(139, 92, 246, 0.22) !important;
-          border-color: rgba(139, 92, 246, 0.55) !important;
-        }
-        .indicator-purple {
-          background-color: rgba(168, 85, 247, 0.22) !important;
-          border-color: rgba(168, 85, 247, 0.55) !important;
-        }
-        .indicator-fuchsia {
-          background-color: rgba(217, 70, 239, 0.22) !important;
-          border-color: rgba(217, 70, 239, 0.55) !important;
-        }
-        .indicator-pink {
-          background-color: rgba(236, 72, 153, 0.22) !important;
-          border-color: rgba(236, 72, 153, 0.55) !important;
+        .sync-text-styles textarea {
+          background: transparent !important;
         }
 
         .sync-text-styles span {
@@ -433,17 +364,18 @@ export default function HighlightedTextarea({ value, onChange, placeholder, rule
             if (seg.isMatch) {
               const firstRuleId = seg.ruleIds?.[0];
               const ruleColor = firstRuleId ? getStableRuleColor(firstRuleId, rules) : null;
-              const colorName = ruleColor ? ruleColor.name : 'amber';
+              const bgStyle = ruleColor ? ruleColor.bg : 'rgba(245, 158, 11, 0.28)';
+              const borderStyle = ruleColor ? ruleColor.border : 'rgba(245, 158, 11, 0.65)';
               return (
                 <mark 
                   key={idx} 
                   data-match-start={seg.start} 
                   data-match-end={seg.end}
-                  className={`highlight-${colorName}`}
-                  style={ruleColor ? {
-                    backgroundColor: ruleColor.bg,
-                    borderBottom: `1.5px solid ${ruleColor.border}`
-                  } : undefined}
+                  style={{
+                    backgroundColor: bgStyle,
+                    borderBottom: `2px solid ${borderStyle}`,
+                    boxShadow: `0 0 6px ${bgStyle}`,
+                  }}
                 >
                   {seg.text}
                 </mark>
@@ -462,37 +394,44 @@ export default function HighlightedTextarea({ value, onChange, placeholder, rule
           onChange={(e) => onChange(e.target.value)}
           onScroll={handleScroll}
           placeholder={placeholder}
-          className="sync-text-styles custom-scrollbar absolute inset-0 overflow-auto bg-transparent! text-slate-300 caret-indigo-400 focus:ring-0 focus:outline-hidden resize-none"
+          style={{ background: 'transparent' }}
+          className="sync-text-styles custom-scrollbar absolute inset-0 overflow-auto text-slate-300 caret-indigo-400 focus:ring-0 focus:outline-hidden resize-none"
           spellCheck={false}
         />
       </div>
+
+      {isTooLarge && (
+        <div className="text-[10px] font-mono text-amber-400/90 bg-amber-950/20 border border-amber-900/40 rounded px-2.5 py-1">
+          Text exceeds 200,000 characters. Live highlight rendering is paused for performance, but all scrubbing rules are active and running.
+        </div>
+      )}
  
       {/* Mini status helper */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[9px] font-mono font-bold text-slate-500 uppercase tracking-wider px-1">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-slate-400">Matched Regions ({activeMatchesCount}):</span>
-          {rules.filter(r => r.isActive && highlightedSegments.some(seg => seg.isMatch && seg.ruleIds?.includes(r.id))).length > 0 ? (
+          <span className="text-slate-400">
+            Matched Regions ({activeMatchesCount > 0 ? activeMatchesCount : rulesWithMatches.reduce((acc, r) => acc + getRuleMatchCount(r), 0)}):
+          </span>
+          {rulesWithMatches.length > 0 ? (
             <div className="flex items-center gap-2 flex-wrap">
-              {rules
-                .filter(r => r.isActive && highlightedSegments.some(seg => seg.isMatch && seg.ruleIds?.includes(r.id)))
-                .map((r) => {
-                  const color = getStableRuleColor(r.id, rules);
-                  const count = getRuleMatchCount(r);
-                  return (
-                    <button
-                      key={r.id}
-                      type="button"
-                      onClick={() => handleJumpToRuleMatch(r)}
-                      className={`flex items-center gap-1.5 active:scale-95 px-2 py-0.5 rounded border transition-all cursor-pointer group/badge shadow-xs ${
-                        color.neonButtonClass || 'bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 hover:text-rose-300 border-rose-500/60 hover:border-rose-400/80'
-                      }`}
-                      title={`Click to jump to match in Source Text (${count} match${count !== 1 ? 'es' : ''})`}
-                    >
-                      <span className="text-[9px] font-mono font-bold truncate max-w-[110px]">{r.name || 'Rule'}</span>
-                      <span className="text-[8px] font-mono opacity-80 group-hover/badge:opacity-100">({count})</span>
-                    </button>
-                  );
-                })}
+              {rulesWithMatches.map((r) => {
+                const color = getStableRuleColor(r.id, rules);
+                const count = getRuleMatchCount(r);
+                return (
+                  <button
+                    key={r.id}
+                    type="button"
+                    onClick={() => handleJumpToRuleMatch(r)}
+                    className={`flex items-center gap-1.5 active:scale-95 px-2 py-0.5 rounded border transition-all cursor-pointer group/badge shadow-xs ${
+                      color.neonButtonClass || 'bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 hover:text-rose-300 border-rose-500/60 hover:border-rose-400/80'
+                    }`}
+                    title={`Click to jump to match in Source Text (${count} match${count !== 1 ? 'es' : ''})`}
+                  >
+                    <span className="text-[9px] font-mono font-bold truncate max-w-[110px]">{r.name || 'Rule'}</span>
+                    <span className="text-[8px] font-mono opacity-80 group-hover/badge:opacity-100">({count})</span>
+                  </button>
+                );
+              })}
             </div>
           ) : (
             <span className="text-slate-600 font-medium">None</span>
@@ -504,3 +443,4 @@ export default function HighlightedTextarea({ value, onChange, placeholder, rule
     </div>
   );
 }
+

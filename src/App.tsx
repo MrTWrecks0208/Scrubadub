@@ -634,6 +634,7 @@ export default function App() {
                   onChange={setInputText}
                   placeholder="Paste text here..."
                   rules={rules}
+                  ruleStats={cleanResult.ruleStats}
                 />
                 
                 {/* Statistics Row */}
