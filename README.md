@@ -23,7 +23,7 @@ A high-performance, real-time text sanitization and multi-rule Regular Expressio
       - [Enable/Disable](#enabledisable)
       - [Saving Rules](#saving-rules)
   - [Rule Sets](#rule-sets)
-    - Understanding Rule Sets(#understanding-rule-sets) 
+    - [Understanding Rule Sets](#understanding-rule-sets) 
     - [Accounts](#accounts)   
   - [Scrubbed Output](#scrubbed-output)
     - [Copy](#copy)
@@ -83,9 +83,11 @@ The Scrubadub workspace is organized into two primary columns below the top head
 <details>
 <summary>📋 Getting Started</summary>
 <br/>
-  ### Source Input
+  
+### Source Input
 
-  The **Source Input** pane (top-left) is your raw document workspace.
+  The **Source Input** pane is on the left-hand side of the screen. Paste your text into the Source Input.
+  The engine operates on an ordered list of rules. When text is entered into the Source Input, it passes through Rule 1. The resulting text is then fed directly into Rule 2 and so on through the end of your active rules.
 
 #### Matched Regions
 - As you enter, paste, or edit text in the Source Input, Scrubadub highlights every matched text segment in real time.
@@ -95,10 +97,6 @@ The Scrubadub workspace is organized into two primary columns below the top head
 - To test rules immediately without exposing real customer data or searching for test files, click the **`Generate Sample Data`** button above the source editor.
 - Scrubadub automatically injects structured test data tailored to your active rules (including realistic mock emails, phone numbers, IP addresses, JSON objects, or server logs).
 ### Rules & Rule Sets
-
-The engine operates on an ordered list of rules. When text is entered into the Source Input, it passes through Rule 1; the resulting text is then fed directly into Rule 2, and so on through the end of your active rules.
-
-
 
 #### Creating Rules
 - Click the **`+ Add Rule`** button in the Rules panel to append a new blank rule.
@@ -130,7 +128,7 @@ The engine operates on an ordered list of rules. When text is entered into the S
      - *"Extract dollar amounts like $1,250.00"*
   3. The Gemini AI synthesizes the regular expression, provides a step-by-step breakdown of how the tokens work, and inserts the completed rule into your rules list with recommended flags.
 
-#### Replace With
+### Replace With
 - In the **Replace With** field, enter the replacement string that will substitute for each matched occurrence.
 - **Blank / Empty (Default)**: If left blank, matched text will simply be removed from the final output.
 - **Literal Text Replacement**: Enter literal placeholder strings such as `[REDACTED]`, `***`, `HIDDEN`, or `0.0.0.0`.
@@ -139,21 +137,21 @@ The engine operates on an ordered list of rules. When text is entered into the S
   - `$&`: Inserts the entire matched substring.
   - *Example*: Pattern `(\w+)\s(\w+)` with Replace With `$2, $1` transforms `"John Doe"` into `"Doe, John"`.
 
-#### Flags
+### Flags
 Each rule includes toggleable flag pills that alter regular expression engine behavior:
 - **`g` (Global Match)**: Finds all matches across the entire text rather than stopping after the first occurrence. (Recommended for scrubbing).
 - **`i` (Case Insensitive)**: Ignores character casing so that `[a-z]` matches uppercase letters as well.
 - **`m` (Multiline Mode)**: Treats the beginning (`^`) and end (`$`) assertions as matching the start and end of each individual line, rather than the start and end of the entire input string.
 - **`s` (DotAll / Single Line)**: Allows the dot `.` wildcard to match newline characters (`\n`), enabling matches that span across multiple lines.
 
-#### Enable/Disable
+### Enable/Disable
 - Every rule card includes an **Active Toggle switch**.
 - You can turn individual rules off temporarily to test how the rest of your rules behave, without having to delete the rule or lose its configuration.
 
-#### Saving Rules
+### Saving Rules
 Scrubadub requires an account in order to save custom rule sets. Please refer to the section below, "Rule Sets", for more information. 
 
-### Rule Sets
+## Rule Sets
 - Once you have configured and tested your rules, you can bundle them into a permanent **Rule Set**.
 - Click the **`Save Rule Set`** button in the top action bar or rules header.
 - Provide a name (e.g., *"Kubernetes Log Sanitizer"*) and an optional description.
