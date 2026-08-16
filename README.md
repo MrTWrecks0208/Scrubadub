@@ -24,15 +24,14 @@ A high-performance, real-time text sanitization and multi-rule Regular Expressio
       - [Saving Rules](#saving-rules)
   - [Rule Sets](#rule-sets)
     - [Understanding Rule Sets](#understanding-rule-sets) 
-    - [Accounts](#accounts)   
   - [Scrubbed Output](#scrubbed-output)
     - [Copy](#copy)
     - [Download](#download)
     - [Stats](#stats)
 - [Additional Resources](#additional-resources)
-- [RegEx Cheat Sheet (regex101.com)](#regex-cheat-sheet-regex101com)
+  - [RegEx Cheat Sheet (regex101.com)](#regex-cheat-sheet-regex101com)
+  - [Quick Reference Table](#quick-reference-table)
 
----
 <details>
 <summary>🔍 Overview</summary> 
 <br/>
@@ -79,12 +78,11 @@ The Scrubadub workspace is organized into two primary columns below the top head
    - **AI Rule Generator (Top Right)**: Describe matching patterns in plain English to automatically synthesize rules.
    - **Rules List (Bottom Right)**: Add rules, reorder them, adjust regex patterns and replacements, toggle flags (`g`, `i`, `m`, `s`), enable/disable rules, and save your rules into custom rule sets.
 </details>
-<br/>
 <details>
 <summary>📋 Getting Started</summary>
 <br/>
-  
-### Source Input
+  <details>
+<summary>Source Input</summary>
 
   The **Source Input** pane is on the left-hand side of the screen. Paste your text into the Source Input.
   The engine operates on an ordered list of rules. When text is entered into the Source Input, it passes through Rule 1. The resulting text is then fed directly into Rule 2 and so on through the end of your active rules.
@@ -96,8 +94,10 @@ The Scrubadub workspace is organized into two primary columns below the top head
 #### Generate Sample Data
 - To test rules immediately without exposing real customer data or searching for test files, click the **`Generate Sample Data`** button above the source editor.
 - Scrubadub automatically injects structured test data tailored to your active rules (including realistic mock emails, phone numbers, IP addresses, JSON objects, or server logs).
-### Rules & Rule Sets
-
+</details>
+<details></details>
+<summary>Rules & Rule Sets</summary>
+<br/>
 #### Creating Rules
 - Click the **`+ Add Rule`** button in the Rules panel to append a new blank rule.
 - You can create as many rules as needed to handle distinct patterns independently.
@@ -150,8 +150,9 @@ Each rule includes toggleable flag pills that alter regular expression engine be
 
 ### Saving Rules
 Scrubadub requires an account in order to save custom rule sets. Please refer to the section below, "Rule Sets", for more information. 
-
-## Rule Sets
+</details>
+<details>
+<summary>Rule Sets</summary>
 <br/>
 ### Understanding Rule Sets
 <strong>_Note: You <ul>MUST</ul> create an account in order to create and save custom rule sets and sync them across all of your devices._</strong>
@@ -161,9 +162,10 @@ Scrubadub requires an account in order to save custom rule sets. Please refer to
 - Provide a name (e.g., *"Kubernetes Log Sanitizer"*) and an optional description.
 - Your saved rule sets will appear in the **Custom Rule Sets** bar at the top for one-click loading on any device where you are signed in.
 - You can manage, update, or delete existing custom rule sets from the custom rule sets bar.
-
-### Scrubbed Output
-
+</details>
+<details>
+<summary>Scrubbed Output</summary>
+<br/>
 The **Scrubbed Output** pane is on bottom-left hand side of the screen below the Source Input pane. The Scrubbed Output pane displays the real-time result produced by executing your active rules against the source text.
 
 #### Copy
@@ -179,20 +181,16 @@ The telemetry toolbar at the top of the output panel displays real-time executio
 - **Characters Altered / Removed**: The net difference in character count between the raw input and the final scrubbed output.
 - **Line & Word Counts**: Total line and word counts for the sanitized document.
 - **Execution Time**: The time in milliseconds (ms) taken to execute your rules, ensuring high-throughput performance.
-
 </details>
-
-
-
----
-
-## Additional Resources
-
+</details>
+<details>
+<summary>Additional Resources</summary>
+<br/>
 ### RegEx Cheat Sheet
 
 For testing complex patterns, inspecting detailed regex token trees, and debugging regular expressions, visit [regex101.com](https://regex101.com).
 
-#### Quick Reference Table
+### Quick Reference Table
 
 | Category | Token | Description | Example |
 | :--- | :--- | :--- | :--- |
