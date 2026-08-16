@@ -1,8 +1,6 @@
 # Scrubadub
 
-A high-performance, real-time text sanitization and multi-rule Regular Expression (RegEx) scrubber for developers, data analysts, security engineers, and privacy-conscious users.
-
----
+A real-time multi-string match and replace tool which allows you to create any number of rules to find and replace as many strings or patterns as needed within a larger body of text. 
 
 ## Table of Contents
 
@@ -35,7 +33,7 @@ A high-performance, real-time text sanitization and multi-rule Regular Expressio
 <details>
 <summary>🔍 Overview</summary> 
 <br/>
-**Scrubadub** is an interactive, browser-based text scrubbing and transformation tool. It enables you to chain multiple Regular Expression rules together into an ordered rule set that processes raw text, redacts sensitive information (PII), strips unwanted markup, normalizes logs, and formats structured data in real time.
+**Scrubadub** is an interactive, browser-based text scrubbing and transformation tool. It enables you to chain multiple Regular Expression rules together into an ordered rule set that processes text, redacts sensitive information (PII), strips unwanted markup, normalizes logs, and formats structured data in real time.
 
 ### Key Principles
 - **Sequential Execution**: Rules run from top to bottom. Each rule operates on the transformed output of the rule that preceded it.
