@@ -23,15 +23,14 @@ A high-performance, real-time text sanitization and multi-rule Regular Expressio
       - [Enable/Disable](#enabledisable)
       - [Saving Rules](#saving-rules)
   - [Rule Sets](#rule-sets)
-  - 
+    - Understanding Rule Sets(#understanding-rule-sets) 
+    - [Accounts](#accounts)   
   - [Scrubbed Output](#scrubbed-output)
     - [Copy](#copy)
     - [Download](#download)
     - [Stats](#stats)
-  - [Accounts](#accounts)
-    - [Must have account to save custom rule sets](#must-have-account-to-save-custom-rule-sets)
 - [Additional Resources](#additional-resources)
-  - [RegEx Cheat Sheet (regex101.com)](#regex-cheat-sheet-regex101com)
+- [RegEx Cheat Sheet (regex101.com)](#regex-cheat-sheet-regex101com)
 
 ---
 <details>
