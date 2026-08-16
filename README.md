@@ -4,7 +4,7 @@ Scrubadub is a real-time multi-string search and replace tool for developers, da
 
 ---
 
-## Table of Contents
+## Table of C1ontents
 
 - [Overview](#overview)
 - [Layout](#layout)
