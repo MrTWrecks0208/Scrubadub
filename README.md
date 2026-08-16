@@ -16,11 +16,14 @@ Scrubadub is a real-time multi-string search and replace tool for developers, da
       - [Entering Patterns](#entering-patterns)
         - [Regular Expressions](#regular-expressions)
         - [AI Rule Generator](#ai-rule-generator)
-      -  [Replace With](#replace-with)
+      - [Replace With](#replace-with)
       - [Flags](#flags)
       - [Enable/Disable](#enabledisable)
       - [Saving Rules](#saving-rules)
     - [Rule Sets](#rule-sets)
+      - [Understanding Rule Sets](#understanding-rule-sets)
+      - [Saving Rule Sets](#saving-rule-sets)
+      - [Accounts](#accounts)
   - [Source Input](#source-input)
     - [Matched Regions](#matched-regions)
     - [Generate Sample Data](#generate-sample-data)
@@ -29,7 +32,7 @@ Scrubadub is a real-time multi-string search and replace tool for developers, da
     - [Download](#download)
     - [Stats](#stats)
 - [Additional Resources](#additional-resources)
-  - [RegEx Cheat Sheet (regex101.com)](#regex-cheat-sheet-regex101com)
+  - [RegEx Cheat Sheet](#regex-cheat-sheet-regex101com)
 
 ---
 
@@ -112,7 +115,7 @@ The **Source Input** pane on the left-hand side of your screen is where you will
 <br/>
 The engine operates on an ordered list of rules. When text is entered into the Source Input, it passes through Rule 1; the resulting text is then fed directly into Rule 2, and so on through the end of your active rules.
 <br/>
-### Rules
+### 📐 Rules
 <br/>
 ### Creating Rules
 - Click the **`+ Add Rule`** button in the Rules panel to append a new blank rule.
@@ -166,10 +169,12 @@ Each rule includes toggleable flag pills that alter regular expression engine be
 
 ### Saving Rules
 <strong>🔔 Please refer to the section below titled "💾 Saving Rules".</strong>
-
-## Rule Sets
+</details>
 <br/>
-### Rule Sets
+<details>
+<summary>📐📐 Rule Sets</summary>
+<br/>
+### Understanding Rule Sets
 - Once you have configured and tested your rules, you can bundle them into a permanent **Rule Set**.
 - Click the **`Save Rule Set`** button in the top action bar or rules header.
 - Provide a name (e.g., *"Kubernetes Log Sanitizer"*) and an optional description.
@@ -177,11 +182,10 @@ Each rule includes toggleable flag pills that alter regular expression engine be
 - You can manage, update, or delete existing custom rule sets from the custom rule sets bar.
 </details>
 
-<summary>💾 Saving Rules</summary>
-#####<strong>Note</strong>: Scrubadub requires an account in order to save custom rule sets and have them sync across devices. 
+### Saving Rules
+Scrubadub requires an account in order to save custom rule sets and have them sync across devices. Learn more about creating an account in the section below, "Accounts".
 <br/>
-## Accounts
-
+### Accounts
 - **Free Access**: Creating an account is completely free.
 - **Feature Access**: Anyone can use Scrubadub for free with no restrictions and without creating an account. However, you **must create an account to save and manage custom rule sets** in the cloud and have them sync across devices.
 - **Strict Data Privacy & Ownership Policy**:
@@ -190,7 +194,6 @@ Each rule includes toggleable flag pills that alter regular expression engine be
   - We do **not** use your data for advertising, marketing, monetization, or promotional purposes.
   - All text scrubbing operations execute purely within your local browser window.
 </details>
-
 <details>
 <summary>📑 Scrubbed Output</summary>
 <br/>
