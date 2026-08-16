@@ -38,7 +38,7 @@ Scrubadub is a real-time multi-string search and replace tool for developers, da
 
 ## 🔍 Overview
 
-**Scrubadub** is an interactive, browser-based text scrubbing and transformation tool. It enables you to chain multiple Regular Expression, string, or pattern rules together into an ordered rule set that processes raw text, redacts sensitive information (PII), strips unwanted markup, normalizes logs, and formats structured data in real time.
+**Scrubadub** is an interactive, browser-based text scrubbing and transformation tool. It enables you to chain together multiple rules containing Regular Expressions, strings, or patterns into an ordered rule set that processes data in descending order.
 
 ### Key Principles
 - **Sequential Execution**: Rules run from top to bottom. Each rule operates on the transformed output of the rule that preceded it.
