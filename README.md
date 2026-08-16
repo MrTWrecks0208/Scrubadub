@@ -10,16 +10,17 @@ Scrubadub is a real-time multi-string search and replace tool for developers, da
 - [Layout](#layout)
 - [Getting Started](#getting-started)
   - [Rules & Rule Sets](#rules--rule-sets)
-    - [Creating Rules](#creating-rules)
+    - [Rules](#rules)
+      - [Creating Rules](#creating-rules)
       - [Renaming Rules](#renaming-rules)
       - [Entering Patterns](#entering-patterns)
         - [Regular Expressions](#regular-expressions)
         - [AI Rule Generator](#ai-rule-generator)
-      - [Replace With](#replace-with)
+      -  [Replace With](#replace-with)
       - [Flags](#flags)
       - [Enable/Disable](#enabledisable)
-    - [Saving Rules](#saving-rules)
-      - [Rule Sets](#rule-sets)
+      - [Saving Rules](#saving-rules)
+    - [Rule Sets](#rule-sets)
   - [Source Input](#source-input)
     - [Matched Regions](#matched-regions)
     - [Generate Sample Data](#generate-sample-data)
@@ -27,8 +28,6 @@ Scrubadub is a real-time multi-string search and replace tool for developers, da
     - [Copy](#copy)
     - [Download](#download)
     - [Stats](#stats)
-  - [Accounts](#accounts)
-    - [Must have account to save custom rule sets](#must-have-account-to-save-custom-rule-sets)
 - [Additional Resources](#additional-resources)
   - [RegEx Cheat Sheet (regex101.com)](#regex-cheat-sheet-regex101com)
 
@@ -95,7 +94,7 @@ To get started using Scrubadub, simply paste your body of text into the textbox 
 <details>
 <summary>Source Input</summary>
 <br/>
-The **Source Input** pane (top-left) is your raw document workspace.
+The **Source Input** pane on the left-hand side of your screen is where you will paste your text from your clipboard.
 
 #### Matched Regions
 - As you enter, paste, or edit text in the Source Input, Scrubadub highlights every matched text segment in real time.
@@ -112,20 +111,21 @@ The **Source Input** pane (top-left) is your raw document workspace.
 <summary>📋 Rules & Rule Sets</summary>
 <br/>
 The engine operates on an ordered list of rules. When text is entered into the Source Input, it passes through Rule 1; the resulting text is then fed directly into Rule 2, and so on through the end of your active rules.
-## Rules
 <br/>
-#### Creating Rules
+### Rules
+<br/>
+### Creating Rules
 - Click the **`+ Add Rule`** button in the Rules panel to append a new blank rule.
 - You can create as many rules as needed to handle distinct patterns independently.
 - Alternatively, clicking any **Built-in Rule Set** in the top bar will populate your workspace with a curated set of rules tailored to that specific domain.
 
-##### Renaming Rules
+### Renaming Rules
 - Click directly on the rule name field (e.g., `Rule 1`, `Rule 2`) to assign a meaningful label, such as *"Redact SSNs"*, *"Strip <script> tags"*, or *"Mask IPv4 Addresses"*.
 - Naming rules can make it easier to inspect, debug, and maintain.
 
-##### Entering Patterns
+### Entering Patterns
 
-###### Regular Expressions
+#### Regular Expressions
 - In the **Pattern** input field, type standard regular expression syntax (without enclosing forward slashes `/`).
 - **Examples**:
   - `\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b` (Email addresses)
@@ -134,7 +134,7 @@ The engine operates on an ordered list of rules. When text is entered into the S
   - `<[^>]+>` (HTML tags)
 - **Live Syntax Validation**: If your regex contains an invalid token or an unclosed group, an error indicator will immediately alert you without interrupting your session.
 
-###### AI Rule Generator
+#### AI Rule Generator
 - If you are new to regex and/or don't know the exact syntax or are dealing with complex edge cases:
   1. Click the **`AI Assistant`** / **`Generate with AI`** button in the header or rule section.
   2. Enter a natural language description of what you want to match, such as:
@@ -144,7 +144,7 @@ The engine operates on an ordered list of rules. When text is entered into the S
      - *"Extract dollar amounts like $1,250.00"*
   3. The Gemini AI synthesizes the regular expression, provides a step-by-step breakdown of how the tokens work, and inserts the completed rule into your rules list with recommended flags.
 
-##### Replace With
+### Replace With
 - In the **Replace With** field, enter the replacement string that will substitute for each matched occurrence.
 - **Blank / Empty (Default)**: If left blank, matched text will simply be removed from the final output.
 - **Literal Text Replacement**: Enter literal placeholder strings such as `[REDACTED]`, `***`, `HIDDEN`, or `0.0.0.0`.
@@ -153,21 +153,23 @@ The engine operates on an ordered list of rules. When text is entered into the S
   - `$&`: Inserts the entire matched substring.
   - *Example*: Pattern `(\w+)\s(\w+)` with Replace With `$2, $1` transforms `"John Doe"` into `"Doe, John"`.
 
-##### Flags
+### Flags
 Each rule includes toggleable flag pills that alter regular expression engine behavior:
 - **`g` (Global Match)**: Finds all matches across the entire text rather than stopping after the first occurrence. (Recommended).
 - **`i` (Case Insensitive)**: Ignores character casing so that `[a-z]` matches uppercase letters as well.
 - **`m` (Multiline Mode)**: Treats the beginning (`^`) and end (`$`) assertions as matching the start and end of each individual line, rather than the start and end of the entire input string.
 - **`s` (DotAll / Single Line)**: Allows the dot `.` wildcard to match newline characters (`\n`), enabling matches that span across multiple lines.
 
-##### Enable/Disable
+### Enable/Disable
 - Every rule card includes an **Active Toggle switch**.
 - You can turn individual rules off temporarily to test how the rest of your rules behave, without having to delete the rule or lose its configuration.
 
-</details>
+### Saving Rules
+<strong>🔔 Please refer to the section below titled "💾 Saving Rules".</strong>
 
 ## Rule Sets
 <br/>
+### Rule Sets
 - Once you have configured and tested your rules, you can bundle them into a permanent **Rule Set**.
 - Click the **`Save Rule Set`** button in the top action bar or rules header.
 - Provide a name (e.g., *"Kubernetes Log Sanitizer"*) and an optional description.
@@ -175,11 +177,10 @@ Each rule includes toggleable flag pills that alter regular expression engine be
 - You can manage, update, or delete existing custom rule sets from the custom rule sets bar.
 </details>
 
-<details>
 <summary>💾 Saving Rules</summary>
-######<strong>Note</strong>: Scrubadub requires an account in order to save custom rule sets and have them sync across devices. 
+#####<strong>Note</strong>: Scrubadub requires an account in order to save custom rule sets and have them sync across devices. 
 <br/>
-### Accounts
+## Accounts
 
 - **Free Access**: Creating an account is completely free.
 - **Feature Access**: Anyone can use Scrubadub for free with no restrictions and without creating an account. However, you **must create an account to save and manage custom rule sets** in the cloud and have them sync across devices.
