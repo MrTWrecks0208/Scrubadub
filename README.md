@@ -1,6 +1,6 @@
 # Scrubadub End-User Documentation
 
-A real-time multi-string search and replace tool for developers, data analysts, security engineers, and privacy-conscious users.
+Scrubadub is a real-time multi-string search and replace tool for developers, data analysts, security engineers, and privacy-conscious users. It allows you to find and replace any number of strings of text within a large body of text.
 
 ---
 
@@ -34,7 +34,7 @@ A real-time multi-string search and replace tool for developers, data analysts, 
 
 ---
 
-## Overview
+## 🔍 Overview
 
 **Scrubadub** is an interactive, browser-based text scrubbing and transformation tool. It enables you to chain multiple Regular Expression, string, or pattern rules together into an ordered rule set that processes raw text, redacts sensitive information (PII), strips unwanted markup, normalizes logs, and formats structured data in real time.
 
@@ -46,7 +46,7 @@ A real-time multi-string search and replace tool for developers, data analysts, 
 
 ---
 
-## Layout
+## 📐 Layout
 
 The Scrubadub workspace is organized into two primary columns below the top header and preset bar:
 
@@ -86,7 +86,7 @@ The Scrubadub workspace is organized into two primary columns below the top head
 
 <details open>
 
-<summary>Getting Started</summary>
+<summary>🚀 Getting Started</summary>
 <br/>
 To get started using Scrubadub, simply paste your body of text into the textbox on the left-hand side of the screen labeled 'Source Input'. Then, start creating rules to scrub the text.
 
@@ -109,10 +109,11 @@ The **Source Input** pane (top-left) is your raw document workspace.
 
 <details>
   
-<summary>Rules & Rule Sets</summary>
+<summary>📋 Rules & Rule Sets</summary>
 <br/>
 The engine operates on an ordered list of rules. When text is entered into the Source Input, it passes through Rule 1; the resulting text is then fed directly into Rule 2, and so on through the end of your active rules.
-
+## Rules
+<br/>
 #### Creating Rules
 - Click the **`+ Add Rule`** button in the Rules panel to append a new blank rule.
 - You can create as many rules as needed to handle distinct patterns independently.
@@ -165,9 +166,7 @@ Each rule includes toggleable flag pills that alter regular expression engine be
 
 </details>
 
-<details>
-
-<summary>Rule Sets</summary>
+## Rule Sets
 <br/>
 - Once you have configured and tested your rules, you can bundle them into a permanent **Rule Set**.
 - Click the **`Save Rule Set`** button in the top action bar or rules header.
@@ -177,7 +176,7 @@ Each rule includes toggleable flag pills that alter regular expression engine be
 </details>
 
 <details>
-<summary>Saving Rules</summary>
+<summary>💾 Saving Rules</summary>
 ######<strong>Note</strong>: Scrubadub requires an account in order to save custom rule sets and have them sync across devices. 
 <br/>
 ### Accounts
@@ -192,7 +191,7 @@ Each rule includes toggleable flag pills that alter regular expression engine be
 </details>
 
 <details>
-<summary>Scrubbed Output</summary>
+<summary>📑 Scrubbed Output</summary>
 <br/>
 The **Scrubbed Output** pane (bottom-left, right below the Source Input) displays the real-time, sanitized result produced by executing your active rules against the source text.
 
@@ -213,7 +212,7 @@ The telemetry toolbar at the top of the output panel displays real-time executio
 
 <details>
 
-<summary>Additional Resources</summary>
+<summary>📑 Additional Resources</summary>
 <br/>
 ### RegEx Cheat Sheet
 
