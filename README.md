@@ -152,16 +152,19 @@ Each rule includes toggleable flag pills that alter regular expression engine be
 Scrubadub requires an account in order to save custom rule sets. Please refer to the section below, "Rule Sets", for more information. 
 
 ## Rule Sets
+<br/>
+### Understanding Rule Sets
+<strong>_Note: You <ul>MUST</ul> create an account in order to create and save custom rule sets and sync them across all of your devices._</strong>
+<br/>
 - Once you have configured and tested your rules, you can bundle them into a permanent **Rule Set**.
 - Click the **`Save Rule Set`** button in the top action bar or rules header.
 - Provide a name (e.g., *"Kubernetes Log Sanitizer"*) and an optional description.
 - Your saved rule sets will appear in the **Custom Rule Sets** bar at the top for one-click loading on any device where you are signed in.
 - You can manage, update, or delete existing custom rule sets from the custom rule sets bar.
-</details>
 
 ### Scrubbed Output
 
-The **Scrubbed Output** pane (bottom-left, right below the Source Input) displays the real-time, sanitized result produced by executing your active rules against the source text.
+The **Scrubbed Output** pane is on bottom-left hand side of the screen below the Source Input pane. The Scrubbed Output pane displays the real-time result produced by executing your active rules against the source text.
 
 #### Copy
 - Click the **`Copy`** button in the output panel header to copy the entire scrubbed text directly to your clipboard.
@@ -177,7 +180,7 @@ The telemetry toolbar at the top of the output panel displays real-time executio
 - **Line & Word Counts**: Total line and word counts for the sanitized document.
 - **Execution Time**: The time in milliseconds (ms) taken to execute your rules, ensuring high-throughput performance.
 
----
+</details>
 
 
 
