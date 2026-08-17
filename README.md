@@ -50,7 +50,7 @@ The Scrubadub workspace is organized into two primary columns below the top head
 **Right Column (Rules Management)**
    - **AI Rule Generator (Top Right)**: Describe matching patterns in plain English to automatically synthesize rules.
    - **Rules List (Bottom Right)**: Add rules, reorder them, adjust regex patterns and replacements, toggle flags (`g`, `i`, `m`, `s`), enable/disable rules, and save your rules into custom rule sets.
-   - 
+     
 </details>
 
 <details>
