@@ -4,7 +4,7 @@ A real-time multi-string match and replace tool which allows you to create any n
 
 ## Table of Contents
 
-- [Overview](https://github.com/MrTWrecks0208/Scrubadub/tree/main/README.md#overview)
+- [Overview](https://github.com/MrTWrecks0208/Scrubadub/tree/main/#overview)
 - [Layout](https://github.com/MrTWrecks0208/Scrubadub/tree/main/README.md#layout)
 - [Getting Started](https://github.com/MrTWrecks0208/Scrubadub/tree/main/README.md#getting-started)
   - [Source Input](https://github.com/MrTWrecks0208/Scrubadub/tree/main/README.md#source-input)
