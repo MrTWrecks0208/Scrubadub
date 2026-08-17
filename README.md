@@ -38,13 +38,15 @@ The Scrubadub workspace is organized into two primary columns below the top head
 └─────────────────────────────────────────┴────────────────────────────────────────┘
 ```
 
-**Header (Logo, Account, and Rule Sets**:
+**Header (Logo, Account, and Rule Sets**
    - Quick-switch selector for built-in rule sets (*PII Redactor*, *HTML Stripper*, *Log Cleaner*, *Code Minifier*).
    - Custom rule sets bar to load or delete your saved custom rule sets.
    - User account & authentication menu.
+
 **Left Column (Editor Panels)**:
    - **Source Input (Top Left)**: Enter or paste your raw text. Live color-coded overlays highlight all matched regions directly under your text cursor. Includes a sample data generator and clear button.
    - **Scrubbed Output (Bottom Left)**: Displays the live sanitized result right below the source input, complete with one-click clipboard copy, plain-text download, and real-time match/alteration statistics.
+
 **Right Column (Rules Management)**:
    - **AI Rule Generator (Top Right)**: Describe matching patterns in plain English to automatically synthesize rules.
    - **Rules List (Bottom Right)**: Add rules, reorder them, adjust regex patterns and replacements, toggle flags (`g`, `i`, `m`, `s`), enable/disable rules, and save your rules into custom rule sets.
