@@ -43,7 +43,7 @@ A real-time multi-string match and replace tool which allows you to create any n
 
 </details>
 <details>
-<summary>Layout</summary>
+<summary>📐 Layout</summary>
 
 The Scrubadub workspace is organized into two primary columns below the top header and preset bar:
 
@@ -150,7 +150,7 @@ Each rule includes toggleable flag pills that alter regular expression engine be
 Scrubadub requires an account in order to save custom rule sets. Please refer to the section below, "Rule Sets", for more information. 
 </details>
 <details>
-<summary>Rule Sets</summary>
+<summary>🧰 Rule Sets</summary>
 <br/>
 ### Understanding Rule Sets
 <strong>_Note: You <ul>MUST</ul> create an account in order to create and save custom rule sets and sync them across all of your devices._</strong>
@@ -182,7 +182,7 @@ The telemetry toolbar at the top of the output panel displays real-time executio
 </details>
 </details>
 <details>
-<summary>Additional Resources</summary>
+<summary>📚 Additional Resources</summary>
 <br/>
 ### RegEx Cheat Sheet
 
