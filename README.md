@@ -1,34 +1,6 @@
-# Scrubadub
+# Scrubadub End-User Doucmentation
 
 A real-time multi-string match and replace tool which allows you to create any number of rules to find and replace as many strings or patterns as needed within a larger body of text. 
-
-## Table of Contents
-
-- [Overview](https://github.com/MrTWrecks0208/Scrubadub/tree/main/#overview)
-- [Layout](https://github.com/MrTWrecks0208/Scrubadub/tree/main/README.md#layout)
-- [Getting Started](https://github.com/MrTWrecks0208/Scrubadub/tree/main/README.md#getting-started)
-  - [Source Input](https://github.com/MrTWrecks0208/Scrubadub/tree/main/README.md#source-input)
-    - [Matched Regions](https://github.com/MrTWrecks0208/Scrubadub/tree/main/README.md#matched-regions)
-    - [Generate Sample Data](https://github.com/MrTWrecks0208/Scrubadub/tree/main/README.md#generate-sample-data)
-  - [Rules](https://github.com/MrTWrecks0208/Scrubadub/tree/main/README.md#rules)
-    - [Creating Rules](https://github.com/MrTWrecks0208/Scrubadub/tree/main/README.md#creating-rules)
-    - [Renaming Rules](https://github.com/MrTWrecks0208/Scrubadub/tree/main/README.md#renaming-rules)
-    - [Patterns](https://github.com/MrTWrecks0208/Scrubadub/tree/main/README.md#patterns)
-      - [Regular Expressions](https://github.com/MrTWrecks0208/Scrubadub/tree/main/README.md#regular-expressions)
-      - [AI Rule Generator](https://github.com/MrTWrecks0208/Scrubadub/tree/main/README.md#ai-rule-generator)
-    - [Replace With](https://github.com/MrTWrecks0208/Scrubadub/tree/main/README.md#replace-with)
-    - [Flags](https://github.com/MrTWrecks0208/Scrubadub/tree/main/README.md#flags)
-    - [Enable/Disable](https://github.com/MrTWrecks0208/Scrubadub/tree/main/README.md#enabledisable)
-    - [Saving Rules](https://github.com/MrTWrecks0208/Scrubadub/tree/main/README.md#saving-rules)
-  - [Rule Sets](https://github.com/MrTWrecks0208/Scrubadub/tree/main/README.md#rule-sets)
-    - [Understanding Rule Sets](https://github.com/MrTWrecks0208/Scrubadub/tree/main/README.md#understanding-rule-sets) 
-  - [Scrubbed Output](https://github.com/MrTWrecks0208/Scrubadub/tree/main/README.md#scrubbed-output)
-    - [Copy](https://github.com/MrTWrecks0208/Scrubadub/tree/main/README.md#copy)
-    - [Download](https://github.com/MrTWrecks0208/Scrubadub/tree/main/README.md#download)
-    - [Stats](https://github.com/MrTWrecks0208/Scrubadub/tree/main/README.md#stats)
-- [Additional Resources](https://github.com/MrTWrecks0208/Scrubadub/tree/main/README.md#additional-resources)
-  - [RegEx Cheat Sheet](https://github.com/MrTWrecks0208/Scrubadub/tree/main/README.md#regex-cheat-sheet)
-  - [Quick Reference Table](https://github.com/MrTWrecks0208/Scrubadub/tree/main/README.md#quick-reference-table)
 
 <details>
   
