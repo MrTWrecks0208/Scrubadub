@@ -144,7 +144,8 @@ Scrubadub requires an account in order to save custom rule sets. Please refer to
 <details>
   
 <summary>🧼 Scrubbed Output</summary>
-The **Scrubbed Output** pane is on bottom-left hand side of the screen below the Source Input pane. The Scrubbed Output pane displays the real-time result produced by executing your active rules against the source text.
+
+The **Scrubbed Output** pane is on the bottom left-hand side of the screen below the Source Input pane. The Scrubbed Output pane displays the real-time result produced by executing your active rules against the source text.
 
 ### Copy
 - Click the **`Copy`** button in the output panel header to copy the entire scrubbed text directly to your clipboard.
