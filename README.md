@@ -1,4 +1,4 @@
-# Scrubadub End-User Doucmentation
+# Scrubadub End-User Documentation
 
 <details open>
   
