@@ -13,7 +13,7 @@ A real-time multi-string match and replace tool which allows you to create any n
   - [Rules](#rules)
     - [Creating Rules](#creating-rules)
     - [Renaming Rules](#renaming-rules)
-    - [Entering Patterns](#entering-patterns)
+    - [Patterns](#entering-patterns)
       - [Regular Expressions](#regular-expressions)
       - [AI Rule Generator](#ai-rule-generator)
     - [Replace With](#replace-with)
@@ -105,7 +105,7 @@ The Scrubadub workspace is organized into two primary columns below the top head
 - Click directly on the rule name field (e.g., `Rule 1`, `Rule 2`) to assign a meaningful label, such as *"Redact SSNs"*, *"Strip <script> tags"*, or *"Mask IPv4 Addresses"*.
 - Naming rules makes multi-step cleaning easy to inspect, debug, and maintain.
 
-### Entering Patterns
+### Patterns
 
 #### Regular Expressions
 - In the **Pattern** input field, type standard ECMAScript / JavaScript regular expression syntax (without enclosing forward slashes `/`).
