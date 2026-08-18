@@ -142,11 +142,22 @@ export default function AIRegexGenerator({ onAddRule, sampleText }: AIRegexGener
 
       {/* Error Message */}
       {error && (
-        <div className="text-xs text-red-400 font-mono bg-red-950/20 border border-red-900/40 rounded p-2.5 flex items-start gap-2">
+        <div className="text-xs text-red-400 font-mono bg-red-950/20 border border-red-900/40 rounded p-3 flex items-start gap-2.5">
           <HelpCircle className="w-4 h-4 shrink-0 text-red-500 mt-0.5" />
-          <div className="space-y-1">
+          <div className="space-y-1.5 flex-1">
             <span className="font-bold text-red-300 block">Generation Failed</span>
-            <p className="leading-relaxed">{error}</p>
+            <p className="leading-relaxed text-slate-300 font-sans text-xs">{error}</p>
+            {error.includes('GEMINI_API_KEY') && (
+              <div className="mt-2 pt-2 border-t border-red-900/40 font-sans text-[11px] text-slate-400 space-y-1">
+                <span className="font-semibold text-amber-300 block">How to configure on your live deployment:</span>
+                <ol className="list-decimal list-inside space-y-0.5 text-slate-300">
+                  <li>Open your <strong>Netlify Site Dashboard</strong> (or hosting dashboard).</li>
+                  <li>Go to <strong>Site configuration</strong> → <strong>Environment variables</strong>.</li>
+                  <li>Add <strong>GEMINI_API_KEY</strong> with your Google Gemini API key.</li>
+                  <li>Trigger a <strong>Deploy</strong> for the serverless functions to pick up the key.</li>
+                </ol>
+              </div>
+            )}
           </div>
         </div>
       )}

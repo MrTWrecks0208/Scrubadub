@@ -22,7 +22,7 @@ export const handler = async (event: any) => {
   }
 
   try {
-    const apiKey = process.env.GEMINI_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_GENAI_API_KEY || process.env.VITE_GEMINI_API_KEY;
     if (!apiKey) {
       return {
         statusCode: 500,
@@ -30,7 +30,9 @@ export const handler = async (event: any) => {
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*'
         },
-        body: JSON.stringify({ error: 'GEMINI_API_KEY environment variable is not defined on the server.' })
+        body: JSON.stringify({ 
+          error: 'GEMINI_API_KEY environment variable is not defined on the server. Please add GEMINI_API_KEY in your deployment environment variables (e.g., Netlify Site configuration -> Environment variables).' 
+        })
       };
     }
 
