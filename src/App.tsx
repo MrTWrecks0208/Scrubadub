@@ -307,16 +307,28 @@ export default function App() {
             onCloseAuthTrigger={() => setAuthTrigger(null)}
           />
              
-          <div className="hidden sm:block h-4 w-px bg-slate-700"></div>
-          <a 
-            href="https://regex101.com/" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="hidden sm:flex items-center gap-1 text-[11px] text-slate-400 hover:text-white transition-colors shrink-0"
-          >
-            <span>Regex Cheat Sheet</span>
-            <ExternalLink className="w-3 h-3 text-slate-500" />
-          </a>
+          <div className="hidden sm:block h-8 w-px bg-slate-700"></div>
+
+          <div className="hidden sm:flex flex-col items-start gap-1">
+            <a 
+              href="https://github.com/MrTWrecks0208/MrTWrecks0208.github.io/blob/ee6d9bdf3d9428e6a3f856c156df50cdd9116c25/Scrubadub-Documentation.md" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 text-[11px] text-slate-400 hover:text-white transition-colors shrink-0"
+            >
+              <span>View Documentation</span>
+              <ExternalLink className="w-3 h-3 text-slate-500" />
+            </a>
+            <a 
+              href="https://regex101.com/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 text-[11px] text-slate-400 hover:text-white transition-colors shrink-0"
+            >
+              <span>Regex Cheat Sheet</span>
+              <ExternalLink className="w-3 h-3 text-slate-500" />
+            </a>
+          </div>
         </div>
       </header>
 
@@ -484,7 +496,7 @@ export default function App() {
                         <div className="flex items-center gap-1.5 text-[10.5px] text-amber-300/95 bg-amber-950/30 border border-amber-900/40 px-2 py-0.5 rounded-md w-fit">
                           <AlertCircle className="w-3.5 h-3.5 flex-shrink-0 text-amber-400" />
                           <span>
-                            <strong className="text-amber-200 uppercase tracking-wider text-[9px] font-bold">Note:</strong> An account is required in order to save and manage custom rule sets.
+                            <strong className="text-amber-200 uppercase tracking-wider text-[9px] font-bold">Note:</strong> An account is required to save custom rule sets.
                           </span>
                         </div>
                       </div>
