@@ -477,14 +477,10 @@ export default function App() {
                     <span>Loading saved rule sets...</span>
                   </div>
                 ) : currentUser ? (
-                  <div className="p-2.5 px-3.5 rounded-lg border border-dashed border-slate-800/80 bg-[#1E293B]/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                  <div className="p-2.5 px-3.5 rounded-lg border border-dashed border-slate-800/80 bg-[#1E293B]/20">
                     <p className="text-[11px] text-slate-300 leading-relaxed font-normal">
                       No custom rule sets found. To create custom rule sets, create rules below and click <strong className="text-white font-semibold">"Save Rule Set"</strong> when finished.
                     </p>
-                    <div className="flex items-center gap-1.5 text-[9.5px] font-mono text-emerald-400 bg-emerald-950/40 border border-emerald-900/50 px-2 py-0.5 rounded-full flex-shrink-0">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                      <span>Syncing to @{currentUser.displayName || currentUser.email?.split('@')[0] || 'account'}</span>
-                    </div>
                   </div>
                 ) : (
                   <div className="p-2.5 px-3.5 rounded-lg border border-slate-800 bg-gradient-to-r from-slate-900/90 via-[#1E293B]/30 to-slate-900/90 space-y-2">
