@@ -1,0 +1,21 @@
+{
+  "name": "Scrubadub",
+  "short_name": "Scrubadub",
+  "description": "An interactive utility to paste text, configure multi-rule regular expressions, and instantly scrub matches to obtain clean text.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0F172A",
+  "theme_color": "#0F172A",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

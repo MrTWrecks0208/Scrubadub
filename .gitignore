@@ -1,8 +1,22 @@
+# Dependencies
 node_modules/
-build/
+
+# Production build outputs
 dist/
+build/
 coverage/
-.DS_Store
-*.log
+
+# Environment files (exclude template)
 .env*
 !.env.example
+
+# Logs and OS files
+*.log
+.DS_Store
+Thumbs.db
+*.tsbuildinfo
+
+# Hosting platform local caches
+.netlify/
+.vercel/
+

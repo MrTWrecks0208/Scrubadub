@@ -200,3 +200,61 @@ For testing complex patterns, inspecting detailed regex token trees, and debuggi
 | | `(?<!...)` | Negative Lookbehind (not preceded by)| `(?<!\$)\d+` matches `100` in `€100` |
 
 </details>
+
+<details>
+
+<summary>🚀 Production Deployment & Custom Domain Setup</summary>
+
+### Custom Domain Configuration
+
+When deploying Scrubadub to your custom domain (e.g., `https://yourdomain.com` or `https://tools.yourdomain.com`), follow these three essential steps:
+
+#### 1. DNS Records
+Point your custom domain or subdomain to your hosting provider:
+- **Apex domain (`example.com`)**: Add an `A` record pointing to your host's IP address (or `ALIAS`/`ANAME` record).
+- **Subdomain (`scrub.example.com`)**: Add a `CNAME` record pointing to your hosting host (e.g., `your-app.netlify.app` or cloud ingress URL).
+
+#### 2. Firebase Authorized Domains (Critical for Login)
+If using Firebase Authentication for custom rule sets:
+1. Open the [Firebase Console](https://console.firebase.google.com).
+2. Select your Firebase project (`scrubadub-503303` or your custom project).
+3. Navigate to **Authentication** &rarr; **Settings** &rarr; **Authorized domains**.
+4. Click **Add domain** and enter your custom domain (e.g., `yourdomain.com`).
+*(Without this step, authentication requests from your custom domain will be rejected by Firebase security).*
+
+#### 3. Environment Variables
+Ensure the following variable is defined on your hosting platform:
+- `GEMINI_API_KEY`: Required for the AI Regex Generator.
+- `PORT`: (Optional for Node servers) Automatically detected by most cloud hosts (Render, Cloud Run, Railway, Heroku). Defaults to `3000`.
+
+### Production Deployment Options
+
+#### Option A: Full-Stack Node.js (Docker, Render, Railway, Cloud Run, VPS)
+```bash
+# 1. Install dependencies
+npm install
+
+# 2. Build frontend and backend server bundle
+npm run build
+
+# 3. Start production server
+npm start
+```
+The server automatically serves optimized frontend static assets from `dist/` with routing fallbacks, provides health checks at `/api/health`, and handles AI regex generation at `/api/ai/generate-regex`.
+
+#### Option B: Netlify
+1. Connect your Git repository to Netlify.
+2. The included `netlify.toml` automatically configures:
+   - Build command: `npm run build`
+   - Publish directory: `dist`
+   - Functions directory: `netlify/functions`
+   - API redirects: `/api/ai/generate-regex` &rarr; `/.netlify/functions/generate-regex`
+3. In Netlify Site Settings &rarr; **Environment variables**, set `GEMINI_API_KEY`.
+4. Under **Domain management**, add your custom domain. Netlify will automatically provision free SSL certificates.
+
+#### Option C: Vercel / Cloudflare Pages
+- Scrubadub builds standard static assets to `dist/`.
+- Ensure single-page app rewrites route all paths `/*` to `/index.html` (handled automatically by `public/_redirects`).
+
+</details>
+

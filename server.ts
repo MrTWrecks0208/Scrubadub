@@ -1,5 +1,6 @@
 import express from 'express';
 import path from 'path';
+import fs from 'fs';
 import { createServer as createViteServer } from 'vite';
 import { GoogleGenAI, Type } from '@google/genai';
 import dotenv from 'dotenv';
@@ -28,9 +29,14 @@ function getAiClient(): GoogleGenAI {
 
 async function startServer() {
   const app = express();
-  const PORT = 3000;
+  const PORT = Number(process.env.PORT) || 3000;
 
   app.use(express.json());
+
+  // Health check endpoint for uptime monitors and load balancers
+  app.get('/api/health', (_req, res) => {
+    res.json({ status: 'ok', service: 'scrubadub', timestamp: new Date().toISOString() });
+  });
 
   // AI Regex generation endpoint
   app.post('/api/ai/generate-regex', async (req, res) => {
@@ -108,16 +114,33 @@ Rules for fields:
     });
     app.use(vite.middlewares);
   } else {
-    const distPath = path.join(process.cwd(), 'dist');
-    app.use(express.static(distPath));
-    app.get('*', (req, res) => {
+    const distPath = fs.existsSync(path.join(process.cwd(), 'dist'))
+      ? path.join(process.cwd(), 'dist')
+      : path.resolve(__dirname);
+
+    app.use(express.static(distPath, {
+      maxAge: '1d',
+      index: false,
+    }));
+
+    app.get('*', (_req, res) => {
       res.sendFile(path.join(distPath, 'index.html'));
     });
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+  const server = app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Scrubadub server running on http://0.0.0.0:${PORT}`);
   });
+
+  // Graceful shutdown
+  const shutdown = () => {
+    server.close(() => {
+      console.log('Server shut down successfully.');
+      process.exit(0);
+    });
+  };
+  process.on('SIGTERM', shutdown);
+  process.on('SIGINT', shutdown);
 }
 
 startServer().catch((err) => {
