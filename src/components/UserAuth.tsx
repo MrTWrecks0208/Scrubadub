@@ -20,7 +20,8 @@ import {
   Sparkles, 
   Loader2,
   Check,
-  ShieldCheck
+  ShieldCheck,
+  ExternalLink
 } from 'lucide-react';
 
 export interface UserAuthProps {
@@ -319,7 +320,7 @@ export const AuthModal = memo(function AuthModal({
 
             {/* Data privacy & ownership notice when creating an account */}
             {authMode === 'signup' && (
-              <div className="p-2.5 rounded-lg bg-slate-900/90 border border-slate-800 text-[10px] text-slate-400 text-center leading-relaxed space-y-1">
+              <div className="p-2.5 rounded-lg bg-slate-900/90 border border-slate-800 text-[10px] text-slate-400 text-center leading-relaxed space-y-1.5">
                 <p className="text-slate-300/80 leading-normal text-center">
                   <span className="inline-flex items-center justify-center gap-1.5 font-semibold text-slate-200">
                     <ShieldCheck className="w-3.5 h-3.5 text-emerald-400/90 flex-shrink-0" />
@@ -328,8 +329,26 @@ export const AuthModal = memo(function AuthModal({
                   <br />
                   We will never sell, share, or otherwise provide your data to any third party or use it for any advertising, marketing, or other promotional purposes.
                 </p>
-                <div className="text-center pt-0.5">
-                  <span className="text-indigo-400 hover:text-indigo-300 underline underline-offset-2 text-[10px] cursor-default">Privacy Policy</span>
+                <div className="flex items-center justify-center gap-2 pt-1 border-t border-slate-800/80 text-[10px]">
+                  <a 
+                    href="https://github.com/MrTWrecks0208/Scrubadub/blob/main/Privacy-Policy.md"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-indigo-400 hover:text-indigo-300 underline underline-offset-2 transition-colors cursor-pointer"
+                  >
+                    <span>Privacy Policy</span>
+                    <ExternalLink className="w-2.5 h-2.5" />
+                  </a>
+                  <span className="text-slate-600">•</span>
+                  <a 
+                    href="https://github.com/MrTWrecks0208/Scrubadub/blob/main/ToS.md"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-indigo-400 hover:text-indigo-300 underline underline-offset-2 transition-colors cursor-pointer"
+                  >
+                    <span>Terms of Service</span>
+                    <ExternalLink className="w-2.5 h-2.5" />
+                  </a>
                 </div>
               </div>
             )}
@@ -446,6 +465,26 @@ export default function UserAuth({ onUserChange, openAuthTrigger, onCloseAuthTri
                 </div>
               </div>
               <div className="p-1">
+                <div className="px-2.5 py-1.5 border-b border-slate-800/60 mb-1 space-y-1">
+                  <a 
+                    href="https://github.com/MrTWrecks0208/Scrubadub/blob/main/Privacy-Policy.md" 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="flex items-center justify-between text-[11px] text-slate-400 hover:text-white transition-colors"
+                  >
+                    <span>Privacy Policy</span>
+                    <ExternalLink className="w-3 h-3 text-slate-500" />
+                  </a>
+                  <a 
+                    href="https://github.com/MrTWrecks0208/Scrubadub/blob/main/ToS.md" 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="flex items-center justify-between text-[11px] text-slate-400 hover:text-white transition-colors"
+                  >
+                    <span>Terms of Service</span>
+                    <ExternalLink className="w-3 h-3 text-slate-500" />
+                  </a>
+                </div>
                 <button
                   type="button"
                   onClick={() => {
