@@ -604,6 +604,7 @@ export default function App() {
                 setSelectedTemplateId(null);
               }} 
               sampleText={inputText}
+              existingRules={rules}
             />
             <PatternManager 
               rules={rules} 
@@ -773,30 +774,14 @@ export default function App() {
         </div>
       </main>
 
-      {/* Editor Status Bar */}
-      <div className="min-h-10 py-2.5 px-4 sm:px-8 bg-indigo-600 text-white text-[11px] flex flex-wrap items-center justify-between font-mono mt-auto select-none gap-x-6 gap-y-2 shadow-inner">
-        <div className="flex flex-wrap items-center gap-2.5 sm:gap-5">
-          <span>MODE: SEQUENCE_REPLACE</span>
-          <span className="opacity-60 hidden sm:inline">|</span>
-          <span>BUFFER: {((inputText.length * 2) / 1024).toFixed(2)} KB</span>
-          <span className="opacity-60 hidden sm:inline">|</span>
-          <span className="text-emerald-300 font-bold">MATCHES FOUND: {cleanResult.totalMatchesRemoved}</span>
-        </div>
-        <div className="hidden md:flex items-center gap-4">
-          <span>UTF-8</span>
-          <span className="opacity-60">|</span>
-          <span>LINUX (LF)</span>
-        </div>
-      </div>
-
       {/* Application Footer */}
-      <footer className="border-t border-slate-800/80 bg-[#0B1120] py-3 px-4 sm:px-8 text-xs text-slate-400">
-        <div className="max-w-[1450px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-2.5 text-[11px]">
-          <div className="flex items-center gap-2 text-slate-400">
+      <footer className="min-h-[48px] border-t border-slate-800/80 bg-indigo-600 py-3.5 px-4 sm:px-8 text-sm text-white mt-auto">
+        <div className="max-w-[1450px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-2.5 text-[12px]">
+          <div className="flex items-center gap-2 text-white">
             <span>© {new Date().getFullYear()} Scrubadub. All rights reserved.</span>
           </div>
 
-          <div className="flex items-center gap-3.5 text-slate-400">
+          <div className="flex items-center gap-3.5 text-white">
             <a 
               href="https://github.com/MrTWrecks0208/Scrubadub/blob/main/Privacy-Policy.md" 
               target="_blank" 
@@ -804,9 +789,9 @@ export default function App() {
               className="inline-flex items-center gap-1 hover:text-white transition-colors"
             >
               <span>Privacy Policy</span>
-              <ExternalLink className="w-3 h-3 text-slate-500" />
+              <ExternalLink className="w-3 h-3 text-white" />
             </a>
-            <span className="text-slate-700">•</span>
+            <span className="text-white">•</span>
             <a 
               href="https://github.com/MrTWrecks0208/Scrubadub/blob/main/ToS.md" 
               target="_blank" 
@@ -814,7 +799,7 @@ export default function App() {
               className="inline-flex items-center gap-1 hover:text-white transition-colors"
             >
               <span>Terms of Service</span>
-              <ExternalLink className="w-3 h-3 text-slate-500" />
+              <ExternalLink className="w-3 h-3 text-white" />
             </a>
           </div>
         </div>

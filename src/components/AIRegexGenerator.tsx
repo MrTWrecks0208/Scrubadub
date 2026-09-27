@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { RegexRule } from '../types';
 import { Sparkles, Plus, Loader2, ArrowRight, CornerDownRight, Check, HelpCircle } from 'lucide-react';
+import { getDefaultRuleName } from '../utils/cleaner';
 
 interface AIRegexGeneratorProps {
   onAddRule: (rule: RegexRule) => void;
   sampleText?: string;
+  existingRules?: RegexRule[];
 }
 
 interface GeneratedRegex {
@@ -18,7 +20,7 @@ interface GeneratedRegex {
   explanation: string;
 }
 
-export default function AIRegexGenerator({ onAddRule, sampleText }: AIRegexGeneratorProps) {
+export default function AIRegexGenerator({ onAddRule, sampleText, existingRules = [] }: AIRegexGeneratorProps) {
   const [description, setDescription] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -68,9 +70,14 @@ export default function AIRegexGenerator({ onAddRule, sampleText }: AIRegexGener
       ? crypto.randomUUID() 
       : 'rule_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
 
+    let assignedName = (generated.name || '').trim();
+    if (!assignedName || (/^rule\s*1$/i.test(assignedName) && existingRules.length > 0)) {
+      assignedName = getDefaultRuleName(existingRules);
+    }
+
     const newRule: RegexRule = {
       id: newRuleId,
-      name: generated.name,
+      name: assignedName,
       pattern: generated.pattern,
       replacement: generated.replacement,
       flags: {

@@ -121,19 +121,35 @@ export function cleanText(originalText: string, rules: RegexRule[]): CleanResult
 
 /**
  * Generates an auto-numbered default rule name (e.g. "Rule 1", "Rule 2", "Rule 3").
- * Ensures uniqueness among existing rules.
+ * Ensures sequence numbering reflects the total rule count and highest existing number,
+ * so renaming a prior rule does not cause subsequent rules to generate as "Rule 1".
  */
 export function getDefaultRuleName(existingRules: RegexRule[]): string {
   const existingNames = new Set(
     existingRules.map((r) => (r.name || '').trim().toLowerCase())
   );
 
-  let index = 1;
-  while (true) {
-    const candidateNum = `Rule ${index}`;
-    if (!existingNames.has(candidateNum.toLowerCase())) {
-      return candidateNum;
+  // Find the highest number used in any existing "Rule <number>"
+  let maxRuleNum = 0;
+  for (const r of existingRules) {
+    const trimmed = (r.name || '').trim();
+    const match = trimmed.match(/^rule\s*(\d+)$/i);
+    if (match) {
+      const num = parseInt(match[1], 10);
+      if (!isNaN(num) && num > maxRuleNum) {
+        maxRuleNum = num;
+      }
     }
-    index++;
   }
+
+  // The next rule number should be at least (existingRules.length + 1)
+  // and also greater than any existing "Rule N" (maxRuleNum + 1)
+  let nextNum = Math.max(existingRules.length + 1, maxRuleNum + 1);
+
+  // Guarantee uniqueness in case of an exact custom name collision
+  while (existingNames.has(`rule ${nextNum}`.toLowerCase())) {
+    nextNum++;
+  }
+
+  return `Rule ${nextNum}`;
 }
