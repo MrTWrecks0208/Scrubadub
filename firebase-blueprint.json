@@ -1,15 +1,74 @@
 {
-  "collections": {
-    "templates": {
-      "fields": {
-        "id": { "type": "string" },
-        "userId": { "type": "string" },
-        "name": { "type": "string" },
-        "description": { "type": "string" },
-        "rules": { "type": "array" },
-        "createdAt": { "type": "timestamp" },
-        "updatedAt": { "type": "timestamp" }
-      }
+  "entities": {
+    "Template": {
+      "title": "Template",
+      "description": "User saved regular expression rule set template",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "User UID who owns the template"
+        },
+        "name": {
+          "type": "string",
+          "description": "Human readable name of the template",
+          "maxLength": 100
+        },
+        "description": {
+          "type": "string",
+          "description": "Optional notes or description of the rule set",
+          "maxLength": 500
+        },
+        "rules": {
+          "type": "array",
+          "description": "List of active regular expression rules"
+        },
+        "sampleText": {
+          "type": "string",
+          "description": "Sample text associated with this template",
+          "maxLength": 200000
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Server timestamp when template was created"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Server timestamp when template was last updated"
+        }
+      },
+      "required": ["userId", "name", "rules"]
+    },
+    "Username": {
+      "title": "Username",
+      "description": "Username reservation to guarantee uniqueness",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "Firebase user ID"
+        },
+        "username": {
+          "type": "string",
+          "description": "Reserved username string",
+          "maxLength": 30
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Creation timestamp"
+        }
+      },
+      "required": ["uid", "username"]
+    }
+  },
+  "firestore": {
+    "/templates/{templateId}": {
+      "schema": "Template",
+      "description": "Collection of user-created regex templates"
+    },
+    "/usernames/{username}": {
+      "schema": "Username",
+      "description": "Unique username registry"
     }
   }
 }

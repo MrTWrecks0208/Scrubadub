@@ -32,6 +32,26 @@ import {
   UserPlus
 } from 'lucide-react';
 
+/** Lucide Broom icon from @lucide/lab */
+const Broom = ({ className = 'w-5 h-5', ...props }: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+    {...props}
+  >
+    <path d="M13.5 10.5 22 2" />
+    <path d="M14.734 13.841a2 2 0 0 0-.314-2.42L12.58 9.58a2 2 0 0 0-2.421-.314l-7.657 4.461A1 1 0 0 0 2.3 15.3l6.403 6.403a1 1 0 0 0 1.571-.204z" />
+    <path d="m5 18 2-2" />
+    <path d="m7.699 10.7 5.602 5.601" />
+  </svg>
+);
+
 export default function App() {
   // --- States ---
   const [inputText, setInputText] = useState<string>(() => {
@@ -629,11 +649,10 @@ export default function App() {
                   <button
                     type="button"
                     onClick={clearInput}
-                    disabled={!inputText}
                     title="Clear input"
-                    className="p-1 text-slate-400 hover:text-red-400 hover:bg-slate-800 rounded transition-colors disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
+                    className="group p-1 text-slate-400 hover:text-rose-400 rounded transition-colors cursor-pointer"
                   >
-                    <Trash2 className="w-3.5 h-3.5" />
+                    <Broom className="w-5 h-5 transition-colors text-slate-400 group-hover:text-rose-400 hover:text-rose-400" />
                   </button>
                 </div>
               </div>

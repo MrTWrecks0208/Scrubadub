@@ -214,10 +214,12 @@ export default function PatternManager({ rules, onChange, ruleStats, onSaveTempl
               <button
                 type="button"
                 onClick={onSaveTemplate}
-                className="flex items-center gap-1 h-6.5 px-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full text-[9px] font-bold transition-all shadow-sm hover:shadow-md cursor-pointer uppercase tracking-wider whitespace-nowrap flex-shrink-0"
+                className="flex items-center gap-1.5 py-1 px-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full text-[9px] font-bold transition-all shadow-sm hover:shadow-md cursor-pointer uppercase tracking-wider flex-shrink-0 leading-tight text-left"
               >
-                <Bookmark className="w-3 h-3" />
-                Save Rule Set
+                <Bookmark className="w-3 h-3 shrink-0" />
+                <span>
+                  Save<br />Rule Set
+                </span>
               </button>
             )}
             {rules.length > 0 && (
@@ -438,7 +440,7 @@ export default function PatternManager({ rules, onChange, ruleStats, onSaveTempl
                       type="button"
                       onClick={() => deleteRule(rule.id)}
                       title="Delete rule"
-                      className="p-1 text-slate-500 hover:text-red-400 hover:bg-red-950/40 rounded transition-colors cursor-pointer"
+                      className="p-1 text-slate-500 hover:text-red-400 rounded transition-colors cursor-pointer"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
