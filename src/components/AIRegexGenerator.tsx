@@ -99,7 +99,7 @@ export default function AIRegexGenerator({ onAddRule, sampleText, existingRules 
   };
 
   return (
-    <div className="bg-[#1E293B]/20 border border-slate-800 rounded-lg overflow-hidden flex flex-col p-4 space-y-4">
+    <div className="bg-[#1E293B]/20 border border-slate-800 rounded-md overflow-hidden flex flex-col p-4 space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-slate-800/80 pb-2.5">
         <div className="flex items-center gap-2">
@@ -171,7 +171,7 @@ export default function AIRegexGenerator({ onAddRule, sampleText, existingRules 
 
       {/* Results Box */}
       {generated && (
-        <div className="bg-[#020617] border border-slate-900 rounded-lg p-3.5 space-y-3 animate-fadeIn">
+        <div className="bg-[#020617] border border-slate-900 rounded-md p-3.5 space-y-3 animate-fadeIn">
           {/* Headline */}
           <div className="flex items-center justify-between border-b border-slate-900 pb-2">
             <div className="flex items-center gap-1.5">

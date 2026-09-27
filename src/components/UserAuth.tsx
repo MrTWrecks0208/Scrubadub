@@ -219,7 +219,7 @@ export const AuthModal = memo(function AuthModal({
           <button
             type="button"
             onClick={onClose}
-            className="p-1 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
+            className="p-1 text-slate-400 hover:text-white hover:bg-slate-800 rounded-md transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -228,14 +228,14 @@ export const AuthModal = memo(function AuthModal({
         {/* Modal Body / Form */}
         <div className="p-5 space-y-4">
           {error && (
-            <div className="p-2.5 rounded-lg bg-rose-950/20 border border-rose-900/40 text-[11px] text-rose-400 font-mono flex items-start gap-1.5">
+            <div className="p-2.5 rounded-md bg-rose-950/20 border border-rose-900/40 text-[11px] text-rose-400 font-mono flex items-start gap-1.5">
               <AlertCircle className="w-4 h-4 text-rose-500 flex-none mt-0.5" />
               <span className="leading-tight">{error}</span>
             </div>
           )}
 
           {successMsg && (
-            <div className="p-2.5 rounded-lg bg-emerald-950/20 border border-emerald-900/40 text-[11px] text-emerald-400 font-mono flex items-start gap-1.5">
+            <div className="p-2.5 rounded-md bg-emerald-950/20 border border-emerald-900/40 text-[11px] text-emerald-400 font-mono flex items-start gap-1.5">
               <Check className="w-4 h-4 text-emerald-500 flex-none mt-0.5" />
               <span className="leading-tight">{successMsg}</span>
             </div>
@@ -386,7 +386,7 @@ export const AuthModal = memo(function AuthModal({
 
             {/* Data privacy & ownership notice when creating an account */}
             {authMode === 'signup' && (
-              <div className="p-2.5 rounded-lg bg-slate-900/90 border border-slate-800 text-[10px] text-slate-400 text-center leading-relaxed space-y-1.5">
+              <div className="p-2.5 rounded-md bg-slate-900/90 border border-slate-800 text-[10px] text-slate-400 text-center leading-relaxed space-y-1.5">
                 <p className="text-slate-300/80 leading-normal text-center">
                   <span className="inline-flex items-center justify-center gap-1.5 font-semibold text-slate-200">
                     <ShieldCheck className="w-3.5 h-3.5 text-emerald-400/90 flex-shrink-0" />
@@ -501,7 +501,7 @@ export default function UserAuth({ onUserChange, openAuthTrigger, onCloseAuthTri
           <button
             type="button"
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className={`flex items-center justify-center w-8 h-8 rounded-full border bg-slate-900 transition-all duration-150 cursor-pointer overflow-hidden ${
+            className={`flex items-center justify-center w-8 h-8 rounded-md border bg-slate-900 transition-all duration-150 cursor-pointer overflow-hidden ${
               isDropdownOpen 
                 ? 'border-indigo-500 ring-2 ring-indigo-500/20' 
                 : 'border-slate-800 hover:border-slate-700 hover:scale-105'
@@ -513,7 +513,7 @@ export default function UserAuth({ onUserChange, openAuthTrigger, onCloseAuthTri
                 src={avatarUrl}
                 alt="User Avatar"
                 referrerPolicy="no-referrer"
-                className="w-full h-full object-cover rounded-full"
+                className="w-full h-full object-cover rounded-md"
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-indigo-600 text-white text-[10px] font-mono font-bold uppercase">
@@ -524,7 +524,7 @@ export default function UserAuth({ onUserChange, openAuthTrigger, onCloseAuthTri
 
           {/* Contextual Dropdown Menu */}
           {isDropdownOpen && (
-            <div className="absolute right-0 top-full mt-2 w-52 bg-[#131B2E] border border-slate-800 rounded-lg py-1 shadow-xl z-50 animate-in fade-in slide-in-from-top-1 duration-100">
+            <div className="absolute right-0 top-full mt-2 w-52 bg-[#131B2E] border border-slate-800 rounded-md py-1 shadow-xl z-50 animate-in fade-in slide-in-from-top-1 duration-100">
               <div className="px-3 py-1.5 border-b border-slate-800/60 select-none">
                 <div className="text-[9px] font-mono font-bold text-slate-500 uppercase tracking-widest">Logged In As</div>
                 <div className="text-[11px] font-mono font-medium text-indigo-400 mt-0.5 truncate" title={`@${displayUsername}`}>
@@ -571,7 +571,7 @@ export default function UserAuth({ onUserChange, openAuthTrigger, onCloseAuthTri
         <button
           type="button"
           onClick={() => handleOpenModal('signin')}
-          className="flex items-center justify-center gap-1.5 h-8 px-3.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full text-[10px] font-semibold uppercase tracking-wider transition-colors cursor-pointer shadow-sm hover:shadow-md whitespace-nowrap shrink-0"
+          className="flex items-center justify-center gap-1.5 h-8 px-3.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-md text-[10px] font-semibold uppercase tracking-wider transition-colors cursor-pointer shadow-sm hover:shadow-md whitespace-nowrap shrink-0"
         >
           <LogIn className="w-3.5 h-3.5 shrink-0" />
           <span>Sign In</span>

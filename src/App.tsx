@@ -933,7 +933,7 @@ export default function App() {
               <X className="w-4 h-4" />
             </button>
 
-            <div className="w-12 h-12 rounded-full bg-indigo-950/80 border border-indigo-700/50 flex items-center justify-center mx-auto text-indigo-400">
+            <div className="w-12 h-12 rounded-md bg-indigo-950/80 border border-indigo-700/50 flex items-center justify-center mx-auto text-indigo-400">
               <Bookmark className="w-6 h-6" />
             </div>
             
@@ -1002,7 +1002,7 @@ export default function App() {
                 {hoveredItemInfo.rules && hoveredItemInfo.rules.map((rule, rIdx) => (
                   <div key={rule.id || rIdx} className="bg-slate-950/60 p-2 rounded border border-slate-800/80 font-mono text-[10px]">
                     <div className="font-bold text-slate-300 flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                      <span className="w-1.5 h-1.5 rounded-md bg-indigo-500"></span>
                       {rule.name}
                     </div>
                     <div className="mt-1 text-slate-400 overflow-x-auto whitespace-pre scrollbar-none py-0.5">

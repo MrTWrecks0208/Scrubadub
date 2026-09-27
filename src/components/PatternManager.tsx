@@ -198,14 +198,14 @@ export default function PatternManager({ rules, onChange, ruleStats, onSaveTempl
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#1E293B]/20 border border-slate-800 rounded-lg overflow-hidden select-none">
+    <div className="flex flex-col h-full bg-[#1E293B]/20 border border-slate-800 rounded-md overflow-hidden select-none">
       {/* Header */}
       <div className="flex flex-col justify-center px-4 py-3.5 border-b border-slate-800 bg-[#1E293B]/60 gap-2">
         {/* First Line: Scrubbing Rules with count on left, Action buttons on right */}
         <div className="flex items-center justify-between gap-3 flex-wrap sm:flex-nowrap">
           <h2 className="text-[12px] font-bold uppercase tracking-wider text-slate-200 flex items-center gap-2 shrink-0 whitespace-nowrap">
             Rules
-            <span className="inline-flex items-center justify-center px-2 py-0.5 text-[10px] font-mono font-bold bg-[#020617] border border-slate-800 text-indigo-400 rounded-full">
+            <span className="inline-flex items-center justify-center px-2 py-0.5 text-[10px] font-mono font-bold bg-[#020617] border border-slate-800 text-indigo-400 rounded-md">
               {rules.length}
             </span>
           </h2>
@@ -214,20 +214,20 @@ export default function PatternManager({ rules, onChange, ruleStats, onSaveTempl
               <button
                 type="button"
                 onClick={onSaveTemplate}
-                className="flex items-center gap-1.5 py-1 px-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full text-[9px] font-bold transition-all shadow-sm hover:shadow-md cursor-pointer uppercase tracking-wider flex-shrink-0 leading-tight text-left"
+                className="flex items-center justify-center gap-1.5 py-1 px-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-md text-[9px] font-bold transition-all shadow-sm hover:shadow-md cursor-pointer uppercase tracking-wider flex-shrink-0 leading-tight text-center"
               >
                 <Bookmark className="w-3 h-3 shrink-0" />
-                <span>
+                <span className="text-center">
                   Save<br />Rule Set
                 </span>
               </button>
             )}
             {rules.length > 0 && (
-              <div className="flex items-center border border-slate-800 rounded-full p-0.5 bg-[#020617] h-6.5 text-[9px] font-mono flex-shrink-0">
+              <div className="flex items-center border border-slate-800 rounded-md p-0.5 bg-[#020617] h-6.5 text-[9px] font-mono flex-shrink-0">
                 <button
                   type="button"
                   onClick={handleAllOn}
-                  className={`h-full px-2 rounded-full font-semibold transition-colors cursor-pointer flex items-center uppercase tracking-wider whitespace-nowrap ${
+                  className={`h-full px-2 rounded-md font-semibold transition-colors cursor-pointer flex items-center uppercase tracking-wider whitespace-nowrap ${
                     allState === 'on'
                       ? 'bg-emerald-500/15 text-emerald-400'
                       : 'text-slate-400 hover:bg-slate-800/50 hover:text-white'
@@ -239,7 +239,7 @@ export default function PatternManager({ rules, onChange, ruleStats, onSaveTempl
                 <button
                   type="button"
                   onClick={handleAllOff}
-                  className={`h-full px-2 rounded-full font-semibold transition-colors cursor-pointer flex items-center uppercase tracking-wider whitespace-nowrap ${
+                  className={`h-full px-2 rounded-md font-semibold transition-colors cursor-pointer flex items-center uppercase tracking-wider whitespace-nowrap ${
                     allState === 'off'
                       ? 'bg-rose-500/15 text-rose-400'
                       : 'text-slate-400 hover:bg-slate-800/50 hover:text-white'
@@ -252,7 +252,7 @@ export default function PatternManager({ rules, onChange, ruleStats, onSaveTempl
             <button
               type="button"
               onClick={addRule}
-              className="flex items-center gap-1 h-6.5 px-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full text-[9px] font-bold transition-all shadow-sm hover:shadow-md cursor-pointer uppercase tracking-wider whitespace-nowrap flex-shrink-0"
+              className="flex items-center gap-1 h-6.5 px-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-md text-[9px] font-bold transition-all shadow-sm hover:shadow-md cursor-pointer uppercase tracking-wider whitespace-nowrap flex-shrink-0"
             >
               <Plus className="w-3 h-3" />
               Add Rule
@@ -290,8 +290,8 @@ export default function PatternManager({ rules, onChange, ruleStats, onSaveTempl
       {/* Rules List */}
       <div className="flex-1 overflow-y-auto p-4 space-y-3 max-h-[500px] lg:max-h-[620px]">
         {rules.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 text-center border border-dashed border-slate-800 rounded-lg px-4 bg-[#1E293B]/10">
-            <div className="w-8 h-8 rounded-full bg-[#1E293B]/50 flex items-center justify-center mb-2.5 border border-slate-800">
+          <div className="flex flex-col items-center justify-center py-16 text-center border border-dashed border-slate-800 rounded-md px-4 bg-[#1E293B]/10">
+            <div className="w-8 h-8 rounded-md bg-[#1E293B]/50 flex items-center justify-center mb-2.5 border border-slate-800">
               <HelpCircle className="w-4 h-4 text-slate-500 animate-pulse" />
             </div>
             <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">No Active Rules</h3>
@@ -339,10 +339,10 @@ export default function PatternManager({ rules, onChange, ruleStats, onSaveTempl
               >
                 {/* Visual Insertion Indicator Bars */}
                 {isOver && dropPosition === 'above' && !isDragging && (
-                  <div className="absolute -top-1.5 left-2 right-2 h-1 bg-indigo-500 rounded-full shadow-[0_0_8px_rgba(99,102,241,0.9)] z-30 pointer-events-none animate-pulse" />
+                  <div className="absolute -top-1.5 left-2 right-2 h-1 bg-indigo-500 rounded-md shadow-[0_0_8px_rgba(99,102,241,0.9)] z-30 pointer-events-none animate-pulse" />
                 )}
                 {isOver && dropPosition === 'below' && !isDragging && (
-                  <div className="absolute -bottom-1.5 left-2 right-2 h-1 bg-indigo-500 rounded-full shadow-[0_0_8px_rgba(99,102,241,0.9)] z-30 pointer-events-none animate-pulse" />
+                  <div className="absolute -bottom-1.5 left-2 right-2 h-1 bg-indigo-500 rounded-md shadow-[0_0_8px_rgba(99,102,241,0.9)] z-30 pointer-events-none animate-pulse" />
                 )}
 
                 {/* Rule Title Row */}
@@ -355,18 +355,6 @@ export default function PatternManager({ rules, onChange, ruleStats, onSaveTempl
                     >
                       <GripVertical className="w-4 h-4 text-slate-500 group-hover/grip:text-indigo-400" />
                     </div>
-
-                    {/* Step Sequence Order Pill */}
-                    <span 
-                      className={`text-[9.5px] font-mono font-bold px-1.5 py-0.5 rounded border select-none shrink-0 ${
-                        rule.isActive
-                          ? 'bg-[#020617] text-slate-400 border-slate-800'
-                          : 'bg-[#020617]/50 text-slate-600 border-slate-900'
-                      }`}
-                      title={`Rule #${index + 1} in execution order`}
-                    >
-                      #{index + 1}
-                    </span>
 
                     {/* Rule Name Input */}
                     <div className="relative flex items-center flex-1 min-w-0 group/name" draggable={false} onMouseDown={(e) => e.stopPropagation()}>
@@ -424,12 +412,12 @@ export default function PatternManager({ rules, onChange, ruleStats, onSaveTempl
                       type="button"
                       onClick={() => updateRule(rule.id, { isActive: !rule.isActive })}
                       title={rule.isActive ? 'Disable rule' : 'Enable rule'}
-                      className={`relative inline-flex h-4 w-7 shrink-0 cursor-pointer rounded-full transition-colors duration-200 ease-in-out outline-none border border-transparent ${
+                      className={`relative inline-flex h-4 w-7 shrink-0 cursor-pointer rounded-md transition-colors duration-200 ease-in-out outline-none border border-transparent ${
                         rule.isActive ? 'bg-emerald-500 hover:bg-emerald-400' : 'bg-red-500 hover:bg-red-400'
                       }`}
                     >
                       <span
-                        className={`pointer-events-none inline-block h-3 w-3 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out mt-[1px] ml-[1px] ${
+                        className={`pointer-events-none inline-block h-3 w-3 transform rounded-md bg-white shadow-sm ring-0 transition duration-200 ease-in-out mt-[1px] ml-[1px] ${
                           rule.isActive ? 'translate-x-3.5' : 'translate-x-0'
                         }`}
                       />
