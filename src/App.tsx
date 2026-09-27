@@ -797,7 +797,7 @@ export default function App() {
       <footer className="min-h-[48px] border-t border-slate-800/80 bg-indigo-600 py-3.5 px-4 sm:px-8 text-sm text-white mt-auto">
         <div className="max-w-[1450px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-2.5 text-[12px]">
           <div className="flex items-center gap-2 text-white">
-            <span>© {new Date().getFullYear()} Scrubadub. All rights reserved.</span>
+            <span>© {new Date().getFullYear()} Scrubadub by Mr. T-Wrecks. All rights reserved.</span>
           </div>
 
           <div className="flex items-center gap-3.5 text-white">
