@@ -713,7 +713,7 @@ export default function App() {
                     onClick={() => copyToClipboard(cleanResult.cleanedText, false)}
                     disabled={!cleanResult.cleanedText}
                     title="Copy scrubbed output"
-                    className="p-1 text-slate-400 hover:text-white hover:bg-slate-800 rounded transition-colors disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
+                    className="p-1 text-white transition-colors disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
                   >
                     {copySuccess ? (
                       <span className="flex items-center gap-1 text-[10px] font-bold uppercase text-emerald-400">
@@ -721,7 +721,7 @@ export default function App() {
                         Copied
                       </span>
                     ) : (
-                      <Copy className="w-3.5 h-3.5" />
+                      <Copy className="w-3.5 h-3.5 hover:text-emerald-400" />
                     )}
                   </button>
                   <button
@@ -729,7 +729,7 @@ export default function App() {
                     onClick={downloadTextFile}
                     disabled={!cleanResult.cleanedText}
                     title="Download scrubbed output"
-                    className="p-1 text-slate-400 hover:text-white hover:bg-slate-800 rounded transition-colors disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
+                    className="p-1 text-white hover:text-emerald-400 transition-colors disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
                   >
                     <Download className="w-3.5 h-3.5" />
                   </button>
