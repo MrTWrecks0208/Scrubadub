@@ -1,53 +1,95 @@
 # Privacy Policy
+**_as of September 28, 2026_**
 
-This privacy policy applies to the Scrubadub app for web browsers, together with any related services operated by Mr. T-Wrecks (collectively, the "Application"). Mr. T-Wrecks is hereby referred to as the "Service Provider".
+Welcome to Scrubadub. Your privacy is important to us. This Privacy Policy explains what information Scrubadub collects, how it is used, and how it is handled when you use our website or web application.
 
-## What information does the Application obtain and how is it used?
+### 1. Information We Collect
+#### Information You Provide
 
-The Application does not collect, log, or store any personal information when you download and use it. Registration is not required. If the Application is used with an active internet connection, technical protocol data (such as your ephemeral IP address) is transmitted to facilitate network connectivity, but this data is not retained or used for tracking.
+You can use Scrubadub without creating an account.
 
-## Does the Application collect precise real time location information of the device?
+If you choose to create an account, we collect only the information necessary to create and maintain that account:
 
-This Application does not collect precise information about the location of your computer.
+Email address
+Username
+Password
 
-## Do third parties see and/or have access to information obtained by the Application?
+Providing an email address is not required unless you choose to create an account.
 
-Since the Application does not collect any information, no data is shared with third parties.
+We do not collect or require your name, phone number, physical address, payment information, or other personal information to use Scrubadub.
 
-## What are my opt-out rights?
+We do not use your email address for marketing, advertising, promotional messages, newsletters, or any other routine communications. We may use it to contact you if there is an important account or security issue, such as a security breach or other emergency affecting the service.
 
-Since the Application does not collect personal information through normal use, ceasing to use the website or closing your browser simply stops the Application from operating.
+#### Information Collected Automatically
 
-If you contact the Service Provider directly or voluntarily provide information by other means, you may request deletion of that information by contacting <strong><a href="mailto:mtwsupport@proton.me">mtwsupport@proton.me</a></strong>.
+We use Google Analytics to understand general website traffic and how Scrubadub is used. Google Analytics may collect information such as your IP address, browser and device information, pages visited, referring websites, and other technical or usage information through cookies and similar technologies.
 
-## Children
+We use this information to understand usage trends and improve Scrubadub. We do not use Google Analytics for advertising or to sell your information.
 
-The Application is not intended for children under 13 years of age, or such higher age as required by applicable law. The Service Provider does not knowingly solicit data from children or market to them. Since the Application does not collect personal information through normal use, children's data is not at risk from use of the Application alone. If you voluntarily provide personal information through other means and are under 13 years of age, your parent or guardian must provide consent on your behalf where permitted by law.
+Our application is hosted by Netlify, and our domain is managed through Hostinger. These providers may automatically process technical information, such as IP addresses and server logs, as necessary to operate, secure, and maintain the website and application.
 
-## Security
+### 2. Your Text and Scrubbing
 
-Because the Application does not collect personal data, the risk of personal data exposure is minimal. However, no security system is completely secure. The Service Provider implements reasonable safeguards to protect systems and any data it holds.
+The text you enter into Scrubadub is processed entirely within your web browser on your device.
 
-## Data Breach Notification
+The text you enter for scrubbing is not transmitted to Scrubadub's servers or uploaded to our systems as part of the scrubbing process. We do not receive, store, or have access to the text you process using the application.
 
-Since the Application does not collect personal data through normal use, the risk of a data breach affecting your personal data is minimal. If a breach occurs involving any data you have voluntarily provided, the Service Provider will notify you as required by applicable law.
+This means that the content you enter into Scrubadub remains on your device unless you independently choose to copy, save, transmit, or otherwise share it using another service or application.
 
-## Changes
+This client-side processing is a core part of Scrubadub's privacy-focused design.
 
-The Service Provider may update this Privacy Policy from time to time. The Service Provider will notify you of material changes by posting the updated Privacy Policy with an effective date. Where required by law, the Service Provider will seek your consent to material changes before they take effect.
+### 3. Cookies
 
-Previous versions of this Privacy Policy will be maintained and made available upon request by contacting the Service Provider at mtwsupport@proton.me.
+Scrubadub does not use advertising or marketing tracking cookies.
 
-This privacy policy is effective as of 2026-09-26
+Google Analytics uses cookies and similar technologies to analyze website traffic and usage. You can manage or disable cookies through your browser settings. Disabling cookies may affect certain website functionality.
 
-## Your Consent
+### 4. How We Use Information
 
-If you voluntarily provide information to the Service Provider and processing is based on consent, you may withdraw that consent at any time without affecting processing carried out before withdrawal.
+Information associated with Scrubadub is used only as necessary to:
 
-## Contact
+ - Provide and maintain the service
+ - Create and maintain optional user accounts
+ - Maintain security and prevent abuse
+ - Respond to security incidents or emergencies
+ - Analyze general website and application usage
+ - Improve the website and application
+ - Diagnose and resolve technical issues
 
-If you have any questions regarding privacy while using the Application, or have questions about the practices, please contact the Service Provider via email at <strong><a href="mailto:mtwsupport@proton.me">mtwsupport@proton.me</a></strong>.
+We do not use your personal information for targeted advertising, marketing, or promotional purposes.
 
-* * *
+### 5. Data Sharing
 
-##### <em>Updated 2026.09.26</em>
+We do not sell, rent, trade, give away, or otherwise provide your personal information to third parties for their own marketing or advertising purposes.
+
+Scrubadub uses third-party service providers, including Netlify, Hostinger, and Google Analytics, to host, operate, secure, and analyze the service. These providers may process information as necessary to provide those services and are subject to their own privacy policies and terms.
+
+We do not otherwise disclose your personal information to third parties except when required to do so by law or when necessary to protect the security, rights, or operation of Scrubadub.
+
+### 6. Data Security and Retention
+
+We take reasonable measures to protect information associated with Scrubadub accounts. However, no method of storing or transmitting information over the internet is completely secure, and we cannot guarantee absolute security.
+
+Account information is retained for as long as necessary to maintain your account and provide the service. If you request that your account be deleted, we will take reasonable steps to delete the associated account information, except where information must be retained for legal, security, or other legitimate purposes.
+
+Because text scrubbing occurs entirely within your browser, Scrubadub does not retain the text you process through the application.
+
+### 7. Your Privacy Rights
+
+Depending on where you live, you may have rights concerning your personal information under applicable privacy laws, including rights to access, correct, or delete certain information.
+
+Because Scrubadub collects minimal personal information, the information available to us may also be limited. If you have a privacy-related request, you can contact us using the information below.
+
+### 8. Children's Privacy
+
+Scrubadub is not intended to knowingly collect personal information from children under 13. If you believe that a child under 13 has provided personal information to us, please contact us so that we can take appropriate action.
+
+### 9. Changes to This Privacy Policy
+
+We may update this Privacy Policy from time to time as Scrubadub or our practices change. Any changes will be posted on this page with an updated Last Updated date.
+
+### 10. Contact Us
+
+If you have questions about this Privacy Policy or Scrubadub's privacy practices, please contact us at <strong><a href="mailto:mtwsupport@protonmail.com">mtwsupport@protonmail.com</a></strong>
+
+##### <em>Updated 2026.09.28</em>
