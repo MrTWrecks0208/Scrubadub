@@ -1,6 +1,9 @@
 [![Netlify Status](https://api.netlify.com/api/v1/badges/467c9f5b-64b1-4327-b269-dc94144dda04/deploy-status)](https://app.netlify.com/projects/scrubadub-v1/deploys)
 
 # Scrubadub End-User Documentation
+**_Updated 2026.09.28_**
+<br/>
+<br/>
 
 <details open>
   
@@ -19,7 +22,7 @@
 
 <details>
   
-<summary>📐 Layout</summary>
+<summary><strong>📐 Layout</strong></summary>
 
 The Scrubadub workspace is organized into two primary columns below the top header and preset bar:
 
@@ -59,7 +62,7 @@ The Scrubadub workspace is organized into two primary columns below the top head
 
 <details>
   
-<summary>🚀 Getting Started</summary>
+<summary><strong>🚀 Getting Started</strong></summary>
 
 ### 🚥 Rules
 
@@ -93,7 +96,7 @@ The Scrubadub workspace is organized into two primary columns below the top head
      - *"Extract dollar amounts like $1,250.00"*
   3. The Gemini AI synthesizes the regular expression, provides a step-by-step breakdown of how the tokens work, and inserts the completed rule into your rules list with recommended flags.
 
-### 🔄 Replace With
+#### 🔄 Replace With
 - In the **Replace With** field, enter the replacement string that will substitute for each matched occurrence.
 - **Blank / Empty (Default)**: If left blank, matched text will simply be removed from the final output.
 - **Literal Text Replacement**: Enter literal placeholder strings such as `[REDACTED]`, `***`, `HIDDEN`, or `0.0.0.0`.
@@ -102,18 +105,18 @@ The Scrubadub workspace is organized into two primary columns below the top head
   - `$&`: Inserts the entire matched substring.
   - *Example*: Pattern `(\w+)\s(\w+)` with Replace With `$2, $1` transforms `"John Doe"` into `"Doe, John"`.
 
-### 🚩 Flags
+#### 🚩 Flags
 Each rule includes toggleable flag pills that alter regular expression engine behavior:
 - **`g` (Global Match)**: Finds all matches across the entire text rather than stopping after the first occurrence. (Recommended for scrubbing).
 - **`i` (Case Insensitive)**: Ignores character casing so that `[a-z]` matches uppercase letters as well.
 - **`m` (Multiline Mode)**: Treats the beginning (`^`) and end (`$`) assertions as matching the start and end of each individual line, rather than the start and end of the entire input string.
 - **`s` (DotAll / Single Line)**: Allows the dot `.` wildcard to match newline characters (`\n`), enabling matches that span across multiple lines.
 
-### 🔌 Enable/Disable
+#### 💡 Enable/Disable
 - Every rule card includes an **Active Toggle switch**.
 - You can turn individual rules off temporarily to test how the rest of your rules behave, without having to delete the rule or lose its configuration.
 
-### 💾 Saving Rules
+#### 💾 Saving Rules
 Scrubadub requires an account in order to save custom rule sets. Please refer to the section below, "Rule Sets", for more information. 
   
 ### 🧼 Scrubbed Output
@@ -138,9 +141,9 @@ The telemetry toolbar at the top of the output panel displays real-time executio
 
 <details>
 
-<summary>🧰 Rule Sets</summary>
+<summary><strong>🧰 Rule Sets</strong></summary>
   
-### Understanding Rule Sets
+#### Understanding Rule Sets
 <strong>_Note: You <span style="text-decoration-line: underline;text-decoration-style: solid;text-decoration-thickness: 1.5px">MUST</span> create an account in order to create and save custom rule sets and sync them across all of your devices._</strong>
 
 - Once you have configured and tested your rules, you can bundle them into a permanent **Rule Set**.
@@ -153,13 +156,13 @@ The telemetry toolbar at the top of the output panel displays real-time executio
 
 <details>
   
-<summary>📚 Additional Resources</summary>
+<summary><strong>📚 Additional Resources</strong></summary>
 
-### RegEx Cheat Sheet
+#### RegEx Cheat Sheet
 
 For testing complex patterns, inspecting detailed regex token trees, and debugging regular expressions, visit [regex101.com](https://regex101.com).
 
-### Quick Reference Table
+#### Quick Reference Table
 
 | Category | Token | Description | Example |
 | :--- | :--- | :--- | :--- |
