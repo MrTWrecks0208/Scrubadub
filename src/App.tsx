@@ -7,6 +7,7 @@ import PatternManager from './components/PatternManager';
 import AIRegexGenerator from './components/AIRegexGenerator';
 import HighlightedTextarea from './components/HighlightedTextarea';
 import UserAuth from './components/UserAuth';
+import CookieBanner, { openCookiePreferencesModal } from './components/CookieBanner';
 import { useFirebaseTemplates, UserTemplate } from './lib/useFirebaseTemplates';
 import { User } from 'firebase/auth';
 import { 
@@ -800,7 +801,7 @@ export default function App() {
             <span>© {new Date().getFullYear()} Scrubadub by Mr. T-Wrecks. All rights reserved.</span>
           </div>
 
-          <div className="flex items-center gap-3.5 text-white">
+          <div className="flex items-center gap-3.5 text-white flex-wrap justify-center sm:justify-end">
             <a 
               href="https://github.com/MrTWrecks0208/Scrubadub/blob/main/Privacy-Policy.md" 
               target="_blank" 
@@ -810,7 +811,7 @@ export default function App() {
               <span>Privacy Policy</span>
               <ExternalLink className="w-3 h-3 text-white" />
             </a>
-            <span className="text-white">•</span>
+            <span className="text-white/60">•</span>
             <a 
               href="https://github.com/MrTWrecks0208/Scrubadub/blob/main/ToS.md" 
               target="_blank" 
@@ -820,6 +821,22 @@ export default function App() {
               <span>Terms of Service</span>
               <ExternalLink className="w-3 h-3 text-white" />
             </a>
+            <span className="text-white/60">•</span>
+            <button
+              type="button"
+              onClick={() => openCookiePreferencesModal('categories')}
+              className="hover:underline transition-colors cursor-pointer text-white"
+            >
+              Cookie Preferences
+            </button>
+            <span className="text-white/60">•</span>
+            <button
+              type="button"
+              onClick={() => openCookiePreferencesModal('ccpa')}
+              className="hover:underline transition-colors cursor-pointer text-white"
+            >
+              Do Not Sell or Share My Personal Information
+            </button>
           </div>
         </div>
       </footer>
@@ -1023,6 +1040,9 @@ export default function App() {
           </div>
         </div>
       )}
+
+      {/* GDPR & CCPA/CPRA Compliant Cookie Consent Banner & Preferences Modal */}
+      <CookieBanner />
     </div>
   );
 }

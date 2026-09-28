@@ -23,8 +23,10 @@ import {
   Loader2,
   Check,
   ShieldCheck,
-  ExternalLink
+  ExternalLink,
+  Cookie
 } from 'lucide-react';
+import { openCookiePreferencesModal } from './CookieBanner';
 
 export interface UserAuthProps {
   onUserChange: (user: FirebaseUser | null) => void;
@@ -551,6 +553,17 @@ export default function UserAuth({ onUserChange, openAuthTrigger, onCloseAuthTri
                     <span>Terms of Service</span>
                     <ExternalLink className="w-3 h-3 text-slate-500" />
                   </a>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsDropdownOpen(false);
+                      openCookiePreferencesModal('categories');
+                    }}
+                    className="w-full flex items-center justify-between text-[11px] text-slate-400 hover:text-white transition-colors cursor-pointer text-left"
+                  >
+                    <span>Cookie Preferences</span>
+                    <Cookie className="w-3 h-3 text-slate-500" />
+                  </button>
                 </div>
                 <button
                   type="button"

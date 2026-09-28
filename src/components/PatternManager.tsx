@@ -214,11 +214,11 @@ export default function PatternManager({ rules, onChange, ruleStats, onSaveTempl
               <button
                 type="button"
                 onClick={onSaveTemplate}
-                className="flex items-center justify-center gap-1.5 py-1 px-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-md text-[9px] font-bold transition-all shadow-sm hover:shadow-md cursor-pointer uppercase tracking-wider flex-shrink-0 leading-tight text-center"
+                className="flex items-center justify-center gap-1.5 py-1 px-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-md text-[10px] font-medium transition-all shadow-xs hover:shadow-sm cursor-pointer flex-shrink-0 leading-tight text-center"
               >
                 <Bookmark className="w-3 h-3 shrink-0" />
                 <span className="text-center">
-                  Save<br />Rule Set
+                  Save<br />rule set
                 </span>
               </button>
             )}
@@ -227,35 +227,35 @@ export default function PatternManager({ rules, onChange, ruleStats, onSaveTempl
                 <button
                   type="button"
                   onClick={handleAllOn}
-                  className={`h-full px-2 rounded-md font-semibold transition-colors cursor-pointer flex items-center uppercase tracking-wider whitespace-nowrap ${
+                  className={`h-full px-2 rounded-md font-medium transition-colors cursor-pointer flex items-center whitespace-nowrap ${
                     allState === 'on'
-                      ? 'bg-emerald-500/15 text-emerald-400'
+                      ? 'bg-emerald-500/15 text-emerald-400 font-semibold'
                       : 'text-slate-400 hover:bg-slate-800/50 hover:text-white'
                   }`}
                 >
-                  All On
+                  All on
                 </button>
                 <div className="w-[1px] h-2.5 bg-slate-800 mx-0.5"></div>
                 <button
                   type="button"
                   onClick={handleAllOff}
-                  className={`h-full px-2 rounded-md font-semibold transition-colors cursor-pointer flex items-center uppercase tracking-wider whitespace-nowrap ${
+                  className={`h-full px-2 rounded-md font-medium transition-colors cursor-pointer flex items-center whitespace-nowrap ${
                     allState === 'off'
-                      ? 'bg-rose-500/15 text-rose-400'
+                      ? 'bg-rose-500/15 text-rose-400 font-semibold'
                       : 'text-slate-400 hover:bg-slate-800/50 hover:text-white'
                   }`}
                 >
-                  All Off
+                  All off
                 </button>
               </div>
             )}
             <button
               type="button"
               onClick={addRule}
-              className="flex items-center gap-1 h-6.5 px-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-md text-[9px] font-bold transition-all shadow-sm hover:shadow-md cursor-pointer uppercase tracking-wider whitespace-nowrap flex-shrink-0"
+              className="flex items-center gap-1 h-6.5 px-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-md text-[10px] font-medium transition-all shadow-xs hover:shadow-sm cursor-pointer whitespace-nowrap flex-shrink-0"
             >
               <Plus className="w-3 h-3" />
-              Add Rule
+              Add rule
             </button>
           </div>
         </div>
