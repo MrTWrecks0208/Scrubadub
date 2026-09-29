@@ -29,3 +29,7 @@ try {
 
 export const db = dbInstance;
 
+// Google Cloud Fraud Defense / reCAPTCHA Enterprise Site Key
+export const RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY || "6LcgANUtAAAAAAtGLeSlryui2CbdDOe4VvAH0M8R";
+
+

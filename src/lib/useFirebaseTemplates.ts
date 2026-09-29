@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { User } from 'firebase/auth';
 import { 
   collection, 
   query, 
   where, 
   onSnapshot, 
+  getDocs,
   addDoc, 
   deleteDoc, 
   doc, 
@@ -80,15 +81,62 @@ export function useFirebaseTemplates(user: User | null) {
     setLoading(true);
     let isSubscribed = true;
 
+    // Safety timeout: Ensure loading spinner NEVER hangs indefinitely (max 1.5 seconds)
+    const safetyTimer = setTimeout(() => {
+      if (isSubscribed) {
+        setLoading(false);
+      }
+    }, 1500);
+
     // Query without orderBy to avoid requiring custom composite indexes in Firestore
     const q = query(
       collection(db, 'templates'),
       where('userId', '==', user.uid)
     );
 
+    // Fast initial one-shot fetch so user sees their rulesets immediately without waiting for WebChannel
+    getDocs(q)
+      .then((snap) => {
+        if (!isSubscribed) return;
+        clearTimeout(safetyTimer);
+        const cloudList: UserTemplate[] = [];
+        snap.forEach((doc) => {
+          const data = doc.data();
+          cloudList.push({
+            id: doc.id,
+            userId: data.userId,
+            name: data.name || 'Untitled Template',
+            description: data.description || '',
+            rules: data.rules || [],
+            sampleText: data.sampleText || '',
+            createdAt: data.createdAt,
+            updatedAt: data.updatedAt
+          });
+        });
+
+        cloudList.sort((a, b) => {
+          const timeA = a.updatedAt?.seconds || a.createdAt?.seconds || 0;
+          const timeB = b.updatedAt?.seconds || b.createdAt?.seconds || 0;
+          return timeB - timeA;
+        });
+
+        const currentLocals = getLocalTemplates();
+        const localUnsynced = currentLocals.filter(lt => 
+          lt.id.startsWith('local_') && 
+          !cloudList.some(ct => ct.id === lt.id || ct.name.trim().toLowerCase() === lt.name.trim().toLowerCase())
+        );
+
+        setTemplates([...cloudList, ...localUnsynced]);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.warn('Initial getDocs check:', err);
+      });
+
     const unsubscribe = onSnapshot(q, 
       (snapshot) => {
         if (!isSubscribed) return;
+        clearTimeout(safetyTimer);
         const cloudList: UserTemplate[] = [];
         snapshot.forEach((doc) => {
           const data = doc.data();
@@ -147,6 +195,7 @@ export function useFirebaseTemplates(user: User | null) {
       },
       (err) => {
         console.warn('Firestore subscription fallback to local storage:', err);
+        clearTimeout(safetyTimer);
         // Fallback gracefully to local templates if Firestore errors out
         setTemplates(getLocalTemplates());
         setError(null);
@@ -156,6 +205,7 @@ export function useFirebaseTemplates(user: User | null) {
 
     return () => {
       isSubscribed = false;
+      clearTimeout(safetyTimer);
       unsubscribe();
     };
   }, [user]);

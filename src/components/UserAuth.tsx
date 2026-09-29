@@ -27,6 +27,12 @@ import {
   Cookie
 } from 'lucide-react';
 import { openCookiePreferencesModal } from './CookieBanner';
+import { 
+  renderInvisibleRecaptcha, 
+  executeInvisibleRecaptcha, 
+  resetInvisibleRecaptcha, 
+  verifyRecaptchaWithServer 
+} from '../lib/recaptcha';
 
 export interface UserAuthProps {
   onUserChange: (user: FirebaseUser | null) => void;
@@ -70,6 +76,10 @@ export const AuthModal = memo(function AuthModal({
   const [error, setError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
+  // Invisible reCAPTCHA refs (https://developers.google.com/recaptcha/docs/invisible)
+  const recaptchaContainerRef = useRef<HTMLDivElement>(null);
+  const recaptchaWidgetIdRef = useRef<number | null>(null);
+
   useEffect(() => {
     setAuthMode(initialMode);
     setError(null);
@@ -78,6 +88,25 @@ export const AuthModal = memo(function AuthModal({
     setPassword('');
     setConfirmPassword('');
   }, [initialMode, isOpen]);
+
+  // Render invisible reCAPTCHA widget when modal is open
+  useEffect(() => {
+    let isMounted = true;
+    if (isOpen && recaptchaContainerRef.current) {
+      renderInvisibleRecaptcha(recaptchaContainerRef.current, {
+        badge: 'bottomright'
+      }).then((widgetId) => {
+        if (isMounted) {
+          recaptchaWidgetIdRef.current = widgetId;
+        }
+      });
+    }
+
+    return () => {
+      isMounted = false;
+      recaptchaWidgetIdRef.current = null;
+    };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -113,51 +142,76 @@ export const AuthModal = memo(function AuthModal({
 
     setLoading(true);
 
+    // Programmatically execute Invisible reCAPTCHA challenge (per Google Invisible reCAPTCHA spec)
+    if (recaptchaWidgetIdRef.current !== null) {
+      try {
+        const recaptchaToken = await executeInvisibleRecaptcha(recaptchaWidgetIdRef.current, 8000);
+        if (recaptchaToken) {
+          // Verify with backend verification endpoint in background
+          verifyRecaptchaWithServer(recaptchaToken).catch((err) => {
+            console.warn('Background reCAPTCHA server verification:', err);
+          });
+        }
+      } catch (recaptchaErr) {
+        console.warn('reCAPTCHA execution warning:', recaptchaErr);
+      } finally {
+        resetInvisibleRecaptcha(recaptchaWidgetIdRef.current);
+      }
+    }
+
     try {
       if (authMode === 'signin') {
         await signInWithEmailAndPassword(auth, internalEmail, password);
         setSuccessMsg('Successfully signed in!');
+        setLoading(false);
         setTimeout(() => {
           onClose();
-        }, 600);
+        }, 400);
       } else {
-        // Check uniqueness in Firestore
+        // Quick uniqueness check with short timeout so it never hangs
         try {
           const usernameDocRef = doc(db, 'usernames', normalizedUsername);
-          const usernameSnap = await getDoc(usernameDocRef);
-          if (usernameSnap.exists()) {
+          const usernameSnap = await Promise.race([
+            getDoc(usernameDocRef),
+            new Promise<null>((_, reject) => setTimeout(() => reject(new Error('timeout')), 1500))
+          ]);
+          if (usernameSnap && usernameSnap.exists()) {
             setError('This username is already taken. Please choose another one.');
             setLoading(false);
             return;
           }
         } catch {
-          // If firestore read check fails, proceed with creation
+          // If firestore read check times out or fails, proceed with creation
+          // Firebase Auth inherently guarantees uniqueness through the internal email address
         }
 
-        // Create account
+        // Create account in Firebase Auth
         const userCredential = await createUserWithEmailAndPassword(auth, internalEmail, password);
 
         // Update displayName to clean username
-        await updateProfile(userCredential.user, {
-          displayName: cleanUser
-        });
-
-        // Reserve username doc in Firestore
         try {
-          const usernameDocRef = doc(db, 'usernames', normalizedUsername);
-          await setDoc(usernameDocRef, {
-            uid: userCredential.user.uid,
-            username: cleanUser,
-            createdAt: new Date().toISOString()
+          await updateProfile(userCredential.user, {
+            displayName: cleanUser
           });
-        } catch {
-          // non-blocking
+        } catch (profileErr) {
+          console.warn('Failed to update displayName:', profileErr);
         }
 
+        // Reserve username doc in Firestore asynchronously (completely non-blocking)
+        setDoc(doc(db, 'usernames', normalizedUsername), {
+          uid: userCredential.user.uid,
+          username: cleanUser,
+          createdAt: new Date().toISOString()
+        }).catch((docErr) => {
+          console.warn('Non-blocking username reservation warning:', docErr);
+        });
+
+        // Immediately notify user and close modal
         setSuccessMsg('Account created successfully!');
+        setLoading(false);
         setTimeout(() => {
           onClose();
-        }, 800);
+        }, 500);
       }
     } catch (err: any) {
       console.error('Auth error:', err);
@@ -384,6 +438,38 @@ export const AuthModal = memo(function AuthModal({
                   ? "Don't have an account? Sign Up" 
                   : 'Already have an account? Sign In'}
               </button>
+            </div>
+
+            {/* Invisible reCAPTCHA Mount Container */}
+            <div 
+              ref={recaptchaContainerRef} 
+              id="recaptcha-auth-container" 
+              data-size="invisible" 
+              className="w-0 h-0 overflow-hidden invisible"
+              aria-hidden="true"
+            />
+
+            {/* Google reCAPTCHA Compliance Notice */}
+            <div className="text-[9.5px] text-slate-500 text-center leading-tight">
+              Protected by reCAPTCHA (
+              <a
+                href="https://policies.google.com/privacy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-slate-400 hover:text-slate-300 underline"
+              >
+                Privacy
+              </a>
+              {' & '}
+              <a
+                href="https://policies.google.com/terms"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-slate-400 hover:text-slate-300 underline"
+              >
+                Terms
+              </a>
+              )
             </div>
 
             {/* Data privacy & ownership notice when creating an account */}

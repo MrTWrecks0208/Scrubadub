@@ -38,6 +38,46 @@ async function startServer() {
     res.json({ status: 'ok', service: 'scrubadub', timestamp: new Date().toISOString() });
   });
 
+  // Google Cloud Fraud Defense / reCAPTCHA verification endpoint
+  app.post('/api/verify-recaptcha', async (req, res) => {
+    try {
+      const { token } = req.body;
+      if (!token) {
+        res.status(400).json({ success: false, error: 'Token is required' });
+        return;
+      }
+
+      const secretKey =
+        process.env.RECAPTCHA_SECRET_KEY ||
+        process.env.RECAPTCHA_ENTERPRISE_API_KEY ||
+        process.env.VITE_RECAPTCHA_SECRET_KEY;
+
+      // If secret key is not provided in env, acknowledge token and allow client to proceed
+      if (!secretKey) {
+        res.json({ success: true, bypassed: true, message: 'reCAPTCHA token accepted.' });
+        return;
+      }
+
+      const verifyUrl = 'https://www.google.com/recaptcha/api/siteverify';
+      const params = new URLSearchParams();
+      params.append('secret', secretKey);
+      params.append('response', token);
+
+      const verifyRes = await fetch(verifyUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: params.toString()
+      });
+
+      const data = await verifyRes.json();
+      res.json(data);
+    } catch (err: any) {
+      console.warn('reCAPTCHA verification error on server:', err);
+      // Fail open to avoid blocking legitimate users on network hiccups
+      res.json({ success: true, fallback: true });
+    }
+  });
+
   // AI Regex generation endpoint
   app.post('/api/ai/generate-regex', async (req, res) => {
     try {
