@@ -214,11 +214,11 @@ export default function PatternManager({ rules, onChange, ruleStats, onSaveTempl
               <button
                 type="button"
                 onClick={onSaveTemplate}
-                className="flex items-center justify-center gap-1.5 py-1 px-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-md text-[10px] font-medium transition-all shadow-xs hover:shadow-sm cursor-pointer flex-shrink-0 leading-tight text-center"
+                className="flex items-center justify-center gap-1 py-1.5 px-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-md text-[10px] font-medium transition-all shadow-xs hover:shadow-sm cursor-pointer flex-shrink-0 leading-tight text-center"
               >
                 <Bookmark className="w-3 h-3 shrink-0" />
-                <span className="text-center">
-                  Save<br />rule set
+                <span className="uppercase text-center">
+                  Save rule set
                 </span>
               </button>
             )}
@@ -374,28 +374,7 @@ export default function PatternManager({ rules, onChange, ruleStats, onSaveTempl
                   </div>
 
                   <div className="flex items-center gap-1 shrink-0" draggable={false} onMouseDown={(e) => e.stopPropagation()}>
-                    {/* Move Up / Down Buttons */}
-                    <div className="flex items-center border border-slate-800/80 bg-[#020617] rounded p-0.5 gap-0.5">
-                      <button
-                        type="button"
-                        onClick={() => moveRule(index, index - 1)}
-                        disabled={index === 0}
-                        title="Move rule up"
-                        className="p-0.5 text-slate-500 hover:text-slate-200 hover:bg-slate-800 rounded transition-colors disabled:opacity-20 disabled:pointer-events-none cursor-pointer"
-                      >
-                        <ChevronUp className="w-3 h-3" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => moveRule(index, index + 1)}
-                        disabled={index === rules.length - 1}
-                        title="Move rule down"
-                        className="p-0.5 text-slate-500 hover:text-slate-200 hover:bg-slate-800 rounded transition-colors disabled:opacity-20 disabled:pointer-events-none cursor-pointer"
-                      >
-                        <ChevronDown className="w-3 h-3" />
-                      </button>
-                    </div>
-
+                   
                     {/* Active Match Stat Badge */}
                     {rule.isActive && rule.pattern && isValid && (
                       <span className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border transition-colors ${
