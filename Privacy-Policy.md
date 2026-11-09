@@ -10,9 +10,11 @@ You can use Scrubadub without creating an account.
 
 If you choose to create an account, we collect only the information necessary to create and maintain that account:
 
-Email address
-Username
-Password
+- Email address
+
+- Username
+
+- Password
 
 Providing an email address is not required unless you choose to create an account.
 
