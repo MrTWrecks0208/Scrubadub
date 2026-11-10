@@ -642,7 +642,7 @@ export default function App() {
             <div className="bg-[#1E293B]/20 border border-slate-800 rounded-lg overflow-hidden flex flex-col">
               <div className="flex items-center justify-between px-3.5 py-2 border-b border-slate-800 bg-[#1E293B]/60">
                 <div className="flex items-center gap-2">
-                  <FileText className="w-3.5 h-3.5 text-indigo-400" />
+                  <FileText className="w-4 h-4 text-emerald-400" />
                   <span className="text-[11px] font-bold uppercase tracking-wider text-slate-300">Source Input</span>
                 </div>
                 
@@ -703,7 +703,7 @@ export default function App() {
               {/* Header */}
               <div className="flex items-center justify-between px-3.5 py-2 border-b border-slate-800 bg-[#1E293B]/60">
                 <div className="flex items-center gap-2">
-                  <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+                  <Sparkles className="w-3.5 h-3.5 text-yellow-400" />
                   <span className="text-[11px] font-bold uppercase tracking-wider text-slate-300">Scrubbed Output</span>
                 </div>
                 

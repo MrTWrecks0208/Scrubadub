@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { RegexRule } from '../types';
-import { Sparkles, Plus, Loader2, ArrowRight, CornerDownRight, Check, HelpCircle } from 'lucide-react';
+import { Sparkles, Plus, Loader2, ArrowRight, CornerDownRight, Check, HelpCircle, RefreshCw } from 'lucide-react';
 import { getDefaultRuleName } from '../utils/cleaner';
 
 interface AIRegexGeneratorProps {
@@ -103,9 +103,7 @@ export default function AIRegexGenerator({ onAddRule, sampleText, existingRules 
       {/* Header */}
       <div className="flex items-center justify-between border-b border-slate-800/80 pb-2.5">
         <div className="flex items-center gap-2">
-          <div className="w-5 h-5 rounded bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center">
-            <Sparkles className="w-3 h-3 text-indigo-400" />
-          </div>
+          <RefreshCw className="w-4 h-4 text-indigo-400" />
           <div>
             <h3 className="text-xs font-bold uppercase tracking-wider text-slate-200">AI Rule Generator</h3>
             <p className="text-[10px] text-slate-500 font-mono mt-0.5">Describe what pattern to match & replace</p>
@@ -139,7 +137,7 @@ export default function AIRegexGenerator({ onAddRule, sampleText, existingRules 
               </>
             ) : (
               <>
-                <Sparkles className="w-3.5 h-3.5 text-indigo-200" />
+                <RefreshCw className="w-3.5 h-3.5 text-indigo-200" />
                 <span>Generate Rule</span>
               </>
             )}

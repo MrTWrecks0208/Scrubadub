@@ -172,88 +172,75 @@ export default function CookieBanner() {
         <aside 
           aria-label="Cookie & Privacy Consent Banner"
           role="region"
-          className="fixed bottom-0 inset-x-0 z-[90] p-3 sm:p-4 animate-in fade-in slide-in-from-bottom-4 duration-300 pointer-events-none"
+          className="fixed bottom-0 inset-x-0 z-[90] p-2.5 sm:p-3 animate-in fade-in slide-in-from-bottom-3 duration-300 pointer-events-none"
         >
-          <div className="max-w-5xl mx-auto bg-[#131B2E] border border-slate-700/80 rounded-xl shadow-2xl p-4 sm:p-5 text-slate-300 pointer-events-auto backdrop-blur-md">
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div className="max-w-[530px] mx-auto bg-[#131B2E] scale-90 border border-slate-700/80 rounded-xl shadow-2xl py-3 px-3 sm:px-3 text-slate-300 pointer-events-auto backdrop-blur-md">
+            <div className="flex flex-col items-center text-center gap-2">
               
-              {/* Text / Information */}
-              <div className="flex items-start gap-3 flex-1 min-w-0">
-                <div className="p-2.5 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 shrink-0 mt-0.5">
-                  <Cookie className="w-5 h-5" />
-                </div>
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-white">
-                      Privacy & Cookie Consent
-                    </h3>
-                    <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-emerald-950/60 text-emerald-400 border border-emerald-800/40">
-                      GDPR & CCPA/CPRA Compliant
-                    </span>
-                  </div>
-                  <p className="text-[11px] sm:text-xs text-slate-300 leading-relaxed max-w-3xl">
-                    We use cookies and local browser storage to run core features (such as your session, saved regular expressions, and security). We respect your privacy rights under GDPR and California’s CCPA/CPRA: <strong>we do not sell or share your personal information</strong>. For full details on how we safeguard your data, view our{' '}
-                    <a 
-                      href="https://github.com/MrTWrecks0208/Scrubadub/blob/main/Privacy-Policy.md"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-indigo-400 hover:text-indigo-300 underline font-semibold inline-flex items-center gap-0.5"
-                    >
-                      Privacy Policy <ExternalLink className="w-2.5 h-2.5 inline" />
-                    </a>. Choose your preferences below.
-                  </p>
-                  <div className="flex items-center gap-3 pt-1 text-[10px] text-slate-400 font-mono">
-                    <a 
-                      href="https://github.com/MrTWrecks0208/Scrubadub/blob/main/Privacy-Policy.md"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-indigo-400 hover:text-indigo-300 underline underline-offset-2 flex items-center gap-1 font-semibold"
-                    >
-                      Privacy Policy <ExternalLink className="w-2.5 h-2.5" />
-                    </a>
-                    <span>•</span>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setActiveTab('ccpa');
-                        setIsModalOpen(true);
-                      }}
-                      className="text-indigo-400 hover:text-indigo-300 underline underline-offset-2 cursor-pointer"
-                    >
-                      Do Not Sell or Share My Info (CCPA)
-                    </button>
-                  </div>
-                </div>
+              {/* Header Title with Cookie Icon on same line */}
+              <div className="flex items-center justify-center gap-2">
+               
+                <h3 className="text-sm sm:text-base font-bold uppercase tracking-wider text-white">
+                
+                </h3>
               </div>
 
-              {/* Action Buttons */}
-              <div className="grid grid-cols-3 sm:flex sm:items-center gap-1.5 w-full md:w-auto shrink-0 pt-2 md:pt-0">
+              {/* Description Text */}
+              <p className="text-[11px] sm:text-xs text-slate-300 leading-relaxed text-center w-full">
+                We use cookies to ensure you get the best possible experience when using our app.<br />
+                 <strong>We do not sell or share your personal information with any third-parties.</strong><br />
+
+                {' '}
+                <a 
+                  href="https://github.com/MrTWrecks0208/Scrubadub/blob/main/Privacy-Policy.md"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-indigo-400 hover:text-indigo-300 underline font-semibold inline-flex items-center gap-0.5"
+                >
+                <span className="text-[11px]">Privacy Policy<ExternalLink className="w-2.5 h-2.5 inline" /></span>
+                </a><br />
+              </p>
+
+              {/* Action Buttons: Centered directly below */}
+              <div className="flex items-center justify-center gap-1.5 w-full pt-2">
+                <button
+                  type="button"
+                  onClick={handleAcceptAll}
+                  className="flex-0 sm:flex-initial sm:w-[110px] h-7 py-2 px-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded text-[11px] font-medium transition-colors shadow-xs cursor-pointer inline-flex items-center justify-center whitespace-nowrap text-center"
+                >
+                  Accept All
+                </button>
+                <button
+                  type="button"
+                  onClick={handleRejectAll}
+                  className="flex-0 sm:flex-initial sm:w-[110px] h-7 px-2.5 py-3 bg-slate-900 hover:bg-slate-700 hover:text-white hover:shadow-indigo-md text-slate-300 border border-slate-700 rounded text-[11px] font-medium transition-colors cursor-pointer inline-flex items-center justify-center whitespace-nowrap text-center"
+                >
+                  Only Essential
+                </button>
                 <button
                   type="button"
                   onClick={() => {
                     setActiveTab('categories');
                     setIsModalOpen(true);
                   }}
-                  className="sm:w-[130px] h-7 px-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded text-[11px] font-medium transition-colors cursor-pointer inline-flex items-center justify-center gap-1.5 whitespace-nowrap text-center"
+                  className="flex-0 sm:flex-initial sm:w-[110px] h-7 px-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border-2 border-slate-700 rounded text-[11px] font-medium transition-colors cursor-pointer inline-flex items-center justify-center gap-1 whitespace-nowrap text-center"
                 >
                   <Sliders className="w-3 h-3 text-slate-400" />
                   <span>Customize</span>
-                </button>
+                </button>               
+              </div>
 
+              {/* Links */}
+              <div className="flex items-center justify-center mt-2 gap-2 text-[10px] text-slate-400 font-mono">
                 <button
                   type="button"
-                  onClick={handleRejectAll}
-                  className="sm:w-[130px] h-7 px-2 bg-slate-900 hover:bg-slate-850 text-slate-300 border border-slate-700 rounded text-[11px] font-medium transition-colors cursor-pointer inline-flex items-center justify-center whitespace-nowrap text-center"
+                  onClick={() => {
+                    setActiveTab('ccpa');
+                    setIsModalOpen(true);
+                  }}
+                  className="text-indigo-400 hover:text-indigo-300 underline underline-offset-2 cursor-pointer"
                 >
-                  Reject non-essential
-                </button>
-
-                <button
-                  type="button"
-                  onClick={handleAcceptAll}
-                  className="sm:w-[130px] h-7 px-2 bg-indigo-600 hover:bg-indigo-500 text-white border border-indigo-500 rounded text-[11px] font-medium transition-colors shadow-xs cursor-pointer inline-flex items-center justify-center whitespace-nowrap text-center"
-                >
-                  Accept all
+                  Do Not Sell or Share My Info (CCPA)
                 </button>
               </div>
 
@@ -343,7 +330,7 @@ export default function CookieBanner() {
               {showSavedFeedback && (
                 <div className="p-2.5 rounded-lg bg-emerald-950/30 border border-emerald-800/50 text-emerald-400 text-xs flex items-center gap-2 animate-in fade-in">
                   <Check className="w-4 h-4 text-emerald-400" />
-                  <span>Your privacy preferences have been updated and saved.</span>
+                  <span>Your preferences have been updated.</span>
                 </div>
               )}
 
@@ -351,7 +338,7 @@ export default function CookieBanner() {
               {activeTab === 'categories' && (
                 <div className="space-y-3">
                   <p className="text-[11px] text-slate-300 leading-relaxed">
-                    When you use Scrubadub, information may be stored on your browser in the form of cookies or local storage. You have the right under GDPR to decide which non-essential categories you want to allow.
+                    When you use Scrubadub, information may be stored in your browser in the form of cookies or local storage. You have the right under GDPR to decide which non-essential categories you want to allow.
                   </p>
 
                   {/* 1. Strictly Necessary */}
@@ -359,14 +346,14 @@ export default function CookieBanner() {
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-2">
                         <Lock className="w-3.5 h-3.5 text-emerald-400" />
-                        <span className="font-semibold text-slate-200 text-xs">Strictly Necessary Cookies</span>
+                        <span className="font-semibold text-slate-200 text-xs">Essential Cookies</span>
                         <span className="text-[9px] font-mono uppercase bg-emerald-950/60 text-emerald-400 border border-emerald-800/40 px-1.5 py-0.2 rounded font-medium">
                           Always Active
                         </span>
                       </div>
                     </div>
                     <p className="text-[11px] text-slate-400 leading-normal">
-                      These cookies and local storage items are essential for the application to function. They handle authentication with Firebase, prevent cross-site request forgery, and maintain security and session state. They cannot be turned off.
+                      These items handle authentication and security and are essential for the application to function. They cannot be turned off.
                     </p>
                   </div>
 
@@ -388,7 +375,7 @@ export default function CookieBanner() {
                       </label>
                     </div>
                     <p className="text-[11px] text-slate-400 leading-normal">
-                      These cookies enable helpful preferences and personalization, such as remembering your custom regular expression rules, active presets, and workspace layout between visits.
+                      These items allow for personalization, such as remembering your custom rules between visits.
                     </p>
                   </div>
 
@@ -410,7 +397,7 @@ export default function CookieBanner() {
                       </label>
                     </div>
                     <p className="text-[11px] text-slate-400 leading-normal">
-                      These cookies help us understand how visitors use the application so we can measure throughput and fix crashes. All diagnostic data is aggregated, anonymized, and never tied to personal profiles.
+                      These cookies help us understand how visitors use the application and allow us to troubleshoot, diagnose, and fix any issues with the application. All diagnostic data is aggregated and anonymized and is never tied to user profiles.
                     </p>
                   </div>
 
@@ -432,7 +419,7 @@ export default function CookieBanner() {
                       </label>
                     </div>
                     <p className="text-[11px] text-slate-400 leading-normal">
-                      Scrubadub does not display third-party advertisements or sell personal data. This category is included for compliance frameworks and is turned off by default.
+                      Scrubadub does not display third-party advertisements or sell personal data. This category is included for compliance and is turned off by default.
                     </p>
                   </div>
                 </div>
@@ -493,28 +480,11 @@ export default function CookieBanner() {
             {/* Modal Footer */}
             <div className="px-5 py-3 border-t border-slate-800 bg-[#131B2E] flex flex-col sm:flex-row items-center justify-between gap-3">
               <div className="flex items-center gap-2 text-[10px] text-slate-400 font-mono flex-wrap">
-                <a
-                  href="https://github.com/MrTWrecks0208/Scrubadub/blob/main/Privacy-Policy.md"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-indigo-400 hover:text-indigo-300 underline font-semibold inline-flex items-center gap-1"
-                >
-                  <span>Privacy Policy</span>
-                  <ExternalLink className="w-2.5 h-2.5" />
-                </a>
-                <span>•</span>
-                <span>Preferences stored locally • Update anytime</span>
+                <span>Preferences are stored on your device and can be updated at any time.</span>
               </div>
 
               <div className="grid grid-cols-3 sm:flex sm:items-center gap-1.5 w-full sm:w-auto justify-end">
-                <button
-                  type="button"
-                  onClick={handleRejectAll}
-                  className="sm:w-[130px] h-7 px-2 bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 rounded text-[11px] font-medium transition-colors cursor-pointer inline-flex items-center justify-center whitespace-nowrap text-center"
-                >
-                  Reject non-essential
-                </button>
-                <button
+               <button
                   type="button"
                   onClick={handleAcceptAll}
                   className="sm:w-[130px] h-7 px-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded text-[11px] font-medium transition-colors cursor-pointer inline-flex items-center justify-center whitespace-nowrap text-center"
@@ -523,11 +493,19 @@ export default function CookieBanner() {
                 </button>
                 <button
                   type="button"
+                  onClick={handleRejectAll}
+                  className="sm:w-[130px] h-7 px-2 bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 rounded text-[11px] font-medium transition-colors cursor-pointer inline-flex items-center justify-center whitespace-nowrap text-center"
+                >
+                  Only essential
+                </button>
+               
+                <button
+                  type="button"
                   onClick={handleSavePreferences}
                   className="sm:w-[130px] h-7 px-2 bg-indigo-600 hover:bg-indigo-500 text-white border border-indigo-500 rounded text-[11px] font-medium transition-colors shadow-xs cursor-pointer inline-flex items-center justify-center gap-1.5 whitespace-nowrap text-center"
                 >
                   <Check className="w-3 h-3" />
-                  <span>Save choices</span>
+                  <span>Save</span>
                 </button>
               </div>
             </div>
