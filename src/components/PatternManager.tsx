@@ -255,7 +255,7 @@ export default function PatternManager({ rules, onChange, ruleStats, onSaveTempl
               className="flex items-center gap-1 h-6.5 px-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-md text-[10px] font-medium transition-all shadow-xs hover:shadow-sm cursor-pointer whitespace-nowrap flex-shrink-0"
             >
               <Plus className="w-3 h-3" />
-              Add rule
+              Add Rule
             </button>
           </div>
         </div>
