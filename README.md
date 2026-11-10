@@ -158,9 +158,9 @@ The telemetry toolbar at the top of the output panel displays real-time executio
   
 <summary><strong>📚 Additional Resources</strong></summary>
 
-#### RegEx Cheat Sheet
+#### <strong>Regular Expressions</strong>
 
-For testing complex patterns, inspecting detailed regex token trees, and debugging regular expressions, visit [regex101.com](https://regex101.com).
+To learn regular expressions, test patterns, inspect regex token trees, and debug regular expressions, visit [regex101.com](https://regex101.com).
 
 #### Quick Reference Table
 
