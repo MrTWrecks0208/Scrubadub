@@ -8,9 +8,11 @@
 <details open>
   
 <summary><strong>🔍 Overview</strong></summary> 
-<br>
+<br />
 
-**Scrubadub** is a multi-string match and replace ("scrub") tool which allows you to create any number of rules using regular expressions (Regex) and strings to find and replace as many strings or patterns as needed within a large body of text.
+**Scrubadub** is a multi-string match and replace ("scrub") tool which allows you to create any number of rules using regular expressions (Regex) and strings to find and replace as many strings or patterns as needed within a large body of text.<br />
+
+
 
 #### Key Principles
 - **Sequential Execution**: Rules run from top to bottom. Each rule operates on the transformed output of the rule that precedes it.
