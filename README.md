@@ -134,10 +134,9 @@ The **Scrubbed Output** pane is on the bottom left-hand side of the screen below
 
 #### Stats
 The telemetry toolbar at the top of the output panel displays real-time execution analytics:
-- **Matches Found**: The total count of all matched text instances across all active rules.
-- **Characters Altered / Removed**: The net difference in character count between the raw input and the final scrubbed output.
-- **Line & Word Counts**: Total line and word counts for the sanitized document.
-- **Execution Time**: The time in milliseconds (ms) taken to execute your rules, ensuring high-throughput performance.
+- **Character & Word Counts**: Total line and word counts for the sanitized document.
+- **Matches Scrubbed**: The total count of all matched text instances across all active rules.
+- **Reduced By**: The net difference in character count between the raw input and the final scrubbed output, expressed as a percentage.
 
 </details>
 
