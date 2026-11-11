@@ -150,7 +150,8 @@ The telemetry toolbar at the top of the output panel displays real-time executio
 - Once you have configured and tested your rules, you can bundle them into a permanent **Rule Set**.
 - Click the **`Save Rule Set`** button in the top action bar or rules header.
 - Provide a name (e.g., *"Kubernetes Log Sanitizer"*) and an optional description.
-- Your saved rule sets will appear in the **Custom Rule Sets** section in the Rule Sets container. To use a custom rule set, simply click on it and all rules within the rule set will be loaded into the Rules section.
+- Your saved rule sets will appear in the **Custom Rule Sets** section in the Rule Sets container.
+- To use a custom rule set, simply click on it. Each rule in the rule set will be added to the Rules section.
 - You can manage, update, or delete existing custom rule sets from the custom rule sets bar.
   
 </details>
