@@ -162,7 +162,7 @@ The telemetry toolbar at the top of the output panel displays real-time executio
 
 #### <strong>Regular Expressions</strong>
 
-To learn regular expressions, test patterns, inspect regex token trees, and debug regular expressions, visit [regex101.com](https://regex101.com).
+For all things related to regular expressions, visit [regex101.com](https://regex101.com).
 
 #### Quick Reference Table
 
