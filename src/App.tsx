@@ -795,8 +795,15 @@ export default function App() {
       </main>
 
       {/* Application Footer */}
-      <footer className="min-h-[48px] border-t border-slate-800/80 bg-indigo-600 py-3.5 px-4 sm:px-8 text-sm text-white mt-auto">
-        <div className="max-w-[1450px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-2.5 text-[12px]">
+      <footer className="border-t border-slate-800/80 bg-indigo-600 py-1.5 px-4 sm:px-8 text-sm text-white mt-auto">
+        <div className="max-w-[1450px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-[11.5px]">
+          <img 
+            src={logo} 
+            alt="Scrubadub Logo" 
+            className="w-20 sm:w-28 md:w-32 h-7 sm:h-9 md:h-10 object-contain" 
+            referrerPolicy="no-referrer"
+          />
+        
           <div className="flex items-center gap-2 text-white">
             <span>© {new Date().getFullYear()} Scrubadub by Mr. T-Wrecks. All rights reserved.</span>
           </div>
@@ -828,14 +835,6 @@ export default function App() {
               className="hover:underline transition-colors cursor-pointer text-white"
             >
               Cookie Preferences
-            </button>
-            <span className="text-white/60">•</span>
-            <button
-              type="button"
-              onClick={() => openCookiePreferencesModal('ccpa')}
-              className="hover:underline transition-colors cursor-pointer text-white"
-            >
-              Do Not Sell or Share My Personal Information
             </button>
           </div>
         </div>
