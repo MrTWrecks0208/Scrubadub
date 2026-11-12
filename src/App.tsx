@@ -332,7 +332,7 @@ export default function App() {
 
           <div className="hidden sm:flex flex-col items-start gap-1">
             <a 
-              href="https://github.com/MrTWrecks0208/MrTWrecks0208.github.io/blob/ee6d9bdf3d9428e6a3f856c156df50cdd9116c25/Scrubadub-Documentation.md" 
+              href="https://github.com/MrTWrecks0208/Scrubadub/blob/73664173c78ab836d42c56b11f87f7071707da44/README.md" 
               target="_blank" 
               rel="noopener noreferrer"
               className="flex items-center gap-1 text-[11px] text-slate-400 hover:text-white transition-colors shrink-0"
@@ -346,7 +346,7 @@ export default function App() {
               rel="noopener noreferrer"
               className="flex items-center gap-1 text-[11px] text-slate-400 hover:text-white transition-colors shrink-0"
             >
-              <span>Regex Cheat Sheet</span>
+              <span>Regex Reference</span>
               <ExternalLink className="w-3 h-3 text-slate-500" />
             </a>
           </div>
